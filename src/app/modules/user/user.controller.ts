@@ -60,7 +60,6 @@ const forgetPassword = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  // const userId = req.body.id;
   const token = req?.headers?.authorization;
 
   if (!token) {

@@ -19,7 +19,6 @@ const registerUserIntoDB = async (payload: TUser) => {
 
 const loginUserIntoDB = async (payload: TLoginUser) => {
   // check if user is already exists ------
-  //   const isUserExists = await User.findOne({ id: payload.id });
   const user = await User.isUserExists(payload.email);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
@@ -53,7 +52,6 @@ const loginUserIntoDB = async (payload: TLoginUser) => {
     config.jwt_refresh_secret as string,
     config.jwt_refresh_expires_in as string,
   );
-  // console.log(accessToken, refreshToken);
   return {
     accessToken,
     refreshToken,
