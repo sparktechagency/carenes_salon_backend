@@ -80,6 +80,7 @@
 
 // export default globalErrorHandler;
 
+// new global error handler-------------------
 import { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
 import AppError from '../error/appError';
