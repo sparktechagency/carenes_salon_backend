@@ -19,6 +19,8 @@ export interface TUser {
   role: 'user' | 'rider' | 'vendor' | 'superAdmin';
   status: 'in-progress' | 'blocked';
   isDeleted: boolean;
+  isVerifiedRider?: boolean;
+  isVerifiedVendor?: boolean;
 }
 
 export interface TLoginUser {

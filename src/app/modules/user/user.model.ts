@@ -47,7 +47,7 @@ const userSchema = new Schema<TUser, UserModel>(
     },
     role: {
       type: String,
-      enum: ['user', 'faculty', 'admin', 'superAdmin'],
+      enum: ['user', 'rider', 'vendor', 'superAdmin'],
     },
     status: {
       type: String,
@@ -55,6 +55,14 @@ const userSchema = new Schema<TUser, UserModel>(
       default: 'in-progress',
     },
     isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    isVerifiedVendor: {
+      type: Boolean,
+      default: false,
+    },
+    isVerifiedRider: {
       type: Boolean,
       default: false,
     },

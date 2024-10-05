@@ -5,6 +5,7 @@ export interface IBusiness {
   email: string;
   contactNumber: string;
   type: 'Restaurant' | 'GroceryShop';
+  business_image: string;
   location: {
     type: 'Point';
     coordinates: [number, number];

@@ -32,6 +32,10 @@ const businessSchema: Schema<IBusiness> = new mongoose.Schema(
       enum: ['Restaurant', 'GroceryShop'],
       required: true,
     },
+    business_image: {
+      type: String,
+      required: true,
+    },
     location: {
       type: {
         type: String,
