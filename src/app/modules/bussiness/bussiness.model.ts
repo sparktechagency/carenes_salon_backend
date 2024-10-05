@@ -4,6 +4,12 @@ import { IBusiness } from './bussiness.interface';
 // Create a schema for Business
 const businessSchema: Schema<IBusiness> = new mongoose.Schema(
   {
+    vendor: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      unique: true,
+    },
     name: {
       type: String,
       required: true,
@@ -36,12 +42,6 @@ const businessSchema: Schema<IBusiness> = new mongoose.Schema(
         type: [Number],
         required: true,
       },
-    },
-    vendor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Vendor',
-      required: true,
-      unique: true,
     },
   },
   { timestamps: true },
