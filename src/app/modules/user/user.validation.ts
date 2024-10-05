@@ -14,7 +14,7 @@ export const registerUserValidationSchema = z.object({
     bankName: z.string().optional().nullable(),
     paymentMethodPreferences: z.string().optional().nullable(),
     role: z.enum(['user', 'rider', 'vendor', 'superAdmin']),
-    status: z.enum([...UserStatus] as [string, ...string[]]),
+    status: z.enum([...UserStatus] as [string, ...string[]]).optional(),
     isDeleted: z.boolean().optional().default(false),
   }),
 });

@@ -29,8 +29,8 @@ export interface TLoginUser {
 export interface UserModel extends Model<TUser> {
   // myStaticMethod(): number;
   isUserExists(email: string): Promise<TUser>;
-  isUserDeleted(email: string): Promise<boolean>;
-  isUserBlocked(email: string): Promise<boolean>;
+  //   isUserDeleted(email: string): Promise<boolean>;
+  //   isUserBlocked(email: string): Promise<boolean>;
   isPasswordMatched(
     plainPassword: string,
     hashPassword: string,

@@ -14,7 +14,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
     // check if the token is sent from client -----
     const token = req?.headers?.authorization;
     if (!token) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'Your are not authorized');
+      throw new AppError(httpStatus.UNAUTHORIZED, 'Your are not authorized 1');
     }
     // check if the token is valid-
     // checking if the given token is valid
@@ -40,14 +40,20 @@ const auth = (...requiredRoles: TUserRole[]) => {
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
     }
-    // checking if the user is already deleted ------------
-    if (await User.isUserDeleted(email)) {
+    if (user.isDeleted) {
       throw new AppError(httpStatus.FORBIDDEN, 'This user is already deleted');
     }
-    // if the user is blocked
-    if (await User.isUserBlocked(email)) {
+    if (user.status === 'blocked') {
       throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
     }
+    // checking if the user is already deleted ------------
+    // if (await User.isUserDeleted(email)) {
+    //   throw new AppError(httpStatus.FORBIDDEN, 'This user is already deleted');
+    // }
+    // if the user is blocked
+    // if (await User.isUserBlocked(email)) {
+    //   throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
+    // }
     //
     if (
       user?.passwordChangedAt &&
@@ -56,10 +62,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
         iat as number,
       ))
     ) {
-      throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized');
+      throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized 2');
     }
     if (requiredRoles && !requiredRoles.includes(role)) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'Your are not authorized');
+      throw new AppError(httpStatus.UNAUTHORIZED, 'Your are not authorized 3');
     }
     // add those properties in req
     req.user = decoded as JwtPayload;

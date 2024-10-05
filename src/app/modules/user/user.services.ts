@@ -18,25 +18,20 @@ const registerUserIntoDB = async (payload: TUser) => {
 };
 
 const loginUserIntoDB = async (payload: TLoginUser) => {
-  // check if user is already exists ------
   const user = await User.isUserExists(payload.email);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
   }
-  // checking if the user is already deleted ------------
-  if (await User.isUserDeleted(payload.email)) {
+  if (user.isDeleted) {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is already deleted');
   }
-  // if the user is blocked
-  if (await User.isUserBlocked(payload.email)) {
+  if (user.status === 'blocked') {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
   }
   // checking if the password is correct ----
   if (!(await User.isPasswordMatched(payload?.password, user?.password))) {
     throw new AppError(httpStatus.FORBIDDEN, 'Password do not match');
   }
-  //   Access Granted : Send Access token ,refresh token
-  // create token and send to the client ------------
   const jwtPayload = {
     id: user?._id,
     email: user?.email,
@@ -63,20 +58,17 @@ const changePasswordIntoDB = async (
   userData: JwtPayload,
   payload: { oldPassword: string; newPassword: string },
 ) => {
-  // console.log(userData);
   const user = await User.isUserExists(userData.email);
-  if (!(await User.isUserExists(userData.userId))) {
+  if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
   }
-  // checking if the user is already deleted ------------
-  if (await User.isUserDeleted(userData.email)) {
+  if (user.isDeleted) {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is already deleted');
   }
-  // if the user is blocked
-  if (await User.isUserBlocked(userData.email)) {
+  if (user.status === 'blocked') {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
   }
-  // checking if the password is correct ----
+
   if (!(await User.isPasswordMatched(payload?.oldPassword, user?.password))) {
     throw new AppError(httpStatus.FORBIDDEN, 'Password do not match');
   }
@@ -99,24 +91,19 @@ const changePasswordIntoDB = async (
 };
 
 const refreshToken = async (token: string) => {
-  // check if the token is valid-
   const decoded = verifyToken(token, config.jwt_refresh_secret as string);
   const { email, iat } = decoded;
-  // get the user if that here ---------
 
   const user = await User.isUserExists(email);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
   }
-  // checking if the user is already deleted ------------
-  if (await User.isUserDeleted(email)) {
+  if (user.isDeleted) {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is already deleted');
   }
-  // if the user is blocked
-  if (await User.isUserBlocked(email)) {
+  if (user.status === 'blocked') {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
   }
-  //
   if (
     user?.passwordChangedAt &&
     (await User.isJWTIssuedBeforePasswordChange(
@@ -145,12 +132,10 @@ const forgetPassword = async (email: string) => {
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
   }
-  // checking if the user is already deleted ------------
-  if (await User.isUserDeleted(email)) {
+  if (user.isDeleted) {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is already deleted');
   }
-  // if the user is blocked
-  if (await User.isUserBlocked(email)) {
+  if (user.status === 'blocked') {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
   }
   const jwtPayload = {
@@ -177,12 +162,10 @@ const resetPassword = async (
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
   }
-  // checking if the user is already deleted ------------
-  if (await User.isUserDeleted(payload.email)) {
+  if (user.isDeleted) {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is already deleted');
   }
-  // if the user is blocked
-  if (await User.isUserBlocked(payload.email)) {
+  if (user.status === 'blocked') {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
   }
   // verify token -------------

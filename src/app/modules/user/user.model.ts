@@ -47,7 +47,7 @@ const userSchema = new Schema<TUser, UserModel>(
     },
     role: {
       type: String,
-      enum: ['student', 'faculty', 'admin', 'superAdmin'],
+      enum: ['user', 'faculty', 'admin', 'superAdmin'],
     },
     status: {
       type: String,
@@ -74,7 +74,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// set empty string after saving password
 userSchema.post('save', function (doc, next) {
   doc.password = '';
   next();
@@ -82,16 +81,6 @@ userSchema.post('save', function (doc, next) {
 // statics method for check is user exists
 userSchema.statics.isUserExists = async function (email: string) {
   return await User.findOne({ email }).select('+password');
-};
-// statics method for check is user isDeleted
-userSchema.statics.isUserDeleted = async function (email: string) {
-  const user = await User.findOne({ email });
-  return user?.isDeleted;
-};
-// statics method for check is user is blocked
-userSchema.statics.isUserBlocked = async function (email: string) {
-  const user = await User.findOne({ email });
-  return user?.status === 'blocked';
 };
 // statics method for check password match  ----
 userSchema.statics.isPasswordMatched = async function (
