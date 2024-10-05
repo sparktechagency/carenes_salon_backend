@@ -2,28 +2,9 @@
 import { Model } from 'mongoose';
 import { USER_ROLE } from './user.constant';
 
-// export interface TUser {
-//   _id: string;
-//   name: string;
-//   email: string;
-//   password: string;
-//   phoneNumber: string;
-//   profileImage?: string;
-//   location?: string;
-//   approved: boolean;
-//   passwordChangedAt?: Date;
-//   bankAccountName?: string;
-//   bankAccountNumber?: number;
-//   bankName?: string;
-//   paymentMethodPreferences?: string;
-//   role: 'user' | 'rider' | 'vendor' | 'superAdmin';
-//   status: 'in-progress' | 'blocked';
-//   isDeleted: boolean;
-//   isVerifiedRider?: boolean;
-//   isVerifiedVendor?: boolean;
-// }
 export interface TUser {
   // id: string;
+  _id: string;
   email: string;
   password: string;
   passwordChangedAt?: Date;
