@@ -2,67 +2,36 @@ import { Schema, model } from 'mongoose';
 import { TUser, UserModel } from './user.interface';
 import config from '../../config';
 import bcrypt from 'bcrypt';
-import { UserStatus } from './user.constant';
 
-const userSchema = new Schema<TUser, UserModel>(
+const userSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     email: {
       type: String,
       required: true,
       unique: true,
+      match: [
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+        'Please provide a valid email address',
+      ],
     },
     password: {
       type: String,
       required: true,
-      select: 0,
-    },
-    phoneNumber: {
-      type: String,
-      required: true,
-    },
-    profileImage: {
-      type: String,
-      default:
-        'https://static.vecteezy.com/system/resources/thumbnails/001/840/612/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg',
     },
     passwordChangedAt: {
       type: Date,
     },
-    bankAccountName: {
-      type: String,
-    },
-    bankAccountNumber: {
-      type: String,
-    },
-    bankName: {
-      type: String,
-    },
-    paymentMethodPreferences: {
-      type: String,
-    },
     role: {
       type: String,
-      enum: ['user', 'rider', 'vendor', 'superAdmin'],
+      enum: ['customer', 'rider', 'vendor', 'superAdmin'],
+      required: true,
     },
     status: {
       type: String,
-      enum: UserStatus,
+      enum: ['in-progress', 'blocked'],
       default: 'in-progress',
     },
     isDeleted: {
-      type: Boolean,
-      default: false,
-    },
-    isVerifiedVendor: {
-      type: Boolean,
-      default: false,
-    },
-    isVerifiedRider: {
       type: Boolean,
       default: false,
     },
