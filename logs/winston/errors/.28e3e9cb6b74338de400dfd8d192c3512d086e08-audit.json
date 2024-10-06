@@ -74,6 +74,16 @@
             "date": 1728129834767,
             "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\errors\\um-2024-10-05-18-error.log",
             "hash": "447f45b83200b89b04db2caaab67e1e7e9ccb41a29a39adf1700b7be0dbbc690"
+        },
+        {
+            "date": 1728183783596,
+            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\errors\\um-2024-10-06-09-error.log",
+            "hash": "33f081b929350d4b1df4a7fb015889369d83c4f6eb63f0c101bf374ae4cfaf23"
+        },
+        {
+            "date": 1728187240626,
+            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\errors\\um-2024-10-06-10-error.log",
+            "hash": "17789f5eca52a69b995e8968727bdd597b444e47a28bf7c18366ccd88248d7a4"
         }
     ],
     "hashType": "sha256"

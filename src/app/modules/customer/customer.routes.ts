@@ -1,23 +1,25 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import validateRequest from '../../middlewares/validateRequest';
+
+import customerValidations from '../customer/customer.validation';
 import auth from '../../middlewares/auth';
+
+import customerController from './customer.controller';
 import { USER_ROLE } from '../user/user.constant';
 import { uploadFile } from '../../helper/fileUploader';
-import vendorController from './vendor.controller';
-import vendorValidations from './vendor.validation';
 
 const router = Router();
 
 router.patch(
-  '/update-vendor-profile',
-  auth(USER_ROLE.vendor),
+  '/update-customer-profile',
+  auth(USER_ROLE.customer),
   uploadFile(),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
     next();
   },
-  validateRequest(vendorValidations.updateVendorProfileValidationSchema),
-  vendorController.updateVendorProfile,
+  validateRequest(customerValidations.updateCustomerProfileValidationSchema),
+  customerController.updateCustomerProfile,
 );
 
-export const vendorRoutes = router;
+export const customerRoutes = router;

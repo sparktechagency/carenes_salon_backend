@@ -29,8 +29,11 @@ const registerCustomer = async (password: string, customerData: ICustomer) => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
-
-    const customer = await Customer.create([customerData], { session });
+    const customerPayload = {
+      ...customerData,
+      user: user[0]._id,
+    };
+    const customer = await Customer.create([customerPayload], { session });
 
     await session.commitTransaction();
     session.endSession();
@@ -61,8 +64,11 @@ const registerRider = async (password: string, riderData: IRider) => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
-
-    const rider = await Rider.create([riderData], { session });
+    const riderPayload = {
+      ...riderData,
+      user: user[0]._id,
+    };
+    const rider = await Rider.create([riderPayload], { session });
 
     await session.commitTransaction();
     session.endSession();
@@ -93,8 +99,11 @@ const registerVendor = async (password: string, vendorData: IVendor) => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
-
-    const vendor = await Vendor.create([vendorData], { session });
+    const vendorPayload = {
+      ...vendorData,
+      user: user[0]._id,
+    };
+    const vendor = await Vendor.create([vendorPayload], { session });
 
     await session.commitTransaction();
     session.endSession();
@@ -107,10 +116,25 @@ const registerVendor = async (password: string, vendorData: IVendor) => {
   }
 };
 
+const getMyProfile = async (email: string, role: string) => {
+  let result = null;
+  if (role === USER_ROLE.customer) {
+    result = await Customer.findOne({ email });
+  }
+  if (role === USER_ROLE.rider) {
+    result = await Rider.findOne({ email });
+  }
+  if (role === USER_ROLE.vendor) {
+    result = await Vendor.findOne({ email });
+  }
+  return result;
+};
+
 const userServices = {
   registerCustomer,
   registerRider,
   registerVendor,
+  getMyProfile,
 };
 
 export default userServices;

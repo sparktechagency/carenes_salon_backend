@@ -80,9 +80,23 @@ const registerVendor = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+// get me
+const getMyProfile = catchAsync(async (req, res) => {
+  const { email, role } = req.user;
+  const result = await userServices.getMyProfile(email, role);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Successfully retrieved your data',
+    data: result,
+  });
+});
 const userController = {
   registerCustomer,
   registerRider,
   registerVendor,
+  getMyProfile,
 };
 export default userController;

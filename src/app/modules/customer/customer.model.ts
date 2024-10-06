@@ -15,6 +15,11 @@ const LocationSchema = new Schema<ILocation>({
 
 const CustomerSchema = new Schema<ICustomer>(
   {
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     name: {
       type: String,
       required: true,
@@ -36,6 +41,10 @@ const CustomerSchema = new Schema<ICustomer>(
     profile_image: {
       type: String,
       default: '',
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   {

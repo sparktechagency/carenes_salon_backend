@@ -3,6 +3,11 @@ import { IRider } from './rider.interface';
 
 const riderSchema = new Schema<IRider>(
   {
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phoneNumber: { type: String, required: true },
@@ -11,6 +16,10 @@ const riderSchema = new Schema<IRider>(
     bankAccountNumber: { type: String, required: true },
     bankName: { type: String, required: true },
     paymentMethodPreference: { type: String, required: true },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

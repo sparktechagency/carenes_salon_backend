@@ -3,6 +3,11 @@ import { IVendor } from './vendor.interface';
 
 const vendorSchema = new Schema<IVendor>(
   {
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     storeName: { type: String, required: true },
     phoneNumber: { type: String, required: true },
     storeLocation: {
@@ -24,6 +29,10 @@ const vendorSchema = new Schema<IVendor>(
     bankAccountNumber: { type: String, required: true },
     bankName: { type: String, required: true },
     paymentMethodPreference: { type: String, required: true },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

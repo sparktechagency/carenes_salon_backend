@@ -2,6 +2,8 @@
 
 import Business from './vendor.model';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { IVendor } from './vendor.interface';
+import Vendor from './vendor.model';
 
 // get all business
 
@@ -27,9 +29,21 @@ const getSingleBusinessFromDB = async (id: string) => {
   return result;
 };
 
-const businessServices = {
-  getAllBusiness,
-  getSingleBusinessFromDB,
+const updateVendorProfile = async (
+  userId: string,
+  payload: Partial<IVendor>,
+) => {
+  const result = await Vendor.findOneAndUpdate({ user: userId }, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return result;
 };
 
-export default businessServices;
+const vendorServices = {
+  getAllBusiness,
+  getSingleBusinessFromDB,
+  updateVendorProfile,
+};
+
+export default vendorServices;

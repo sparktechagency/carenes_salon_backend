@@ -5,6 +5,8 @@ import customerValidations from '../customer/customer.validation';
 import riderValidations from '../rider/rider.validation';
 import { uploadFile } from '../../helper/fileUploader';
 import vendorValidations from '../vendor/vendor.validation';
+import auth from '../../middlewares/auth';
+import { USER_ROLE } from './user.constant';
 
 const router = Router();
 
@@ -36,5 +38,15 @@ router.post(
 );
 
 router.post('/register-vendor');
+router.get(
+  '/get-my-profile',
+  auth(
+    USER_ROLE.superAdmin,
+    USER_ROLE.customer,
+    USER_ROLE.rider,
+    USER_ROLE.vendor,
+  ),
+  userControllers.getMyProfile,
+);
 
 export const userRoutes = router;

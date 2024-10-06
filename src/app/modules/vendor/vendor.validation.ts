@@ -42,8 +42,40 @@ const registerVendorValidationSchema = z.object({
   }),
 });
 
+const updateVendorProfileValidationSchema = z.object({
+  body: z
+    .object({
+      storeName: z.string().min(1, 'Store name is required').optional(),
+      phoneNumber: z.string().min(1, 'Phone number is required').optional(),
+      storeLocation: locationSchema.optional(), // Location is optional for updates
+      // email: z
+      //   .string()
+      //   .email('Invalid email format')
+      //   .min(1, 'Email is required')
+      //   .optional(),
+      storeImage: z.string().min(1, 'Store image is required').optional(),
+      storeLicence: z.string().min(1, 'Store licence is required').optional(),
+      shopType: z.string().min(1, 'Shop type is required').optional(),
+      bankAccountName: z
+        .string()
+        .min(1, 'Bank account name is required')
+        .optional(),
+      bankAccountNumber: z
+        .string()
+        .min(1, 'Bank account number is required')
+        .optional(),
+      bankName: z.string().min(1, 'Bank name is required').optional(),
+      paymentMethodPreference: z
+        .string()
+        .min(1, 'Payment method preference is required')
+        .optional(),
+    })
+    .partial(),
+});
+
 const vendorValidations = {
   registerVendorValidationSchema,
+  updateVendorProfileValidationSchema,
 };
 
 export default vendorValidations;
