@@ -40,12 +40,20 @@ router.get(
   ),
   productController.getSingleProduct,
 );
-
 router.patch(
   '/update-product/:id',
   auth(USER_ROLE.vendor),
   validateRequest(productValidations.updateProductValidationSchema),
   productController.updateProduct,
 );
-
+router.delete(
+  '/delete-product/:id',
+  auth(USER_ROLE.vendor),
+  productController.deleteProduct,
+);
+router.patch(
+  '/change-product-status/:id',
+  auth(USER_ROLE.vendor),
+  productController.changeProductStatus,
+);
 export const productRoutes = router;

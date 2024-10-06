@@ -32,6 +32,7 @@ const getSingleProduct = async (id: string) => {
 };
 
 const updateProduct = async (id: string, payload: Partial<IProduct>) => {
+  //!TODO: need to use id and shop id both for update product
   const result = await Product.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,
@@ -40,11 +41,28 @@ const updateProduct = async (id: string, payload: Partial<IProduct>) => {
   return result;
 };
 
+const deleteProductFromDB = async (id: string) => {
+  //!TODO: need to use id and shop id both for update product
+  const product = await Product.findByIdAndDelete(id);
+  return product;
+};
+
+const changeProductStatus = async (id: string, status: string) => {
+  const result = await Product.findByIdAndUpdate(
+    id,
+    { status: status },
+    { new: true, runValidators: true },
+  );
+  return result;
+};
+
 const productServices = {
   createProductIntoDB,
   getAllProduct,
   getSingleProduct,
   updateProduct,
+  deleteProductFromDB,
+  changeProductStatus,
 };
 
 export default productServices;
