@@ -124,6 +124,11 @@
             "date": 1728216015422,
             "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\errors\\um-2024-10-06-18-error.log",
             "hash": "32d122e9fc66ad696c0e02f48a20e6a075dbf284dd80542a88ea368a840b0ddd"
+        },
+        {
+            "date": 1728219738610,
+            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\errors\\um-2024-10-06-19-error.log",
+            "hash": "1b29d34ac1f1b9657198e6cbab2e31423418afa3587eb27accf1bbebf22a4a25"
         }
     ],
     "hashType": "sha256"

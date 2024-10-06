@@ -12,6 +12,7 @@ const createProductValidationSchema = z.object({
     price: z
       .number({ required_error: 'Price is required' })
       .positive('Price must be a positive number'),
+    stoke: z.number().optional(),
     category: z
       .string({ required_error: 'Category is required' })
       .min(1, 'Category is required'),

@@ -42,6 +42,9 @@ const productSchema = new Schema<IProduct>(
       required: [true, 'Quantity is required'],
       min: [1, 'Quantity must be at least 1'],
     },
+    stock: {
+      type: Number,
+    },
     description: {
       type: String,
       required: [true, 'Description is required'],
