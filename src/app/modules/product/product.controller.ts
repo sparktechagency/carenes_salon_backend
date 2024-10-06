@@ -42,6 +42,16 @@ const getSingleProduct = catchAsync(async (req, res) => {
   });
 });
 
+const getMyProducts = catchAsync(async (req, res) => {
+  const result = await productServices.getMyProducts(req?.user?.profileId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Product retrieved successfully',
+    data: result,
+  });
+});
+
 const updateProduct = catchAsync(async (req, res) => {
   const { files } = req;
   // Check if files and store_image exist, and process multiple images
@@ -62,17 +72,21 @@ const updateProduct = catchAsync(async (req, res) => {
   });
 });
 const deleteProduct = catchAsync(async (req, res) => {
-  const result = await productServices.deleteProductFromDB(req?.params?.id);
+  const result = await productServices.deleteProductFromDB(
+    req?.params?.id,
+    req?.user?.profileId,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Product updated successfully',
+    message: 'Product deleted successfully',
     data: result,
   });
 });
 const changeProductStatus = catchAsync(async (req, res) => {
   const result = await productServices.changeProductStatus(
     req?.params?.id,
+    req?.user?.profileId,
     req?.body?.status,
   );
   sendResponse(res, {
@@ -90,6 +104,7 @@ const productController = {
   updateProduct,
   deleteProduct,
   changeProductStatus,
+  getMyProducts,
 };
 
 export default productController;

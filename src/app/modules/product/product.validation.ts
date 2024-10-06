@@ -4,7 +4,8 @@ const createProductValidationSchema = z.object({
   body: z.object({
     images: z
       .array(z.string())
-      .nonempty({ message: 'At least one image is required' }),
+      .nonempty({ message: 'At least one image is required' })
+      .optional(),
     name: z
       .string({ required_error: 'Name is required' })
       .min(1, 'Name is required'),

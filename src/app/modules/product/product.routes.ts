@@ -43,6 +43,11 @@ router.get(
 router.patch(
   '/update-product/:id',
   auth(USER_ROLE.vendor),
+  uploadFile(),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+  },
   validateRequest(productValidations.updateProductValidationSchema),
   productController.updateProduct,
 );
@@ -55,5 +60,10 @@ router.patch(
   '/change-product-status/:id',
   auth(USER_ROLE.vendor),
   productController.changeProductStatus,
+);
+router.get(
+  '/my-products',
+  auth(USER_ROLE.vendor),
+  productController.getMyProducts,
 );
 export const productRoutes = router;
