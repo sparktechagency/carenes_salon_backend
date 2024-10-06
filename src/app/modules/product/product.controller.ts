@@ -43,7 +43,10 @@ const getSingleProduct = catchAsync(async (req, res) => {
 });
 
 const getMyProducts = catchAsync(async (req, res) => {
-  const result = await productServices.getMyProducts(req?.user?.profileId);
+  const result = await productServices.getMyProducts(
+    req?.user?.profileId,
+    req?.query,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

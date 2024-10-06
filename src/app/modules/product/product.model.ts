@@ -38,7 +38,7 @@ const productSchema = new Schema<IProduct>(
       min: [0, 'Delivery fee must be a non-negative number'],
     },
     quantity: {
-      type: Number,
+      type: String,
       required: [true, 'Quantity is required'],
       min: [1, 'Quantity must be at least 1'],
     },

@@ -60,10 +60,23 @@ const changeProductStatus = async (
   return result;
 };
 
-const getMyProducts = async (shopId: string) => {
-  const result = await Product.find({ shop: shopId });
+const getMyProducts = async (shopId: string, query: Record<string, any>) => {
+  // const result = await Product.find({ shop: shopId });
 
-  return result;
+  // return result;
+  const productQuery = new QueryBuilder(Product.find({ shop: shopId }), query)
+    .search(['name'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const meta = await productQuery.countTotal();
+  const result = await productQuery.modelQuery;
+
+  return {
+    meta,
+    result,
+  };
 };
 
 const productServices = {

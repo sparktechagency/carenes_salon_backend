@@ -8,7 +8,7 @@ export interface IProduct {
   category: string;
   subCategory: string;
   deliveryFee: number;
-  quantity: number;
+  quantity: string;
   description: string;
   status: 'available' | 'unavailable';
 }

@@ -22,7 +22,7 @@ const createProductValidationSchema = z.object({
       .number({ required_error: 'Delivery fee is required' })
       .nonnegative('Delivery fee must be a non-negative number'),
     quantity: z
-      .number({ required_error: 'Quantity is required' })
+      .string({ required_error: 'Quantity is required' })
       .min(1, 'Quantity must be at least 1'),
     description: z
       .string({ required_error: 'Description is required' })
@@ -44,7 +44,7 @@ const updateProductValidationSchema = z.object({
       .number()
       .nonnegative('Delivery fee must be a non-negative number')
       .optional(),
-    quantity: z.number().min(1, 'Quantity must be at least 1').optional(),
+    quantity: z.string().min(1, 'Quantity must be at least 1').optional(),
     description: z.string().min(1, 'Description is required').optional(),
   }),
 });
