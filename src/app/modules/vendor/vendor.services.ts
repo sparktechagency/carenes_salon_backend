@@ -5,7 +5,7 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { IVendor } from './vendor.interface';
 import Vendor from './vendor.model';
 
-// get all business
+// get all business-------------
 
 const getAllBusiness = async (query: Record<string, any>) => {
   const businessQuery = new QueryBuilder(Business.find(), query)
