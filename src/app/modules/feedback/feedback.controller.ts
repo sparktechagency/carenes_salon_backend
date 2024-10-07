@@ -26,10 +26,32 @@ const replyFeedback = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const deleteFeedback = catchAsync(async (req, res) => {
+  const result = await feedbackService.deleteFeedbackFromDB(req?.params?.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Feedback deleted  successfully',
+    data: result,
+  });
+});
+
+// get all feedback
+const getAllFeedback = catchAsync(async (req, res) => {
+  const result = await feedbackService.getAllFeedback(req?.query);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Feedback retrieved  successfully',
+    data: result,
+  });
+});
 
 const feedbackController = {
   createFeedBack,
   replyFeedback,
+  deleteFeedback,
+  getAllFeedback,
 };
 
 export default feedbackController;
