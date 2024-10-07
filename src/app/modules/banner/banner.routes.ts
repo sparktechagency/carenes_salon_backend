@@ -22,4 +22,9 @@ router.delete(
   auth(USER_ROLE.vendor),
   bannerController.deleteMyShopBanner,
 );
+router.patch(
+  '/update-shop-banner/:id',
+  auth(USER_ROLE.vendor),
+  bannerController.updateShopBanner,
+);
 export const bannerRoutes = router;

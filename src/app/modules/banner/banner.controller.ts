@@ -42,10 +42,29 @@ const deleteMyShopBanner = catchAsync(async (req, res) => {
   });
 });
 
+const updateShopBanner = catchAsync(async (req, res) => {
+  const { files } = req;
+  if (files && typeof files === 'object' && 'shop_banner' in files) {
+    req.body.image = files['shop_banner'][0].path;
+  }
+
+  const result = await bannerServices.updateShopBanner(
+    req?.user?.profileId,
+    req?.params?.id,
+    req?.body,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Banner updated successfully',
+    data: result,
+  });
+});
 const bannerController = {
   createShopBanner,
   getMyShopBanner,
   deleteMyShopBanner,
+  updateShopBanner,
 };
 
 export default bannerController;

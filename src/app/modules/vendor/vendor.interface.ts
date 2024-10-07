@@ -13,7 +13,7 @@ export interface IVendor {
   email: string;
   storeImage: string;
   storeLicence: string;
-  shopType: string;
+  shopType: 'Restaurant' | 'Grocery';
   bankAccountName: string;
   bankAccountNumber: string;
   bankName: string;

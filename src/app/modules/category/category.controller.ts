@@ -22,6 +22,16 @@ const createCategory = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+const getAllCategories = catchAsync(async (req, res) => {
+  const result = await categoryService.getAllCategories();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Category retrieved successfully',
+    data: result,
+  });
+});
 const updateCategory = catchAsync(async (req, res) => {
   const { files } = req;
 
@@ -145,5 +155,6 @@ const categoryController = {
   deleteCategory,
   getMySubCategories,
   deleteSubCategory,
+  getAllCategories,
 };
 export default categoryController;

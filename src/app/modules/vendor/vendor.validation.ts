@@ -23,9 +23,7 @@ const registerVendorValidationSchema = z.object({
 
       storeImage: z.string().min(1, 'Store image is required').optional(),
       storeLicence: z.string().min(1, 'Store licence is required').optional(),
-      shopType: z
-        .string({ required_error: 'Shop type is required' })
-        .min(1, 'Shop type is required'),
+      shopType: z.enum(['Restaurant', 'Grocery']),
       bankAccountName: z
         .string({ required_error: 'Bank account name is required' })
         .min(1, 'Bank account name is required'),
@@ -55,7 +53,7 @@ const updateVendorProfileValidationSchema = z.object({
       //   .optional(),
       storeImage: z.string().min(1, 'Store image is required').optional(),
       storeLicence: z.string().min(1, 'Store licence is required').optional(),
-      shopType: z.string().min(1, 'Shop type is required').optional(),
+      shopType: z.enum(['Restaurant', 'Grocery']).optional(),
       bankAccountName: z
         .string()
         .min(1, 'Bank account name is required')

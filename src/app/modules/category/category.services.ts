@@ -22,6 +22,14 @@ const updateCategoryIntoDB = async (
   return result;
 };
 
+const getAllCategories = async () => {
+  const result = await Category.find().populate({
+    path: 'shop',
+    select: 'shopType',
+  });
+  return result;
+};
+
 const getMyCategories = async (profileId: string) => {
   const categories = await Category.aggregate([
     {
@@ -52,6 +60,10 @@ const getMyCategories = async (profileId: string) => {
 
 // delete category
 const deleteCategoryFromDB = async (profileId: string, categoryId: string) => {
+  const category = await Category.findOne({ shop: profileId, _id: categoryId });
+  if (!category) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Category not found');
+  }
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -135,6 +147,7 @@ const deleteSubCategoryFromDB = async (shopId: string, id: string) => {
 const categoryService = {
   createCategoryIntoDB,
   updateCategoryIntoDB,
+  getAllCategories,
   createSubCategoryIntoDB,
   updateSubCategoryIntoDB,
   getMyCategories,

@@ -31,6 +31,8 @@ router.get(
   categoryController.getMyCategories,
 );
 
+router.get('/all-categories', categoryController.getAllCategories);
+
 router.delete(
   '/delete-category/:id',
   auth(USER_ROLE.vendor),
