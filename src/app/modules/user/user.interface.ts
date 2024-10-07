@@ -11,6 +11,7 @@ export interface TUser {
   passwordChangedAt?: Date;
   role: 'customer' | 'rider' | 'vendor' | 'superAdmin';
   status: 'in-progress' | 'blocked';
+  isActive: boolean;
   isDeleted: boolean;
 }
 export interface TLoginUser {

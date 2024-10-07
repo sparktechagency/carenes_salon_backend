@@ -31,6 +31,10 @@ const userSchema = new Schema(
       enum: ['in-progress', 'blocked'],
       default: 'in-progress',
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

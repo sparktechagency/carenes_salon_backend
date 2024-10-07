@@ -49,10 +49,25 @@ const updateVendorProfile = catchAsync(async (req, res) => {
   });
 });
 
+// update shop status
+const updateShopStatus = catchAsync(async (req, res) => {
+  const result = await vendorServices.updateShopStatus(
+    req?.params?.id,
+    req?.body?.status,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Shop status updated successfully',
+    data: result,
+  });
+});
+
 const vendorController = {
   getAllBusiness,
   getSingleBusiness,
   updateVendorProfile,
+  updateShopStatus,
 };
 
 export default vendorController;

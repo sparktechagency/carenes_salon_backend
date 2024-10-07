@@ -18,5 +18,6 @@ export interface IVendor {
   bankAccountNumber: string;
   bankName: string;
   paymentMethodPreference: string;
+  status: 'active' | 'deactivate';
   isDeleted: boolean;
 }

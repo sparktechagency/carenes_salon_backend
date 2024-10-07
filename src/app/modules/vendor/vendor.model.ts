@@ -29,6 +29,11 @@ const vendorSchema = new Schema<IVendor>(
     bankAccountNumber: { type: String, required: true },
     bankName: { type: String, required: true },
     paymentMethodPreference: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ['activate', 'deactivate'],
+      default: 'deactivate',
+    },
     isDeleted: {
       type: Boolean,
       default: false,

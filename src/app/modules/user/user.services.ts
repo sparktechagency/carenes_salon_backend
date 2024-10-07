@@ -60,6 +60,7 @@ const registerRider = async (password: string, riderData: IRider) => {
       email: riderData?.email,
       password: password,
       role: USER_ROLE.rider,
+      isActive: false,
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -95,6 +96,7 @@ const registerVendor = async (password: string, vendorData: IVendor) => {
       email: vendorData?.email,
       password: password,
       role: USER_ROLE.vendor,
+      isActive: false,
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -50,6 +50,12 @@ const auth = (...requiredRoles: TUserRole[]) => {
     if (user.status === 'blocked') {
       throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
     }
+    if (!user?.isActive) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'You have not proper access right now . Contact with admin',
+      );
+    }
 
     let profileData;
     if (role === USER_ROLE.customer) {
@@ -59,6 +65,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
     } else if (role === USER_ROLE.vendor) {
       profileData = await Vendor.findOne({ user: id }).select('_id');
     }
+
     decoded.profileId = profileData?._id;
     if (
       user?.passwordChangedAt &&

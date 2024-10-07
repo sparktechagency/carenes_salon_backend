@@ -20,4 +20,10 @@ router.patch(
   vendorController.updateVendorProfile,
 );
 
+router.patch(
+  '/update-vendor-status/:id',
+  auth(USER_ROLE.superAdmin),
+  vendorController.updateShopStatus,
+);
+
 export const vendorRoutes = router;
