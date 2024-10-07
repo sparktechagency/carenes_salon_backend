@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import AppError from '../../error/appError';
-import { IShopBanner } from './banner.interface';
-import { ShopBanner } from './banner.model';
+import { IAppBanner, IShopBanner } from './banner.interface';
+import { AppBanner, ShopBanner } from './banner.model';
 
 // shop banner ------------------------
 const createShopBannerIntoDB = async (shopId: string, payload: IShopBanner) => {
@@ -46,12 +46,51 @@ const updateShopBanner = async (
   );
   return result;
 };
+// app banner ------------------------
+const createAppBannerIntoDB = async (payload: IAppBanner) => {
+  const result = await AppBanner.create(payload);
+  return result;
+};
+
+const getAppBannerFromDB = async () => {
+  const result = await AppBanner.find();
+  return result;
+};
+
+const deleteAppBannerFromDB = async (bannerId: string) => {
+  const shopBanner = await AppBanner.findById(bannerId);
+  if (!shopBanner) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Banner not found');
+  }
+  const result = await AppBanner.findByIdAndDelete(bannerId);
+
+  return result;
+};
+
+const updateAppBannerIntoDB = async (
+  bannerId: string,
+  payload: Partial<IAppBanner>,
+) => {
+  const shopBanner = await AppBanner.findById(bannerId);
+  if (!shopBanner) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Banner not found');
+  }
+  const result = await AppBanner.findByIdAndUpdate(bannerId, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return result;
+};
 
 const bannerServices = {
   createShopBannerIntoDB,
   getMyShopBanner,
   deleteMyShopBanner,
   updateShopBanner,
+  createAppBannerIntoDB,
+  updateAppBannerIntoDB,
+  getAppBannerFromDB,
+  deleteAppBannerFromDB,
 };
 
 export default bannerServices;

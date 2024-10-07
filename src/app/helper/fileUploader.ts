@@ -18,6 +18,8 @@ export const uploadFile = () => {
         uploadPath = 'uploads/images/product';
       } else if (file.fieldname === 'shop_banner') {
         uploadPath = 'uploads/images/shop_banner';
+      } else if (file.fieldname === 'app_banner') {
+        uploadPath = 'uploads/images/app_banner';
       } else if (file.fieldname === 'licence_image') {
         uploadPath = 'uploads/images/licence';
       } else if (file.fieldname === 'store_image') {
@@ -56,6 +58,7 @@ export const uploadFile = () => {
       'category_image',
       'sub_category_image',
       'shop_banner',
+      'app_banner',
       'licence_image',
       'store_image',
       'video',
@@ -90,6 +93,7 @@ export const uploadFile = () => {
     { name: 'sub_category_image', maxCount: 1 },
     { name: 'product_image', maxCount: 5 },
     { name: 'shop_banner', maxCount: 1 },
+    { name: 'app_banner', maxCount: 1 },
     { name: 'licence_image', maxCount: 1 },
     { name: 'store_image', maxCount: 1 },
     { name: 'video', maxCount: 1 },
