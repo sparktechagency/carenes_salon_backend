@@ -7,6 +7,8 @@ import { riderRoutes } from '../modules/rider/rider.routes';
 import { productRoutes } from '../modules/product/product.routes';
 import { categoryRoutes } from '../modules/category/category.routes';
 import { bannerRoutes } from '../modules/banner/banner.routes';
+import { ManageRoutes } from '../modules/manage-web/manage.routes';
+import { feedbackRoutes } from '../modules/feedback/feedback.routes';
 
 const router = Router();
 
@@ -42,6 +44,14 @@ const moduleRoutes = [
   {
     path: '/banner',
     router: bannerRoutes,
+  },
+  {
+    path: '/manage',
+    router: ManageRoutes,
+  },
+  {
+    path: '/feedback',
+    router: feedbackRoutes,
   },
 ];
 
