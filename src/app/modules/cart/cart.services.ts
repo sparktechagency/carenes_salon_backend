@@ -2,6 +2,7 @@
 import httpStatus from 'http-status';
 import AppError from '../../error/appError';
 import Cart from './cart.model';
+import Product from '../product/product.model';
 
 interface addToCartProps {
   costumerId: string;
@@ -10,12 +11,7 @@ interface addToCartProps {
   price: number;
 }
 
-const addToCart = async ({
-  costumerId,
-  shopId,
-  productId,
-  price,
-}: addToCartProps) => {
+const addToCart = async ({ costumerId, shopId, productId }: addToCartProps) => {
   let cart = await Cart.findOne({ customer: costumerId });
 
   if (cart) {
@@ -44,8 +40,13 @@ const addToCart = async ({
     // existingItem.quantity += quantity;
     existingItem.quantity += 1;
   } else {
+    const product = await Product.findById(productId).select('price');
     // Add new item to the cart
-    cart.items.push({ product: productId, quantity: 1, price });
+    cart.items.push({
+      product: productId,
+      quantity: 1,
+      price: product?.price as number,
+    });
   }
 
   await cart.save();

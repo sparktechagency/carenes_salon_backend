@@ -11,5 +11,7 @@ export interface ICart extends Document {
   shop: Types.ObjectId;
   items: ICartItem[];
   totalQuantity: number;
+  subTotal: number;
+  deliveryFee: number;
   totalPrice: number;
 }

@@ -11,12 +11,19 @@ const LocationSchema = new Schema<ILocation>({
     required: true,
   },
 });
+
 const OrderSchema = new Schema<IOrder>(
   {
     customer: {
       type: Schema.Types.ObjectId,
       required: true,
       ref: 'Customer',
+    },
+    shop: {
+      type: Schema.Types.ObjectId,
+
+      required: true,
+      ref: 'Vendor',
     },
     name: {
       type: String,
@@ -49,6 +56,19 @@ const OrderSchema = new Schema<IOrder>(
       required: true,
     },
     totalPrice: {
+      type: Number,
+      required: true,
+    },
+    rider: {
+      type: Schema.Types.ObjectId,
+      default: null,
+      ref: 'Rider',
+    },
+    deliveryFee: {
+      type: Number,
+      required: true,
+    },
+    subTotal: {
       type: Number,
       required: true,
     },

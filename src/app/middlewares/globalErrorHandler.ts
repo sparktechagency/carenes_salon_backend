@@ -84,6 +84,7 @@
 import { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
 import AppError from '../error/appError';
+import mongoose from 'mongoose';
 const globalErrorHandler: ErrorRequestHandler = (
   err,
   req,
@@ -115,6 +116,13 @@ const globalErrorHandler: ErrorRequestHandler = (
     errorDetails = {
       issues: err.issues,
     };
+  } else if (err instanceof mongoose.Error.ValidationError) {
+    message = 'Mongoose Validation Error';
+    errorMessage = Object.values(err.errors)
+      .map((val) => val.message)
+      .join(', ');
+    errorDetails = err.errors;
+    statusCode = 400;
   } else if (err instanceof AppError) {
     statusCode = err.statusCode;
     errorMessage = err.message;

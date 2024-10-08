@@ -12,6 +12,7 @@ import { feedbackRoutes } from '../modules/feedback/feedback.routes';
 import { productBookmarkRoutes } from '../modules/productBookmark/product.bookmark.routes';
 import { shopBookmarkRoutes } from '../modules/shopBookmak/product.bookmark.routes';
 import { cartRoutes } from '../modules/cart/cart.routes';
+import { orderRoutes } from '../modules/order/order.routes';
 
 const router = Router();
 
@@ -67,6 +68,10 @@ const moduleRoutes = [
   {
     path: '/cart',
     router: cartRoutes,
+  },
+  {
+    path: '/order',
+    router: orderRoutes,
   },
 ];
 

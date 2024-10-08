@@ -4,7 +4,7 @@ const addToCartValidationSchema = z.object({
   body: z.object({
     shopId: z.string({ required_error: 'Shop id is required' }),
     productId: z.string({ required_error: 'Product id is required' }),
-    price: z.string({ required_error: 'Price is required' }),
+    // price: z.number({ required_error: 'Price is required' }),
   }),
 });
 
