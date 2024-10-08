@@ -1,32 +1,7 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utilities/catchasync';
-import businessServices from './vendor.services';
 import sendResponse from '../../utilities/sendResponse';
 import vendorServices from './vendor.services';
-
-// get all business
-const getAllBusiness = catchAsync(async (req, res) => {
-  const result = await businessServices.getAllBusiness(req?.query);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Business retrieved successfully',
-    data: result,
-  });
-});
-
-// get single business
-const getSingleBusiness = catchAsync(async (req, res) => {
-  const result = await businessServices.getSingleBusinessFromDB(
-    req?.params?.id,
-  );
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Business retrieved successfully',
-    data: result,
-  });
-});
 
 const updateVendorProfile = catchAsync(async (req, res) => {
   const { files } = req;
@@ -62,12 +37,20 @@ const updateShopStatus = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getAllVendor = catchAsync(async (req, res) => {
+  const result = await vendorServices.getAllVendorFromDB(req?.query);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Vendor retrieved successfully',
+    data: result,
+  });
+});
 
 const vendorController = {
-  getAllBusiness,
-  getSingleBusiness,
   updateVendorProfile,
   updateShopStatus,
+  getAllVendor,
 };
 
 export default vendorController;

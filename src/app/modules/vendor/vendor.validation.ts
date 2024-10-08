@@ -1,9 +1,11 @@
 import { z } from 'zod';
 
-const locationSchema = z.object({
-  type: z.literal('Point'),
-  coordinates: z.tuple([z.number(), z.number()]),
-});
+const locationSchema = z
+  .object({
+    type: z.literal('Point'),
+    coordinates: z.tuple([z.number(), z.number()]),
+  })
+  .optional();
 
 const registerVendorValidationSchema = z.object({
   body: z.object({
@@ -14,7 +16,8 @@ const registerVendorValidationSchema = z.object({
         .min(1, 'Store name is required'),
       phoneNumber: z
         .string({ required_error: 'Phone number is required' })
-        .min(1, 'Phone number is required'),
+        .min(1, 'Phone number is required')
+        .optional(),
       storeLocation: locationSchema,
       email: z
         .string({ required_error: 'Email is required' })
@@ -26,16 +29,20 @@ const registerVendorValidationSchema = z.object({
       shopType: z.enum(['Restaurant', 'Grocery']),
       bankAccountName: z
         .string({ required_error: 'Bank account name is required' })
-        .min(1, 'Bank account name is required'),
+        .min(1, 'Bank account name is required')
+        .optional(),
       bankAccountNumber: z
         .string({ required_error: 'Bank account number is required' })
-        .min(1, 'Bank account number is required'),
+        .min(1, 'Bank account number is required')
+        .optional(),
       bankName: z
         .string({ required_error: 'Bank name is required' })
-        .min(1, 'Bank name is required'),
+        .min(1, 'Bank name is required')
+        .optional(),
       paymentMethodPreference: z
         .string({ required_error: 'Payment method is required' })
-        .min(1, 'Payment method preference is required'),
+        .min(1, 'Payment method preference is required')
+        .optional(),
     }),
   }),
 });

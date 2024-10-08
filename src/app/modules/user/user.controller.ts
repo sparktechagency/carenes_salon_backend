@@ -18,24 +18,24 @@ const registerCustomer = catchAsync(async (req, res) => {
 
 // register rider
 const registerRider = catchAsync(async (req, res) => {
-  const { files } = req;
-  let drivingLicence;
-  if (files && typeof files === 'object' && 'licence_image' in files) {
-    drivingLicence = files['licence_image'][0].path;
-  } else {
-    drivingLicence = null;
-  }
-  const payload = {
-    ...req.body,
-    rider: {
-      ...req.body.rider,
-      drivingLicence,
-    },
-  };
+  // const { files } = req;
+  // let drivingLicence;
+  // if (files && typeof files === 'object' && 'licence_image' in files) {
+  //   drivingLicence = files['licence_image'][0].path;
+  // } else {
+  //   drivingLicence = null;
+  // }
+  // const payload = {
+  //   ...req.body,
+  //   rider: {
+  //     ...req.body.rider,
+  //     drivingLicence,
+  //   },
+  // };
 
   const result = await userServices.registerRider(
-    payload?.password,
-    payload?.rider,
+    req?.body?.password,
+    req?.body?.rider,
   );
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -47,31 +47,31 @@ const registerRider = catchAsync(async (req, res) => {
 
 // register vendor
 const registerVendor = catchAsync(async (req, res) => {
-  const { files } = req;
-  let storeLicence;
-  if (files && typeof files === 'object' && 'licence_image' in files) {
-    storeLicence = files['licence_image'][0].path;
-  } else {
-    storeLicence = null;
-  }
-  let storeImage;
-  if (files && typeof files === 'object' && 'store_image' in files) {
-    storeImage = files['store_image'][0].path;
-  } else {
-    storeImage = null;
-  }
-  const payload = {
-    ...req.body,
-    vendor: {
-      ...req.body.vendor,
-      storeLicence,
-      storeImage,
-    },
-  };
+  // const { files } = req;
+  // let storeLicence;
+  // if (files && typeof files === 'object' && 'licence_image' in files) {
+  //   storeLicence = files['licence_image'][0].path;
+  // } else {
+  //   storeLicence = null;
+  // }
+  // let storeImage;
+  // if (files && typeof files === 'object' && 'store_image' in files) {
+  //   storeImage = files['store_image'][0].path;
+  // } else {
+  //   storeImage = null;
+  // }
+  // const payload = {
+  //   ...req.body,
+  //   vendor: {
+  //     ...req.body.vendor,
+  //     storeLicence,
+  //     storeImage,
+  //   },
+  // };
 
   const result = await userServices.registerVendor(
-    payload?.password,
-    payload?.vendor,
+    req?.body?.password,
+    req?.body?.vendor,
   );
   sendResponse(res, {
     statusCode: httpStatus.CREATED,

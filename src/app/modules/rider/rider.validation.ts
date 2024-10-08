@@ -16,12 +16,19 @@ const registerRiderValidationSchema = z.object({
         .string()
         .min(1, 'Driving licence is required')
         .optional(),
-      bankAccountName: z.string().min(1, 'Bank account name is required'),
-      bankAccountNumber: z.string().min(1, 'Bank account number is required'),
-      bankName: z.string().min(1, 'Bank name is required'),
+      bankAccountName: z
+        .string()
+        .min(1, 'Bank account name is required')
+        .optional(),
+      bankAccountNumber: z
+        .string()
+        .min(1, 'Bank account number is required')
+        .optional(),
+      bankName: z.string().min(1, 'Bank name is required').optional(),
       paymentMethodPreference: z
         .string()
-        .min(1, 'Payment method preference is required'),
+        .min(1, 'Payment method preference is required')
+        .optional(),
     }),
   }),
 });

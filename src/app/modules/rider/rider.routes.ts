@@ -22,4 +22,10 @@ router.patch(
   riderController.updateRiderProfile,
 );
 
+router.get(
+  '/all-riders',
+  auth(USER_ROLE.superAdmin),
+  riderController.getAllRider,
+);
+
 export const riderRoutes = router;

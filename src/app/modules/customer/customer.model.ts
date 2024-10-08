@@ -35,7 +35,7 @@ const CustomerSchema = new Schema<ICustomer>(
     },
     location: {
       type: LocationSchema,
-      required: true,
+      default: null,
       index: '2dsphere',
     },
     profile_image: {

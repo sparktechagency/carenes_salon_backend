@@ -26,4 +26,10 @@ router.patch(
   vendorController.updateShopStatus,
 );
 
+router.get(
+  '/all-vendors',
+  auth(USER_ROLE.superAdmin),
+  vendorController.getAllVendor,
+);
+
 export const vendorRoutes = router;

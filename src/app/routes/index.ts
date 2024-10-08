@@ -9,6 +9,8 @@ import { categoryRoutes } from '../modules/category/category.routes';
 import { bannerRoutes } from '../modules/banner/banner.routes';
 import { ManageRoutes } from '../modules/manage-web/manage.routes';
 import { feedbackRoutes } from '../modules/feedback/feedback.routes';
+import { productBookmarkRoutes } from '../modules/productBookmark/product.bookmark.routes';
+import { shopBookmarkRoutes } from '../modules/shopBookmak/product.bookmark.routes';
 
 const router = Router();
 
@@ -52,6 +54,14 @@ const moduleRoutes = [
   {
     path: '/feedback',
     router: feedbackRoutes,
+  },
+  {
+    path: '/product-bookmark',
+    router: productBookmarkRoutes,
+  },
+  {
+    path: '/shop-bookmark',
+    router: shopBookmarkRoutes,
   },
 ];
 

@@ -1,12 +1,13 @@
-import { NextFunction, Request, Response, Router } from 'express';
+// import { NextFunction, Request, Response, Router } from 'express';
 import validateRequest from '../../middlewares/validateRequest';
 import userControllers from './user.controller';
 import customerValidations from '../customer/customer.validation';
 import riderValidations from '../rider/rider.validation';
-import { uploadFile } from '../../helper/fileUploader';
+// import { uploadFile } from '../../helper/fileUploader';
 import vendorValidations from '../vendor/vendor.validation';
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from './user.constant';
+import { Router } from 'express';
 
 const router = Router();
 
@@ -18,21 +19,21 @@ router.post(
 
 router.post(
   '/register-rider',
-  uploadFile(),
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
-    next();
-  },
+  // uploadFile(),
+  // (req: Request, res: Response, next: NextFunction) => {
+  //   req.body = JSON.parse(req.body.data);
+  //   next();
+  // },
   validateRequest(riderValidations.registerRiderValidationSchema),
   userControllers.registerRider,
 );
 router.post(
   '/register-vendor',
-  uploadFile(),
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
-    next();
-  },
+  // uploadFile(),
+  // (req: Request, res: Response, next: NextFunction) => {
+  //   req.body = JSON.parse(req.body.data);
+  //   next();
+  // },
   validateRequest(vendorValidations.registerVendorValidationSchema),
   userControllers.registerVendor,
 );
