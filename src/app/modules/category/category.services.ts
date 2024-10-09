@@ -29,6 +29,10 @@ const getAllCategories = async () => {
   });
   return result;
 };
+const getSpecificShopCategories = async (shopId: string) => {
+  const result = await Category.find({ shop: shopId });
+  return result;
+};
 
 const getMyCategories = async (profileId: string) => {
   const categories = await Category.aggregate([
@@ -148,6 +152,7 @@ const categoryService = {
   createCategoryIntoDB,
   updateCategoryIntoDB,
   getAllCategories,
+  getSpecificShopCategories,
   createSubCategoryIntoDB,
   updateSubCategoryIntoDB,
   getMyCategories,

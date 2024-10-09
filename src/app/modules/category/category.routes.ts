@@ -32,6 +32,10 @@ router.get(
 );
 
 router.get('/all-categories', categoryController.getAllCategories);
+router.get(
+  '/shop-categories/:shopId',
+  categoryController.getSpecificShopCategories,
+);
 
 router.delete(
   '/delete-category/:id',

@@ -32,6 +32,17 @@ const getAllCategories = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getSpecificShopCategories = catchAsync(async (req, res) => {
+  const result = await categoryService.getSpecificShopCategories(
+    req?.params?.shopId,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Category retrieved successfully',
+    data: result,
+  });
+});
 const updateCategory = catchAsync(async (req, res) => {
   const { files } = req;
 
@@ -151,6 +162,7 @@ const categoryController = {
   updateCategory,
   createSubCategory,
   updateSubCategory,
+  getSpecificShopCategories,
   getMyCategories,
   deleteCategory,
   getMySubCategories,
