@@ -23,7 +23,10 @@ const createProduct = catchAsync(async (req, res) => {
 });
 
 const getAllProduct = catchAsync(async (req, res) => {
-  const result = await productServices.getAllProduct(req?.query);
+  const result = await productServices.getAllProduct(
+    req?.user?.profileId,
+    req?.query,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -45,6 +48,20 @@ const getSingleProduct = catchAsync(async (req, res) => {
 const getMyProducts = catchAsync(async (req, res) => {
   const result = await productServices.getMyProducts(
     req?.user?.profileId,
+    req?.query,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Product retrieved successfully',
+    data: result,
+  });
+});
+
+const getSpecificShopProducts = catchAsync(async (req, res) => {
+  const result = await productServices.getSpecificShopProducts(
+    req?.user?.profileId,
+    req?.body?.shopId,
     req?.query,
   );
   sendResponse(res, {
@@ -103,6 +120,7 @@ const changeProductStatus = catchAsync(async (req, res) => {
 const productController = {
   createProduct,
   getAllProduct,
+  getSpecificShopProducts,
   getSingleProduct,
   updateProduct,
   deleteProduct,

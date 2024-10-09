@@ -8,6 +8,7 @@ import AppError from '../../error/appError';
 import httpStatus from 'http-status';
 import { maxDistanceForShop, riderSpeed } from '../../constant';
 import ShopBookmark from '../shopBookmak/shop.bookmark.model';
+import Product from '../product/product.model';
 
 const updateVendorProfile = async (
   userId: string,
@@ -119,9 +120,29 @@ const getNearbyShopWithTime = async (
   );
   const bookmarkedShopIds = new Set(bookmarks.map((b) => b.shop.toString()));
 
+  // popular products
+
+  const shopIds = result.map((shop) => shop._id);
+  const products = await Product.find({
+    shop: { $in: shopIds },
+  }).select('name shop');
+
+  const productsByShopId = products.reduce(
+    (acc, product) => {
+      const shopId = product.shop.toString();
+      if (!acc[shopId]) {
+        acc[shopId] = [];
+      }
+      acc[shopId].push(product);
+      return acc;
+    },
+    {} as Record<string, any[]>,
+  );
+
   const enrichedResult = result.map((shop) => ({
     ...shop,
     isBookmark: bookmarkedShopIds.has(shop._id.toString()),
+    products: productsByShopId[shop._id.toString()] || [],
   }));
 
   return enrichedResult;

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import QueryBuilder from '../../builder/QueryBuilder';
+import ProductBookmark from '../productBookmark/product.bookmark.model';
 import Vendor from '../vendor/vendor.model';
 import { IProduct } from './product.interface';
 import Product from './product.model';
@@ -10,7 +11,10 @@ const createProductIntoDB = async (userId: string, payload: IProduct) => {
   return result;
 };
 
-const getAllProduct = async (query: Record<string, any>) => {
+const getAllProduct = async (
+  customerId: string,
+  query: Record<string, any>,
+) => {
   const productQuery = new QueryBuilder(Product.find(), query)
     .search(['name'])
     .filter()
@@ -19,10 +23,18 @@ const getAllProduct = async (query: Record<string, any>) => {
     .fields();
   const meta = await productQuery.countTotal();
   const result = await productQuery.modelQuery;
+  const bookmarks = await ProductBookmark.find({ costumer: customerId }).select(
+    'product',
+  );
+  const bookmarkedShopIds = new Set(bookmarks.map((b) => b.product.toString()));
 
+  const enrichedResult = result.map((product) => ({
+    ...product.toObject(),
+    isBookmark: bookmarkedShopIds.has(product._id.toString()),
+  }));
   return {
     meta,
-    result,
+    result: enrichedResult,
   };
 };
 
@@ -61,9 +73,6 @@ const changeProductStatus = async (
 };
 
 const getMyProducts = async (shopId: string, query: Record<string, any>) => {
-  // const result = await Product.find({ shop: shopId });
-
-  // return result;
   const productQuery = new QueryBuilder(Product.find({ shop: shopId }), query)
     .search(['name'])
     .filter()
@@ -79,6 +88,34 @@ const getMyProducts = async (shopId: string, query: Record<string, any>) => {
   };
 };
 
+const getSpecificShopProducts = async (
+  customerId: string,
+  shopId: string,
+  query: Record<string, any>,
+) => {
+  const productQuery = new QueryBuilder(Product.find({ shop: shopId }), query)
+    .search(['name'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const meta = await productQuery.countTotal();
+  const result = await productQuery.modelQuery;
+  const bookmarks = await ProductBookmark.find({ costumer: customerId }).select(
+    'product',
+  );
+  const bookmarkedShopIds = new Set(bookmarks.map((b) => b.product.toString()));
+
+  const enrichedResult = result.map((product) => ({
+    ...product.toObject(),
+    isBookmark: bookmarkedShopIds.has(product._id.toString()),
+  }));
+  return {
+    meta,
+    result: enrichedResult,
+  };
+};
+
 const productServices = {
   createProductIntoDB,
   getAllProduct,
@@ -87,6 +124,7 @@ const productServices = {
   deleteProductFromDB,
   changeProductStatus,
   getMyProducts,
+  getSpecificShopProducts,
 };
 
 export default productServices;

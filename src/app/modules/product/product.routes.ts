@@ -31,6 +31,11 @@ router.get(
   productController.getAllProduct,
 );
 router.get(
+  '/shop-products',
+  auth(USER_ROLE.customer),
+  productController.getSpecificShopProducts,
+);
+router.get(
   '/single-product/:id',
   auth(
     USER_ROLE.customer,
