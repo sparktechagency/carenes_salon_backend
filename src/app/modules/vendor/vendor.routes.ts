@@ -27,6 +27,12 @@ router.patch(
 );
 
 router.get(
+  '/get-nearby-shop',
+  auth(USER_ROLE.customer),
+  vendorController.getNearbyShop,
+);
+
+router.get(
   '/all-vendors',
   auth(USER_ROLE.superAdmin),
   vendorController.getAllVendor,

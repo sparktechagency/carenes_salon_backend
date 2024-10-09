@@ -25,9 +25,32 @@ const getAllOrders = catchAsync(async (req, res) => {
   });
 });
 
+// get my orders
+const getMyOrders = catchAsync(async (req, res) => {
+  const result = await orderServices.getMyOrders(req?.user, req?.query);
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: 'Order retrieved successfully',
+    data: result,
+  });
+});
+//
+const getNearbyOrders = catchAsync(async (req, res) => {
+  const result = await orderServices.getNearbyOrders(req?.body);
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: 'Order retrieved successfully',
+    data: result,
+  });
+});
+
 const orderController = {
   createOrder,
   getAllOrders,
+  getMyOrders,
+  getNearbyOrders,
 };
 
 export default orderController;

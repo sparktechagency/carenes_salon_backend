@@ -6,6 +6,8 @@ import Vendor from './vendor.model';
 import { User } from '../user/user.model';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
+import { maxDistanceForShop, riderSpeed } from '../../constant';
+import ShopBookmark from '../shopBookmak/shop.bookmark.model';
 
 const updateVendorProfile = async (
   userId: string,
@@ -74,10 +76,63 @@ const getAllVendorFromDB = async (query: Record<string, any>) => {
   };
 };
 
+const getNearbyShopWithTime = async (
+  customerId: string,
+  payload: {
+    latitude: number;
+    longitude: number;
+    maxDistanceForShop: number;
+    // riderSpeed: number; // Speed in meters per second (m/s), e.g., 10 m/s ≈ 36 km/h
+  },
+  query: Record<string, any>,
+) => {
+  const matchStage = query.storeName
+    ? {
+        $match: {
+          name: { $regex: query.storeName, $options: 'i' },
+        },
+      }
+    : null;
+  const result = await Vendor.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [payload.longitude, payload.latitude],
+        },
+        distanceField: 'distance', // This will store the distance in meters
+        maxDistance: maxDistanceForShop, // Distance in meters
+        spherical: true, // Use spherical geometry for Earth-like distances
+      },
+    },
+    ...(matchStage ? [matchStage] : []),
+    {
+      $addFields: {
+        estimatedTime: {
+          $divide: ['$distance', riderSpeed], // distance / speed to get time in seconds
+        },
+      },
+    },
+  ]);
+  const bookmarks = await ShopBookmark.find({ costumer: customerId }).select(
+    'shop',
+  );
+  const bookmarkedShopIds = new Set(bookmarks.map((b) => b.shop.toString()));
+
+  const enrichedResult = result.map((shop) => ({
+    ...shop,
+    isBookmark: bookmarkedShopIds.has(shop._id.toString()),
+  }));
+
+  return enrichedResult;
+};
+
 const vendorServices = {
   updateVendorProfile,
   updateShopStatus,
   getAllVendorFromDB,
+
+  getNearbyShopWithTime,
 };
 
 export default vendorServices;

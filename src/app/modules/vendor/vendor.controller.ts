@@ -47,10 +47,25 @@ const getAllVendor = catchAsync(async (req, res) => {
   });
 });
 
+const getNearbyShop = catchAsync(async (req, res) => {
+  const result = await vendorServices.getNearbyShopWithTime(
+    req?.user?.profileId,
+    req?.body,
+    req.query,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Vendor retrieved successfully',
+    data: result,
+  });
+});
+
 const vendorController = {
   updateVendorProfile,
   updateShopStatus,
   getAllVendor,
+  getNearbyShop,
 };
 
 export default vendorController;

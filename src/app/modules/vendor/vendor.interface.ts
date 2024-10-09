@@ -6,6 +6,7 @@ export interface ILocation {
 }
 
 export interface IVendor {
+  _id: string;
   user: Types.ObjectId;
   storeName: string;
   phoneNumber: string;

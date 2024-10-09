@@ -18,5 +18,15 @@ router.get(
   auth(USER_ROLE.superAdmin),
   orderController.getAllOrders,
 );
+router.get(
+  '/my-orders',
+  auth(USER_ROLE.customer, USER_ROLE.rider, USER_ROLE.vendor),
+  orderController.getMyOrders,
+);
+router.get(
+  '/nearby-orders',
+  auth(USER_ROLE.rider),
+  orderController.getNearbyOrders,
+);
 
 export const orderRoutes = router;

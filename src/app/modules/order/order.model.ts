@@ -1,5 +1,6 @@
 import { model, Schema } from 'mongoose';
 import { ILocation, IOrder } from './order.interface';
+import { ENUM_ORDER_STATUS } from '../../utilities/enum';
 const LocationSchema = new Schema<ILocation>({
   type: {
     type: String,
@@ -71,6 +72,11 @@ const OrderSchema = new Schema<IOrder>(
     subTotal: {
       type: Number,
       required: true,
+    },
+    status: {
+      type: String,
+      enum: Object.values(ENUM_ORDER_STATUS),
+      default: ENUM_ORDER_STATUS.PENDING,
     },
   },
   {
