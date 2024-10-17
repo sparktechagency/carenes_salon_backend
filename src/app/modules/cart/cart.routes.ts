@@ -33,5 +33,10 @@ router.patch(
   validateRequest(cartValidations.removeCartItemValidationSchema),
   cartControllers.decreaseItemQuantity,
 );
+router.delete(
+  '/delete-cart',
+  auth(USER_ROLE.customer),
+  cartControllers.clearCart,
+);
 
 export const cartRoutes = router;

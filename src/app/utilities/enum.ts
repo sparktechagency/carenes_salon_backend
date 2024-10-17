@@ -7,6 +7,10 @@ export const ENUM_SHOP_TYPE = {
   RESTAURANT: 'Restaurant',
   GROCERY: 'Grocery',
 };
+export const ENUM_SHOP_STATUS = {
+  ACTIVATE: 'activate',
+  DEACTIVATE: 'deactivate',
+};
 
 export const ENUM_ORDER_STATUS = {
   PENDING: 'pending',

@@ -24,6 +24,16 @@ const createOrderValidationSchema = z.object({
   }),
 });
 
-const orderValidations = { createOrderValidationSchema };
+const getNearbyByOrderValidationSchema = z.object({
+  body: z.object({
+    latitude: z.number({ required_error: 'Latitude is required' }),
+    longitude: z.number({ required_error: 'Longitude is required' }),
+  }),
+});
+
+const orderValidations = {
+  createOrderValidationSchema,
+  getNearbyByOrderValidationSchema,
+};
 
 export default orderValidations;

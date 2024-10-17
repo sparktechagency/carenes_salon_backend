@@ -11,7 +11,6 @@ const updateVendorProfile = catchAsync(async (req, res) => {
   if (files && typeof files === 'object' && 'store_image' in files) {
     req.body.storeImage = files['store_image'][0].path;
   }
-  console.log('ddd');
   const result = await vendorServices.updateVendorProfile(
     req?.user?.id,
     req?.body,
@@ -60,12 +59,25 @@ const getNearbyShop = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const addRating = catchAsync(async (req, res) => {
+  const result = await vendorServices.addRating(
+    req?.params?.shopId,
+    req?.body?.rating,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Rating added successfully',
+    data: result,
+  });
+});
 
 const vendorController = {
   updateVendorProfile,
   updateShopStatus,
   getAllVendor,
   getNearbyShop,
+  addRating,
 };
 
 export default vendorController;

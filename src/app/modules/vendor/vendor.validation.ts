@@ -78,9 +78,29 @@ const updateVendorProfileValidationSchema = z.object({
     .partial(),
 });
 
+const getNearbyShopValidationSchema = z.object({
+  body: z.object({
+    latitude: z.number({ required_error: 'Latitude is required' }),
+    longitude: z.number({ required_error: 'Longitude is required' }),
+  }),
+});
+
+const addRatingValidationSchema = z.object({
+  body: z.object({
+    rating: z
+      .number({
+        required_error: 'Rating is required',
+        invalid_type_error: 'Rating must be a number',
+      })
+      .max(5, { message: 'Rating must be at most 5' }),
+  }),
+});
+
 const vendorValidations = {
   registerVendorValidationSchema,
   updateVendorProfileValidationSchema,
+  getNearbyShopValidationSchema,
+  addRatingValidationSchema,
 };
 
 export default vendorValidations;

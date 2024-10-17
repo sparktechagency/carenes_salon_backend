@@ -15,6 +15,8 @@ export interface IVendor {
   storeImage: string;
   storeLicence: string;
   shopType: 'Restaurant' | 'Grocery';
+  totalRating: number;
+  totalRatingCount: number;
   bankAccountName: string;
   bankAccountNumber: string;
   bankName: string;

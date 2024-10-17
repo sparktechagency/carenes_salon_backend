@@ -64,10 +64,21 @@ const decreaseItemQuantity = catchAsync(async (req, res) => {
   });
 });
 
+const clearCart = catchAsync(async (req, res) => {
+  const result = await cartServices.clearCartFromDB(req?.user?.profileId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Cart deleted  successfully',
+    data: result,
+  });
+});
+
 const cartControllers = {
   addToCart,
   removeCartItem,
   viewCart,
+  clearCart,
   increaseItemQuantity,
   decreaseItemQuantity,
 };

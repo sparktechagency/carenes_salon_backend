@@ -29,6 +29,7 @@ router.patch(
 router.get(
   '/get-nearby-shop',
   auth(USER_ROLE.customer),
+  validateRequest(vendorValidations.getNearbyShopValidationSchema),
   vendorController.getNearbyShop,
 );
 
@@ -36,6 +37,13 @@ router.get(
   '/all-vendors',
   auth(USER_ROLE.superAdmin),
   vendorController.getAllVendor,
+);
+
+router.patch(
+  '/add-rating/:shopId',
+  auth(USER_ROLE.customer),
+  validateRequest(vendorValidations.addRatingValidationSchema),
+  vendorController.addRating,
 );
 
 export const vendorRoutes = router;

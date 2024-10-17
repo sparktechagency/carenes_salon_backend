@@ -1,0 +1,12 @@
+Tue Oct 15 2024 17:22 19 [Food Delivery] error: Unhandled Rejection: 30080000:error:0A00010B:SSL routines:ssl3_get_record:wrong version number:c:\ws\deps\openssl\openssl\ssl\record\ssl3_record.c:355:
+
+Tue Oct 15 2024 17:24 41 [Food Delivery] error: Unhandled Rejection: 08480000:error:0A00010B:SSL routines:ssl3_get_record:wrong version number:c:\ws\deps\openssl\openssl\ssl\record\ssl3_record.c:355:
+
+Tue Oct 15 2024 17:36 34 [Food Delivery] error: Unhandled Rejection: F8460000:error:0A00010B:SSL routines:ssl3_get_record:wrong version number:c:\ws\deps\openssl\openssl\ssl\record\ssl3_record.c:355:
+
+Tue Oct 15 2024 17:37 41 [Food Delivery] error: Unhandled Rejection: 503B0000:error:0A00010B:SSL routines:ssl3_get_record:wrong version number:c:\ws\deps\openssl\openssl\ssl\record\ssl3_record.c:355:
+
+Tue Oct 15 2024 17:39 37 [Food Delivery] error: Unhandled Rejection: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-71e774caab8sm1087172b3a.145 - gsmtp
+Tue Oct 15 2024 17:40 6 [Food Delivery] error: Unhandled Rejection: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-7ea9c6d3a59sm1157913a12.42 - gsmtp

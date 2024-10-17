@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable no-undef */
 import mongoose from 'mongoose';
 import { Server as HTTPServer } from 'http'; // Import HTTPServer type
 import server from './app';
 import { errorLogger, logger } from './app/shared/logger';
 import config from './app/config';
 import seedSuperAdmin from './app/DB';
+import { Server } from 'socket.io';
+import socket from './app/socket/socket';
 
 process.on('uncaughtException', (error) => {
   errorLogger.error('Uncaught Exception:', error);
@@ -25,6 +29,19 @@ async function main() {
         `Example app listening on port http://192.168.10.153:${config.port}`,
       );
     });
+
+    // Set up Socket.IO-----------------
+    const socketIO = new Server(myServer, {
+      pingTimeout: 60000,
+      cors: {
+        origin: '*',
+      },
+    });
+
+    socket(socketIO);
+
+    //@ts-ignore
+    global.io = socketIO;
   } catch (error) {
     errorLogger.error('Error in main function:', error);
     throw error;

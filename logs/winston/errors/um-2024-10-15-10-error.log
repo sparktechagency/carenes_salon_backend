@@ -1,0 +1,18 @@
+Tue Oct 15 2024 10:24 7 [Food Delivery] error: Error in main function: Server is not defined
+Tue Oct 15 2024 10:24 7 [Food Delivery] error: Main function error: Server is not defined
+Tue Oct 15 2024 10:24 44 [Food Delivery] error: Error in main function: socket is not defined
+Tue Oct 15 2024 10:24 44 [Food Delivery] error: Main function error: socket is not defined
+Tue Oct 15 2024 10:49 29 [Food Delivery] error: Error in main function: You are trying to attach socket.io to an express request handler function. Please pass a http.Server instance.
+Tue Oct 15 2024 10:49 29 [Food Delivery] error: Main function error: You are trying to attach socket.io to an express request handler function. Please pass a http.Server instance.
+Tue Oct 15 2024 10:50 14 [Food Delivery] error: Error in main function: You are trying to attach socket.io to an express request handler function. Please pass a http.Server instance.
+Tue Oct 15 2024 10:50 14 [Food Delivery] error: Main function error: You are trying to attach socket.io to an express request handler function. Please pass a http.Server instance.
+Tue Oct 15 2024 10:52 12 [Food Delivery] error: Error in main function: server is not defined
+Tue Oct 15 2024 10:52 12 [Food Delivery] error: Main function error: server is not defined
+Tue Oct 15 2024 10:56 31 [Food Delivery] error: Error in main function: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 10:56 31 [Food Delivery] error: Main function error: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 10:56 39 [Food Delivery] error: Error in main function: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 10:56 39 [Food Delivery] error: Main function error: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 10:58 39 [Food Delivery] error: Error in main function: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 10:58 39 [Food Delivery] error: Main function error: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 10:59 25 [Food Delivery] error: Error in main function: server is not defined
+Tue Oct 15 2024 10:59 25 [Food Delivery] error: Main function error: server is not defined

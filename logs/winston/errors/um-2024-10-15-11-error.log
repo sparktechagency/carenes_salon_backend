@@ -1,0 +1,12 @@
+Tue Oct 15 2024 11:1 25 [Food Delivery] error: Error in main function: Cannot read properties of undefined (reading 'listen')
+Tue Oct 15 2024 11:1 25 [Food Delivery] error: Main function error: Cannot read properties of undefined (reading 'listen')
+Tue Oct 15 2024 11:13 24 [Food Delivery] error: Error in main function: getIO is not defined
+Tue Oct 15 2024 11:13 24 [Food Delivery] error: Main function error: getIO is not defined
+Tue Oct 15 2024 11:13 42 [Food Delivery] error: Error in main function: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 11:13 42 [Food Delivery] error: Main function error: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 11:13 56 [Food Delivery] error: Error in main function: socket is not defined
+Tue Oct 15 2024 11:13 56 [Food Delivery] error: Main function error: socket is not defined
+Tue Oct 15 2024 11:14 0 [Food Delivery] error: Error in main function: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 11:14 0 [Food Delivery] error: Main function error: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 11:15 14 [Food Delivery] error: Error in main function: (0 , socket_1.default) is not a function
+Tue Oct 15 2024 11:15 14 [Food Delivery] error: Main function error: (0 , socket_1.default) is not a function

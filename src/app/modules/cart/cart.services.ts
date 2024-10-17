@@ -140,12 +140,23 @@ export const decreaseCartItemQuantity = async (
   return cart;
 };
 
+const clearCartFromDB = async (customerId: string) => {
+  const cart = await Cart.findOne({ customer: customerId });
+  if (!cart) {
+    throw new AppError(httpStatus.NOT_FOUND, "You don't have any cart");
+  }
+  const result = await Cart.findOneAndDelete({ customer: customerId });
+
+  return result;
+};
+
 const cartServices = {
   addToCart,
   removeCartItem,
   viewCart,
   increaseCartItemQuantity,
   decreaseCartItemQuantity,
+  clearCartFromDB,
 };
 
 export default cartServices;

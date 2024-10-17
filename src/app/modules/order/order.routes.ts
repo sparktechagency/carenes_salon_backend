@@ -26,6 +26,7 @@ router.get(
 router.get(
   '/nearby-orders',
   auth(USER_ROLE.rider),
+  validateRequest(orderValidations.getNearbyByOrderValidationSchema),
   orderController.getNearbyOrders,
 );
 

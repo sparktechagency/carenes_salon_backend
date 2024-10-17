@@ -13,6 +13,7 @@ import { productBookmarkRoutes } from '../modules/productBookmark/product.bookma
 import { shopBookmarkRoutes } from '../modules/shopBookmak/product.bookmark.routes';
 import { cartRoutes } from '../modules/cart/cart.routes';
 import { orderRoutes } from '../modules/order/order.routes';
+import { metaRoutes } from '../modules/meta/meta.routes';
 
 const router = Router();
 
@@ -72,6 +73,10 @@ const moduleRoutes = [
   {
     path: '/order',
     router: orderRoutes,
+  },
+  {
+    path: '/meta',
+    router: metaRoutes,
   },
 ];
 

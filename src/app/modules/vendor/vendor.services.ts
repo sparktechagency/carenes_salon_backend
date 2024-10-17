@@ -77,24 +77,98 @@ const getAllVendorFromDB = async (query: Record<string, any>) => {
   };
 };
 
+// const getNearbyShopWithTime = async (
+//   customerId: string,
+//   payload: {
+//     latitude: number;
+//     longitude: number;
+//     maxDistanceForShop: number;
+//     // riderSpeed: number; // Speed in meters per second (m/s), e.g., 10 m/s ≈ 36 km/h
+//   },
+//   query: Record<string, any>,
+// ) => {
+//   const matchStage = query.storeName
+//     ? {
+//         $match: {
+//           name: { $regex: query.storeName, $options: 'i' },
+//         },
+//       }
+//     : null;
+//   const result = await Vendor.aggregate([
+//     {
+//       $geoNear: {
+//         near: {
+//           type: 'Point',
+//           coordinates: [payload.longitude, payload.latitude],
+//         },
+//         distanceField: 'distance', // This will store the distance in meters
+//         maxDistance: maxDistanceForShop, // Distance in meters
+//         spherical: true, // Use spherical geometry for Earth-like distances
+//       },
+//     },
+//     ...(matchStage ? [matchStage] : []),
+//     {
+//       $addFields: {
+//         estimatedTime: {
+//           $divide: ['$distance', riderSpeed], // distance / speed to get time in seconds
+//         },
+//       },
+//     },
+//   ]);
+//   const bookmarks = await ShopBookmark.find({ costumer: customerId }).select(
+//     'shop',
+//   );
+//   const bookmarkedShopIds = new Set(bookmarks.map((b) => b.shop.toString()));
+
+//   // popular products
+
+//   const shopIds = result.map((shop) => shop._id);
+//   const products = await Product.find({
+//     shop: { $in: shopIds },
+//   }).select('name shop');
+
+//   const productsByShopId = products.reduce(
+//     (acc, product) => {
+//       const shopId = product.shop.toString();
+//       if (!acc[shopId]) {
+//         acc[shopId] = [];
+//       }
+//       acc[shopId].push(product);
+//       return acc;
+//     },
+//     {} as Record<string, any[]>,
+//   );
+
+//   const enrichedResult = result.map((shop) => ({
+//     ...shop,
+//     isBookmark: bookmarkedShopIds.has(shop._id.toString()),
+//     products: productsByShopId[shop._id.toString()] || [],
+//   }));
+
+//   return enrichedResult;
+// };
 const getNearbyShopWithTime = async (
   customerId: string,
   payload: {
     latitude: number;
     longitude: number;
-    maxDistanceForShop: number;
-    // riderSpeed: number; // Speed in meters per second (m/s), e.g., 10 m/s ≈ 36 km/h
   },
   query: Record<string, any>,
 ) => {
-  const matchStage = query.storeName
-    ? {
-        $match: {
-          name: { $regex: query.storeName, $options: 'i' },
-        },
-      }
-    : null;
-  const result = await Vendor.aggregate([
+  const matchStage: any[] = [
+    ...(query.storeName
+      ? [
+          {
+            $match: {
+              storeName: { $regex: query.storeName, $options: 'i' },
+            },
+          },
+        ]
+      : []),
+  ];
+
+  // Base aggregation pipeline
+  const pipeline: any[] = [
     {
       $geoNear: {
         near: {
@@ -106,21 +180,43 @@ const getNearbyShopWithTime = async (
         spherical: true, // Use spherical geometry for Earth-like distances
       },
     },
-    ...(matchStage ? [matchStage] : []),
-    {
-      $addFields: {
-        estimatedTime: {
-          $divide: ['$distance', riderSpeed], // distance / speed to get time in seconds
+    ...matchStage,
+  ];
+
+  // If categoryId is present in the query, perform a lookup
+  if (query.categoryId) {
+    pipeline.push(
+      {
+        $lookup: {
+          from: 'categories', // Name of the categories collection
+          localField: 'categories', // Field in Vendor that holds category IDs
+          foreignField: '_id', // Field in Categories collection
+          as: 'categoryDetails', // Name of the output array field
         },
       },
+      {
+        $match: {
+          'categoryDetails._id': query.categoryId, // Filter by category ID
+        },
+      },
+    );
+  }
+
+  // Add estimated time calculation
+  pipeline.push({
+    $addFields: {
+      estimatedTime: {
+        $divide: ['$distance', riderSpeed], // distance / speed
+      },
     },
-  ]);
-  const bookmarks = await ShopBookmark.find({ costumer: customerId }).select(
+  });
+
+  const result = await Vendor.aggregate(pipeline);
+
+  const bookmarks = await ShopBookmark.find({ customer: customerId }).select(
     'shop',
   );
   const bookmarkedShopIds = new Set(bookmarks.map((b) => b.shop.toString()));
-
-  // popular products
 
   const shopIds = result.map((shop) => shop._id);
   const products = await Product.find({
@@ -148,12 +244,24 @@ const getNearbyShopWithTime = async (
   return enrichedResult;
 };
 
+// rating
+const addRating = async (shopId: string, rating: number) => {
+  const result = await Vendor.findByIdAndUpdate(
+    shopId,
+    {
+      $inc: { totalRating: 1, totalRatingCount: rating },
+    },
+    { new: true, runValidators: true },
+  );
+  return result;
+};
+
 const vendorServices = {
   updateVendorProfile,
   updateShopStatus,
   getAllVendorFromDB,
-
   getNearbyShopWithTime,
+  addRating,
 };
 
 export default vendorServices;

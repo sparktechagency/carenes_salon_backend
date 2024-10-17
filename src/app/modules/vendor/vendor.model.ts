@@ -36,6 +36,14 @@ const vendorSchema = new Schema<IVendor>(
       enum: Object.values(ENUM_SHOP_TYPE),
       required: true,
     },
+    totalRating: {
+      type: Number,
+      default: 0,
+    },
+    totalRatingCount: {
+      type: Number,
+      default: 0,
+    },
     bankAccountName: { type: String, default: '' },
     bankAccountNumber: { type: String, default: '' },
     bankName: { type: String, default: '' },

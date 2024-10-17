@@ -9,6 +9,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { sendEmail } from '../../utilities/sendEmail';
+import generateResetPasswordEmail from '../../helper/generateResetPasswordEmail';
 const loginUserIntoDB = async (payload: TLoginUser) => {
   const user = await User.isUserExists(payload.email);
   if (!user) {
@@ -141,8 +142,10 @@ const forgetPassword = async (email: string) => {
     '10m',
   );
   const resetUiLink = `${config.reset_password_ui_link}?${user._id}&token=${resetToken}`;
-  console.log(resetUiLink);
-  sendEmail(user?.email, resetUiLink);
+  const emailContent = generateResetPasswordEmail(resetUiLink);
+
+  // Send the email
+  sendEmail(user?.email, 'Reset your password within 10 mins!', emailContent);
 };
 
 // reset password
