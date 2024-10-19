@@ -46,11 +46,41 @@ const getNearbyOrders = catchAsync(async (req, res) => {
   });
 });
 
+// complete order
+
+const updateOrderStatus = catchAsync(async (req, res) => {
+  const result = await orderServices.updateOrderStatus(
+    req?.user,
+    req?.params?.id,
+    req?.body?.status,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `Order ${result?.status} successfully`,
+    data: result,
+  });
+});
+const completeOrder = catchAsync(async (req, res) => {
+  const result = await orderServices.completeOrder(
+    req?.params?.id,
+    req?.user?.profileId,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Order completed successfully',
+    data: result,
+  });
+});
+
 const orderController = {
   createOrder,
   getAllOrders,
   getMyOrders,
   getNearbyOrders,
+  updateOrderStatus,
+  completeOrder,
 };
 
 export default orderController;

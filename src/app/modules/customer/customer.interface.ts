@@ -11,5 +11,6 @@ export interface ICustomer {
   phoneNumber: string;
   location: ILocation;
   profile_image: string;
+  walletAmount: number;
   isDeleted: boolean;
 }

@@ -46,6 +46,10 @@ const CustomerSchema = new Schema<ICustomer>(
       type: Boolean,
       default: false,
     },
+    walletAmount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

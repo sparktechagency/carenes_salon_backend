@@ -29,5 +29,20 @@ router.get(
   validateRequest(orderValidations.getNearbyByOrderValidationSchema),
   orderController.getNearbyOrders,
 );
+router.patch(
+  '/update-order-status/:id',
+  auth(
+    USER_ROLE.customer,
+    USER_ROLE.rider,
+    USER_ROLE.vendor,
+    USER_ROLE.superAdmin,
+  ),
+  orderController.updateOrderStatus,
+);
+router.post(
+  '/complete-order/:id',
+  auth(USER_ROLE.customer),
+  orderController.completeOrder,
+);
 
 export const orderRoutes = router;

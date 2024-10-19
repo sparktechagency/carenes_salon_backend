@@ -35,6 +35,10 @@ const riderSchema = new Schema<IRider>(
     bankAccountNumber: { type: String, default: '' },
     bankName: { type: String, default: '' },
     paymentMethodPreference: { type: String, default: '' },
+    walletAmount: {
+      type: Number,
+      default: 0,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

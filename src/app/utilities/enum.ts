@@ -14,6 +14,7 @@ export const ENUM_SHOP_STATUS = {
 
 export const ENUM_ORDER_STATUS = {
   PENDING: 'pending',
+  CANCELED: 'canceled',
   ACCEPTED: 'accepted',
   PICKED: 'picked',
   DELIVERED: 'delivered',

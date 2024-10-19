@@ -15,5 +15,6 @@ export interface IRider {
   bankAccountNumber: string;
   bankName: string;
   paymentMethodPreference: string;
+  walletAmount: number;
   isDeleted: boolean;
 }
