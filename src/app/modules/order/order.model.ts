@@ -26,6 +26,10 @@ const OrderSchema = new Schema<IOrder>(
       required: true,
       ref: 'Vendor',
     },
+    shopName: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
@@ -33,6 +37,11 @@ const OrderSchema = new Schema<IOrder>(
     contactNumber: {
       type: String,
       required: true,
+    },
+    shopLocation: {
+      type: LocationSchema,
+      required: true,
+      index: '2dsphere',
     },
     deliveryLocation: {
       type: LocationSchema,

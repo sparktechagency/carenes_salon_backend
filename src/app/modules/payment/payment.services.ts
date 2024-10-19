@@ -28,7 +28,6 @@ const createPaymentIntentForCustomerOrderWithStripe = async (
   });
 
   await orderServices.createOrder(customerId, payload, paymentIntent.id);
-
   return {
     clientSecret: paymentIntent.client_secret,
   };

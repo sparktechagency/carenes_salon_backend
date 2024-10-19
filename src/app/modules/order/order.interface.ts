@@ -12,8 +12,10 @@ export interface ILocation {
 export interface IOrder {
   customer: Types.ObjectId;
   shop: Types.ObjectId;
+  shopName: string;
   name: string;
   contactNumber: string;
+  shopLocation: ILocation;
   deliveryLocation: ILocation;
   items: IOrderItem[];
   totalQuantity: number;

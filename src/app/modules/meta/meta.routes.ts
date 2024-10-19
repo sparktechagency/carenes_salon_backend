@@ -19,5 +19,15 @@ router.get(
   auth(USER_ROLE.superAdmin),
   metaController.getShopChartData,
 );
+router.get(
+  '/get-income-chart-data',
+  auth(USER_ROLE.superAdmin),
+  metaController.getAreaChartDataForIncome,
+);
+router.get(
+  '/get-sales-chart-data',
+  auth(USER_ROLE.vendor),
+  metaController.getAreaChartDataForSales,
+);
 
 export const metaRoutes = router;

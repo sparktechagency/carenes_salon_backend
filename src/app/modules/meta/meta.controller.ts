@@ -34,11 +34,38 @@ const getShopChartData = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getAreaChartDataForIncome = catchAsync(async (req, res) => {
+  const result = await metaServices.getAreaChartDataForIncomeFromDB(
+    Number(req?.query?.year),
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Income chart data retrieved successfully',
+    data: result,
+  });
+});
+const getAreaChartDataForSales = catchAsync(async (req, res) => {
+  const result = await metaServices.getAreaChartDataForSalesFromDB(
+    req?.user?.profileId,
+    Number(req?.query?.year),
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Sales chart data retrieved successfully',
+    data: result,
+  });
+});
 
 const metaController = {
   getAminDashboardMetaData,
   getVendorDashboardMetaData,
   getShopChartData,
+  getAreaChartDataForIncome,
+  getAreaChartDataForSales,
 };
 
 export default metaController;

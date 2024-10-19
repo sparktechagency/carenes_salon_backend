@@ -21,7 +21,7 @@ const createOrder = async (
 ) => {
   const cart = await Cart.findOne({ customer: customerId }).populate({
     path: 'shop',
-    select: 'storeLocation',
+    select: 'storeLocation storeName',
   });
 
   if (!cart || cart.items.length === 0) {
@@ -30,9 +30,11 @@ const createOrder = async (
 
   const createNewOrder = await Order.create({
     ...payload,
+    shopLocation: cart.shop.storeLocation,
     items: cart?.items,
     customer: customerId,
     shop: cart?.shop,
+    shopName: cart.shop.storeName,
     totalPrice: cart.totalPrice,
     totalQuantity: cart.totalQuantity,
     subTotal: cart.subTotal,
@@ -80,8 +82,8 @@ const getMyOrders = async (user: any, query: Record<string, any>) => {
           path: 'items.product',
           select: 'name price images',
         })
-        .populate('customer', 'name email')
-        .populate({ path: 'shop', select: 'storeLocation' }),
+        .populate('customer', 'name email'),
+      // .populate({ path: 'shop', select: 'storeLocation' })
       query,
     )
       .search(['name'])
@@ -159,8 +161,8 @@ const getNearbyOrders = async ({
     throw new AppError(httpStatus.NOT_FOUND, 'Please provide valid location');
   }
 
-  const nearbyVendors = await Vendor.find({
-    storeLocation: {
+  const nearbyOrders = await Order.find({
+    shopLocation: {
       $near: {
         $geometry: {
           type: 'Point',
@@ -175,18 +177,18 @@ const getNearbyOrders = async ({
     //   },
     // },
     // status: 'pending',
-  }).select('_id');
+  });
 
-  const vendorIds = nearbyVendors.map((vendor) => vendor._id);
-  const orders = await Order.find({ shop: { $in: vendorIds } })
-    .populate({
-      path: 'items.product',
-      select: 'name price images',
-    })
-    .populate('customer', 'name email')
-    .populate({ path: 'shop', select: 'storeLocation' });
+  // const vendorIds = nearbyVendors.map((vendor) => vendor._id);
+  // const orders = await Order.find({ shop: { $in: vendorIds } })
+  //   .populate({
+  //     path: 'items.product',
+  //     select: 'name price images',
+  //   })
+  //   .populate('customer', 'name email')
+  //   .populate({ path: 'shop', select: 'storeLocation' });
 
-  return orders;
+  return nearbyOrders;
 };
 
 // update order status

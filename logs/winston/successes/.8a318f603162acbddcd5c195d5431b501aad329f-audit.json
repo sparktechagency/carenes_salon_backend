@@ -6,26 +6,6 @@
     "auditLog": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\.8a318f603162acbddcd5c195d5431b501aad329f-audit.json",
     "files": [
         {
-            "date": 1728120559453,
-            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\um-2024-10-05-15-success.log",
-            "hash": "f8af6608169d873fe92df0607fae0b24055e627b94d2c1afa384216769ccb0d5"
-        },
-        {
-            "date": 1728122788798,
-            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\um-2024-10-05-16-success.log",
-            "hash": "e585fc3e22da63fc8ced819a942ab0ba26129194678ddfdd6eee089bff63da20"
-        },
-        {
-            "date": 1728126695711,
-            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\um-2024-10-05-17-success.log",
-            "hash": "fe963bc90b45b260cf5e7e7f0699302c8496dfd4119ef5b9e4bd6fc9a324202d"
-        },
-        {
-            "date": 1728129834764,
-            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\um-2024-10-05-18-success.log",
-            "hash": "d26f9de19fdff05a0bfe64879856452a530983c5b886d3b4f11ac44e0035db39"
-        },
-        {
             "date": 1728183783594,
             "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\um-2024-10-06-09-success.log",
             "hash": "cf48eb3735475d3b27b846530f58a5d4461d5f5d4b0d258bd178973950069213"
@@ -294,6 +274,26 @@
             "date": 1729324928233,
             "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\um-2024-10-19-14-success.log",
             "hash": "766b76d513229a5089155301d5f93cb312ebc56b0e2aa2c40f23ad237570e147"
+        },
+        {
+            "date": 1729328429045,
+            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\um-2024-10-19-15-success.log",
+            "hash": "fef8207c055f5aeadccb4408bb325ea82ee7cf5a2096ff5c5cbffbd0707b787a"
+        },
+        {
+            "date": 1729333404299,
+            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\um-2024-10-19-16-success.log",
+            "hash": "2555d65c7d639a276fcd50700f8834b2f12090d836031d9cad483e8021408479"
+        },
+        {
+            "date": 1729335650601,
+            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\um-2024-10-19-17-success.log",
+            "hash": "cbf046b04dfd256efda238a7e3b3f97d3c7103bb47b388f57a1ff62ba9b29874"
+        },
+        {
+            "date": 1729340650305,
+            "name": "D:\\SolutionSqued Projects\\food-delivery\\logs\\winston\\successes\\um-2024-10-19-18-success.log",
+            "hash": "4b2db633ee3a20b2379755d1ed39481c377c16775fb037670a070844dbcd2a64"
         }
     ],
     "hashType": "sha256"
