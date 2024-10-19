@@ -78,6 +78,15 @@ const OrderSchema = new Schema<IOrder>(
       enum: Object.values(ENUM_ORDER_STATUS),
       default: ENUM_ORDER_STATUS.PENDING,
     },
+    // for payment
+    paymentId: {
+      type: String,
+      required: true,
+    },
+    paymentStatus: {
+      type: String,
+      default: 'unpaid',
+    },
   },
   {
     timestamps: true,

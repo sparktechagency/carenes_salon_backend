@@ -8,7 +8,11 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { USER_ROLE } from '../user/user.constant';
 import Vendor from '../vendor/vendor.model';
 
-const createOrder = async (customerId: string, payload: IOrder) => {
+const createOrder = async (
+  customerId: string,
+  payload: IOrder,
+  paymentId?: string,
+) => {
   const cart = await Cart.findOne({ customer: customerId }).populate({
     path: 'shop',
     select: 'storeLocation',
@@ -27,6 +31,7 @@ const createOrder = async (customerId: string, payload: IOrder) => {
     totalQuantity: cart.totalQuantity,
     subTotal: cart.subTotal,
     deliveryFee: cart.deliveryFee,
+    paymentId,
   });
 
   await Cart.deleteOne({ customer: customerId });

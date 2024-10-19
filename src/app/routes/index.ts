@@ -14,6 +14,7 @@ import { shopBookmarkRoutes } from '../modules/shopBookmak/product.bookmark.rout
 import { cartRoutes } from '../modules/cart/cart.routes';
 import { orderRoutes } from '../modules/order/order.routes';
 import { metaRoutes } from '../modules/meta/meta.routes';
+import { paymentRoutes } from '../modules/payment/payment.routes';
 
 const router = Router();
 
@@ -77,6 +78,10 @@ const moduleRoutes = [
   {
     path: '/meta',
     router: metaRoutes,
+  },
+  {
+    path: '/payment',
+    router: paymentRoutes,
   },
 ];
 

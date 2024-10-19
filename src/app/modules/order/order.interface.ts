@@ -22,4 +22,7 @@ export interface IOrder {
   rider: Types.ObjectId;
   deliveryFee: number;
   status: string;
+  // for payment
+  paymentId: string;
+  paymentStatus: string;
 }
