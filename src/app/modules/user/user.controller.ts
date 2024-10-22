@@ -6,6 +6,7 @@ import userServices from './user.services';
 const registerCustomer = catchAsync(async (req, res) => {
   const result = await userServices.registerCustomer(
     req?.body?.password,
+    req?.body?.confirmPassword,
     req?.body?.customer,
   );
   sendResponse(res, {
@@ -35,6 +36,7 @@ const registerRider = catchAsync(async (req, res) => {
 
   const result = await userServices.registerRider(
     req?.body?.password,
+    req?.body?.confirmPassword,
     req?.body?.rider,
   );
   sendResponse(res, {
@@ -71,6 +73,7 @@ const registerVendor = catchAsync(async (req, res) => {
 
   const result = await userServices.registerVendor(
     req?.body?.password,
+    req?.body?.confirmPassword,
     req?.body?.vendor,
   );
   sendResponse(res, {

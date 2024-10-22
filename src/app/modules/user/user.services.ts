@@ -12,7 +12,17 @@ import Rider from '../rider/rider.model';
 import { IVendor } from '../vendor/vendor.interface';
 import Vendor from '../vendor/vendor.model';
 
-const registerCustomer = async (password: string, customerData: ICustomer) => {
+const registerCustomer = async (
+  password: string,
+  confirmPassword: string,
+  customerData: ICustomer,
+) => {
+  if (password !== confirmPassword) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Password and confirm password doesn't match",
+    );
+  }
   const user = await User.isUserExists(customerData?.email);
   if (user) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
@@ -23,6 +33,7 @@ const registerCustomer = async (password: string, customerData: ICustomer) => {
   try {
     const userData: Partial<TUser> = {
       email: customerData?.email,
+      phoneNumber: customerData?.phoneNumber,
       password: password,
       role: USER_ROLE.customer,
     };
@@ -47,7 +58,17 @@ const registerCustomer = async (password: string, customerData: ICustomer) => {
 };
 
 // register rider
-const registerRider = async (password: string, riderData: IRider) => {
+const registerRider = async (
+  password: string,
+  confirmPassword: string,
+  riderData: IRider,
+) => {
+  if (password !== confirmPassword) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Password and confirm password doesn't match",
+    );
+  }
   const rider = await User.isUserExists(riderData?.email);
   if (rider) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
@@ -58,6 +79,7 @@ const registerRider = async (password: string, riderData: IRider) => {
   try {
     const userData: Partial<TUser> = {
       email: riderData?.email,
+      phoneNumber: riderData?.phoneNumber,
       password: password,
       role: USER_ROLE.rider,
       isActive: false,
@@ -83,7 +105,17 @@ const registerRider = async (password: string, riderData: IRider) => {
 };
 
 // register vendor
-const registerVendor = async (password: string, vendorData: IVendor) => {
+const registerVendor = async (
+  password: string,
+  confirmPassword: string,
+  vendorData: IVendor,
+) => {
+  if (password !== confirmPassword) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Password and confirm password doesn't match",
+    );
+  }
   const rider = await User.isUserExists(vendorData?.email);
   if (rider) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
@@ -94,6 +126,7 @@ const registerVendor = async (password: string, vendorData: IVendor) => {
   try {
     const userData: Partial<TUser> = {
       email: vendorData?.email,
+      phoneNumber: vendorData?.phoneNumber,
       password: password,
       role: USER_ROLE.vendor,
       isActive: false,

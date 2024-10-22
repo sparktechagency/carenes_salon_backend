@@ -12,8 +12,8 @@ import { ENUM_ORDER_STATUS } from '../../utilities/enum';
 import { JwtPayload } from 'jsonwebtoken';
 import Stripe from 'stripe';
 import config from '../../config';
+import Notification from '../notification/notification.model';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
-
 const createOrder = async (
   customerId: string,
   payload: IOrder,
@@ -72,7 +72,7 @@ const getAllOrders = async (query: Record<string, any>) => {
   };
 };
 
-// get my orders
+// get my orders--------------
 
 const getMyOrders = async (user: any, query: Record<string, any>) => {
   if (user.role === USER_ROLE.customer) {
@@ -83,7 +83,6 @@ const getMyOrders = async (user: any, query: Record<string, any>) => {
           select: 'name price images',
         })
         .populate('customer', 'name email'),
-      // .populate({ path: 'shop', select: 'storeLocation' })
       query,
     )
       .search(['name'])
@@ -179,15 +178,6 @@ const getNearbyOrders = async ({
     // status: 'pending',
   });
 
-  // const vendorIds = nearbyVendors.map((vendor) => vendor._id);
-  // const orders = await Order.find({ shop: { $in: vendorIds } })
-  //   .populate({
-  //     path: 'items.product',
-  //     select: 'name price images',
-  //   })
-  //   .populate('customer', 'name email')
-  //   .populate({ path: 'shop', select: 'storeLocation' });
-
   return nearbyOrders;
 };
 
@@ -213,6 +203,14 @@ const updateOrderStatus = async (
         const updateOrder = await Order.findByIdAndUpdate(orderId, {
           status: ENUM_ORDER_STATUS.CANCELED,
         });
+        // notification for customer --------
+        const notificationData = {
+          title: 'Your offer has been rejected',
+          message: 'We are sorry .. your offer has been rejected from seller',
+          receiver: order?.customer,
+        };
+
+        await Notification.create(notificationData);
         return updateOrder;
       } else {
         throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Refund failed');
@@ -232,6 +230,15 @@ const updateOrderStatus = async (
     const updateOrder = await Order.findByIdAndUpdate(orderId, {
       status: ENUM_ORDER_STATUS.ACCEPTED,
     });
+
+    const notificationData = {
+      title: 'Your offer has been accepted',
+      message: 'Your offer has been accepted by seller',
+      receiver: order?.customer,
+    };
+
+    await Notification.create(notificationData);
+
     return updateOrder;
   }
   // picked order

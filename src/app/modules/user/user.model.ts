@@ -3,7 +3,7 @@ import { TUser, UserModel } from './user.interface';
 import config from '../../config';
 import bcrypt from 'bcrypt';
 
-const userSchema = new Schema(
+const userSchema = new Schema<TUser>(
   {
     email: {
       type: String,
@@ -13,6 +13,10 @@ const userSchema = new Schema(
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
         'Please provide a valid email address',
       ],
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
     },
     password: {
       type: String,
@@ -34,6 +38,16 @@ const userSchema = new Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    verifyCode: {
+      type: Number,
+    },
+    resetCode: {
+      type: Number,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
     isDeleted: {
       type: Boolean,

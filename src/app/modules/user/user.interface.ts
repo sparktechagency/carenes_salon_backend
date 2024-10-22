@@ -7,10 +7,14 @@ export interface TUser {
   // id: string;
   _id: string;
   email: string;
+  phoneNumber: string;
   password: string;
   passwordChangedAt?: Date;
   role: 'customer' | 'rider' | 'vendor' | 'superAdmin';
   status: 'in-progress' | 'blocked';
+  verifyCode: number;
+  resetCode: number;
+  isVerified: boolean;
   isActive: boolean;
   isDeleted: boolean;
 }

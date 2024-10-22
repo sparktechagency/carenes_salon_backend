@@ -9,7 +9,12 @@ const locationSchema = z
 
 const registerVendorValidationSchema = z.object({
   body: z.object({
-    password: z.string({ required_error: 'Password is required' }).min(6),
+    password: z
+      .string({ required_error: 'Password is required' })
+      .min(6, { message: 'Password must be 6 character' }),
+    confirmPassword: z
+      .string({ required_error: 'Confirm password is required' })
+      .min(6, { message: 'Password must be 6 character' }),
     vendor: z.object({
       storeName: z
         .string({ required_error: 'Store is required' })
