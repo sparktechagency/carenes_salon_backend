@@ -15,6 +15,8 @@ export interface TUser {
   verifyCode: number;
   resetCode: number;
   isVerified: boolean;
+  isResetVerified: boolean;
+  codeExpireIn: Date;
   isActive: boolean;
   isDeleted: boolean;
 }
@@ -25,7 +27,7 @@ export interface TLoginUser {
 
 export interface UserModel extends Model<TUser> {
   // myStaticMethod(): number;
-  isUserExists(email: string): Promise<TUser>;
+  isUserExists(phoneNumber: string): Promise<TUser>;
   //   isUserDeleted(email: string): Promise<boolean>;
   //   isUserBlocked(email: string): Promise<boolean>;
   isPasswordMatched(

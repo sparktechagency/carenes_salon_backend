@@ -7,7 +7,7 @@ const userSchema = new Schema<TUser>(
   {
     email: {
       type: String,
-      required: true,
+      // required: true,
       unique: true,
       match: [
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
@@ -49,6 +49,13 @@ const userSchema = new Schema<TUser>(
       type: Boolean,
       default: false,
     },
+    isResetVerified: {
+      type: Boolean,
+      default: false,
+    },
+    codeExpireIn: {
+      type: Date,
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -74,8 +81,8 @@ userSchema.post('save', function (doc, next) {
   next();
 });
 // statics method for check is user exists
-userSchema.statics.isUserExists = async function (email: string) {
-  return await User.findOne({ email }).select('+password');
+userSchema.statics.isUserExists = async function (phoneNumber: string) {
+  return await User.findOne({ phoneNumber }).select('+password');
 };
 // statics method for check password match  ----
 userSchema.statics.isPasswordMatched = async function (

@@ -10,7 +10,7 @@ export const registerCustomerValidationSchema = z.object({
       .min(6, { message: 'Password must be 6 character' }),
     customer: z.object({
       name: z.string().min(1, 'Name is required').max(100),
-      email: z.string().email('Invalid email format'),
+      email: z.string().email('Invalid email format').optional(),
       phoneNumber: z.string().min(1, 'Phone number is required').max(15),
       location: z
         .object({

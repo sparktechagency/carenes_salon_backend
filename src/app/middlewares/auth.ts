@@ -33,14 +33,14 @@ const auth = (...requiredRoles: TUserRole[]) => {
     } catch (err) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'Token is expired');
     }
-    const { id, role, email, iat } = decoded;
+    const { id, role, phoneNumber, iat } = decoded;
 
     if (!decoded) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'Token is expired');
     }
     // get the user if that here ---------
 
-    const user = await User.isUserExists(email);
+    const user = await User.isUserExists(phoneNumber);
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
     }

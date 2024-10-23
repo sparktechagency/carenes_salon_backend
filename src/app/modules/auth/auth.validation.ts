@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 const loginValidationSchema = z.object({
   body: z.object({
-    email: z.string({ required_error: 'Email is required' }),
+    // email: z.string({ required_error: 'Email is required' }),
+    phoneNumber: z.string({ required_error: 'Phone number is required' }),
     password: z.string({ required_error: 'Password is required' }),
   }),
 });
@@ -24,14 +25,27 @@ const refreshTokenValidationSchema = z.object({
 // forget password validation schema
 const forgetPasswordValidationSchema = z.object({
   body: z.object({
-    email: z.string({ required_error: 'User email is required' }),
+    phoneNumber: z.string({ required_error: 'Phone number is required' }),
   }),
 });
 // reset password validation schema
 const resetPasswordValidationSchema = z.object({
   body: z.object({
-    email: z.string({ required_error: 'User email is required' }),
-    newPassword: z.string({ required_error: 'New password is required' }),
+    phoneNumber: z.string({ required_error: 'Phone number is required' }),
+    password: z.string({ required_error: 'Password is required' }),
+    confirmPassword: z.string({
+      required_error: 'Confirm password is required',
+    }),
+  }),
+});
+
+const verifyResetOtpValidationSchema = z.object({
+  body: z.object({
+    phoneNumber: z.string({ required_error: 'Phone number is required' }),
+    resetCode: z.number({
+      required_error: 'Reset code is required',
+      invalid_type_error: 'Reset code must be number',
+    }),
   }),
 });
 
@@ -41,6 +55,7 @@ const authValidations = {
   refreshTokenValidationSchema,
   forgetPasswordValidationSchema,
   resetPasswordValidationSchema,
+  verifyResetOtpValidationSchema,
 };
 
 export default authValidations;

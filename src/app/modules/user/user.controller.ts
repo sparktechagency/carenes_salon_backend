@@ -86,8 +86,8 @@ const registerVendor = catchAsync(async (req, res) => {
 
 // get me
 const getMyProfile = catchAsync(async (req, res) => {
-  const { email, role } = req.user;
-  const result = await userServices.getMyProfile(email, role);
+  const { phoneNumber, role } = req.user;
+  const result = await userServices.getMyProfile(phoneNumber, role);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -96,10 +96,35 @@ const getMyProfile = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+const verifyCode = catchAsync(async (req, res) => {
+  const result = await userServices.verifyCode(
+    req?.body?.phoneNumber,
+    req?.body?.verifyCode,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Successfully verified your account with phone number',
+    data: result,
+  });
+});
+const resendVerifyCode = catchAsync(async (req, res) => {
+  const result = await userServices.resendVerifyCode(req?.body?.phoneNumber);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Verify code send to your message inbox ',
+    data: result,
+  });
+});
+
 const userController = {
   registerCustomer,
   registerRider,
   registerVendor,
   getMyProfile,
+  verifyCode,
+  resendVerifyCode,
 };
 export default userController;

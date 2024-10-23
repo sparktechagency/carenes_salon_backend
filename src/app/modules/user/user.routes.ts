@@ -8,6 +8,7 @@ import vendorValidations from '../vendor/vendor.validation';
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from './user.constant';
 import { Router } from 'express';
+import userValidations from './user.validation';
 
 const router = Router();
 
@@ -48,6 +49,24 @@ router.get(
     USER_ROLE.vendor,
   ),
   userControllers.getMyProfile,
+);
+
+router.post(
+  '/verify-code',
+  validateRequest(userValidations.verifyCodeValidationSchema),
+  userControllers.verifyCode,
+);
+
+router.post(
+  '/resend-verify-code',
+  auth(
+    USER_ROLE.customer,
+    USER_ROLE.rider,
+    USER_ROLE.vendor,
+    USER_ROLE.superAdmin,
+  ),
+  validateRequest(userValidations.resendVerifyCodeSchema),
+  userControllers.resendVerifyCode,
 );
 
 export const userRoutes = router;

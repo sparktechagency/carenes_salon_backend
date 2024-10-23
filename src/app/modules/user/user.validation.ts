@@ -5,7 +5,10 @@ import { UserStatus } from './user.constant';
 export const registerUserValidationSchema = z.object({
   body: z.object({
     name: z.string().min(1, 'Name is required').max(100),
-    email: z.string().email('Invalid email format'),
+    email: z
+      .string({ invalid_type_error: 'Please add a valid email' })
+      .email('Invalid email format')
+      .optional(),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     phoneNumber: z.string().min(1, 'Phone number is required').max(15),
     passwordChangedAt: z.date().optional(),
@@ -54,6 +57,19 @@ const resetPasswordValidationSchema = z.object({
   }),
 });
 
+const verifyCodeValidationSchema = z.object({
+  body: z.object({
+    phoneNumber: z.string({ required_error: 'Phone number is required' }),
+    verifyCode: z.number({ required_error: 'Phone number is required' }),
+  }),
+});
+
+const resendVerifyCodeSchema = z.object({
+  body: z.object({
+    phoneNumber: z.string({ required_error: 'Phone number is required' }),
+  }),
+});
+
 const userValidations = {
   registerUserValidationSchema,
   loginValidationSchema,
@@ -61,6 +77,8 @@ const userValidations = {
   refreshTokenValidationSchema,
   forgetPasswordValidationSchema,
   resetPasswordValidationSchema,
+  verifyCodeValidationSchema,
+  resendVerifyCodeSchema,
 };
 
 export default userValidations;
