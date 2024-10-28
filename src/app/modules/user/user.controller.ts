@@ -36,7 +36,6 @@ const registerClient = catchAsync(async (req, res) => {
 
   const result = await userServices.registerClient(
     req?.body?.password,
-    req?.body?.confirmPassword,
     req?.body?.Client,
   );
   sendResponse(res, {
@@ -49,28 +48,6 @@ const registerClient = catchAsync(async (req, res) => {
 
 // register Admin
 const registerAdmin = catchAsync(async (req, res) => {
-  // const { files } = req;
-  // let storeLicence;
-  // if (files && typeof files === 'object' && 'licence_image' in files) {
-  //   storeLicence = files['licence_image'][0].path;
-  // } else {
-  //   storeLicence = null;
-  // }
-  // let storeImage;
-  // if (files && typeof files === 'object' && 'store_image' in files) {
-  //   storeImage = files['store_image'][0].path;
-  // } else {
-  //   storeImage = null;
-  // }
-  // const payload = {
-  //   ...req.body,
-  //   Admin: {
-  //     ...req.body.Admin,
-  //     storeLicence,
-  //     storeImage,
-  //   },
-  // };
-
   const result = await userServices.registerAdmin(
     req?.body?.password,
     req?.body?.admin,

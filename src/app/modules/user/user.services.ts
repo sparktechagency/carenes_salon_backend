@@ -70,17 +70,7 @@ const registerCustomer = async (
 };
 
 // register Client
-const registerClient = async (
-  password: string,
-  confirmPassword: string,
-  clientData: IClient,
-) => {
-  if (password !== confirmPassword) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "Password and confirm password doesn't match",
-    );
-  }
+const registerClient = async (password: string, clientData: IClient) => {
   const client = await User.isUserExists(clientData?.email);
   if (client) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
@@ -105,11 +95,11 @@ const registerClient = async (
 
     const smsMessage = `Your verification code is: ${verifyCode}`;
     await sendSMS(clientData?.phoneNumber, smsMessage);
-    const ClientPayload = {
+    const clientPayload = {
       ...clientData,
       user: user[0]._id,
     };
-    const client = await Client.create([ClientPayload], { session });
+    const client = await Client.create([clientPayload], { session });
 
     await session.commitTransaction();
     session.endSession();
