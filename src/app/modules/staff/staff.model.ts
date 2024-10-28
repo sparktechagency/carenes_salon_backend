@@ -6,7 +6,7 @@ const staffSchema = new Schema<IStaff>(
   {
     name: { type: String, required: true },
     specialty: { type: String, required: true },
-    phoneNumber: { type: String, required: true },
+    phoneNumber: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     employmentStartDate: { type: Date, required: true },
     services: {

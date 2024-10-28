@@ -1,0 +1,25 @@
+import express, { NextFunction, Request, Response } from 'express';
+import { USER_ROLE } from '../user/user.constant';
+import { uploadFile } from '../../helper/fileUploader';
+import validateRequest from '../../middlewares/validateRequest';
+import staffValidations from './staff.validation';
+import StaffController from './staff.controller';
+import auth from '../../middlewares/auth';
+
+const router = express.Router();
+
+router.patch(
+  '/create',
+  auth(USER_ROLE.client),
+  uploadFile(),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
+    next();
+  },
+  validateRequest(staffValidations.createStaffValidationSchema),
+  StaffController.createStaff,
+);
+
+export const staffRoutes = router;
