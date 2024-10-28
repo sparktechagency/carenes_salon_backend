@@ -1,6 +1,7 @@
 import { model, Schema } from 'mongoose';
+import { IBlockHour } from './blockHour.interface';
 
-const blockHourSchema = new Schema({
+const blockHourSchema = new Schema<IBlockHour>({
   entityId: {
     type: Schema.Types.ObjectId,
     required: true,
