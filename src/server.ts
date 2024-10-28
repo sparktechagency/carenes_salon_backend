@@ -8,7 +8,7 @@ import config from './app/config';
 import seedSuperAdmin from './app/DB';
 import { Server } from 'socket.io';
 import socket from './app/socket/socket';
-
+// some changes--------
 process.on('uncaughtException', (error) => {
   errorLogger.error('Uncaught Exception:', error);
   process.exit(1);
