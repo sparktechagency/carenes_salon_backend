@@ -3,6 +3,7 @@ export interface ILocation {
   type: 'Point';
   coordinates: [number, number];
 }
+// client interface
 export interface IClient {
   user: Types.ObjectId;
   name: string;
