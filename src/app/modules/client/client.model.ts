@@ -43,6 +43,11 @@ const clientSchema = new Schema<IClient>({
   bankAccountNumber: { type: String, required: true },
   branchCode: { type: String, required: true },
   bankCity: { type: String, required: true },
+  status: {
+    type: String,
+    enum: ['active', 'inactive'],
+    default: 'inactive',
+  },
   isDeleted: { type: Boolean, default: false },
 });
 

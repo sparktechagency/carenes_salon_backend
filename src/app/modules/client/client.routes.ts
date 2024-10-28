@@ -11,11 +11,13 @@ import ClientController from './client.controller';
 const router = Router();
 
 router.patch(
-  '/update-rider-profile',
+  '/update',
   auth(USER_ROLE.client),
   uploadFile(),
   (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
     next();
   },
   validateRequest(ClientValidations.updateClientProfileValidationSchema),

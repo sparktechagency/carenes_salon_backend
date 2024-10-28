@@ -19,5 +19,6 @@ export interface IClient {
   bankAccountNumber: string;
   branchCode: string;
   bankCity: string;
+  status: 'active' | 'inactive';
   isDeleted: boolean;
 }

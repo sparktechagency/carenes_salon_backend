@@ -14,8 +14,8 @@ export const uploadFile = () => {
         uploadPath = 'uploads/images/category';
       } else if (file.fieldname === 'sub_category_image') {
         uploadPath = 'uploads/images/sub_category';
-      } else if (file.fieldname === 'product_image') {
-        uploadPath = 'uploads/images/product';
+      } else if (file.fieldname === 'shop_image') {
+        uploadPath = 'uploads/images/shop_image';
       } else if (file.fieldname === 'shop_banner') {
         uploadPath = 'uploads/images/shop_banner';
       } else if (file.fieldname === 'app_banner') {
@@ -54,7 +54,7 @@ export const uploadFile = () => {
     const allowedFieldnames = [
       'image',
       'profile_image',
-      'product_image',
+      'shop_image',
       'category_image',
       'sub_category_image',
       'shop_banner',
@@ -91,7 +91,7 @@ export const uploadFile = () => {
     { name: 'profile_image', maxCount: 1 },
     { name: 'category_image', maxCount: 1 },
     { name: 'sub_category_image', maxCount: 1 },
-    { name: 'product_image', maxCount: 5 },
+    { name: 'shop_image', maxCount: 5 },
     { name: 'shop_banner', maxCount: 1 },
     { name: 'app_banner', maxCount: 1 },
     { name: 'licence_image', maxCount: 1 },
