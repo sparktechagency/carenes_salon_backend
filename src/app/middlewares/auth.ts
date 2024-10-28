@@ -8,8 +8,8 @@ import { TUserRole } from '../modules/user/user.interface';
 import { User } from '../modules/user/user.model';
 import { USER_ROLE } from '../modules/user/user.constant';
 import Customer from '../modules/customer/customer.model';
-import Rider from '../modules/rider/rider.model';
-import Vendor from '../modules/vendor/vendor.model';
+import Client from '../modules/client/client.model';
+import Admin from '../modules/admin/admin.model';
 
 // make costume interface
 
@@ -33,14 +33,14 @@ const auth = (...requiredRoles: TUserRole[]) => {
     } catch (err) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'Token is expired');
     }
-    const { id, role, phoneNumber, iat } = decoded;
+    const { id, role, email, iat } = decoded;
 
     if (!decoded) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'Token is expired');
     }
     // get the user if that here ---------
 
-    const user = await User.isUserExists(phoneNumber);
+    const user = await User.isUserExists(email);
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
     }
@@ -60,10 +60,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
     let profileData;
     if (role === USER_ROLE.customer) {
       profileData = await Customer.findOne({ user: id }).select('_id');
-    } else if (role === USER_ROLE.rider) {
-      profileData = await Rider.findOne({ user: id }).select('_id');
-    } else if (role === USER_ROLE.vendor) {
-      profileData = await Vendor.findOne({ user: id }).select('_id');
+    } else if (role === USER_ROLE.client) {
+      profileData = await Client.findOne({ user: id }).select('_id');
+    } else if (role === USER_ROLE.admin) {
+      profileData = await Admin.findOne({ user: id }).select('_id');
     }
 
     decoded.profileId = profileData?._id;

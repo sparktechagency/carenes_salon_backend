@@ -21,7 +21,7 @@ export interface IOrder {
   totalQuantity: number;
   subTotal: number;
   totalPrice: number;
-  rider: Types.ObjectId;
+  Client: Types.ObjectId;
   deliveryFee: number;
   status: string;
   // for payment

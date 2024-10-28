@@ -43,7 +43,7 @@ const forgetPassword = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Password resend code send to the phone number',
+    message: 'Password reset code send to the phone number',
     data: result,
   });
 });
@@ -74,6 +74,17 @@ const verifyResetOtp = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+const resendResetCode = catchAsync(async (req, res) => {
+  const result = await authServices.resendResetCode(req?.body.phoneNumber);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Reset code resend successfully',
+    data: result,
+  });
+});
+
 const authControllers = {
   loginUser,
   changePassword,
@@ -81,6 +92,7 @@ const authControllers = {
   forgetPassword,
   resetPassword,
   verifyResetOtp,
+  resendResetCode,
 };
 
 export default authControllers;

@@ -1,10 +1,10 @@
-import Rider from '../modules/rider/rider.model';
+import Client from '../modules/client/Client.model';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const updateRiderLocation = async (io: any, socket: any) => {
-  // Listen for rider location update event
+const updateClientLocation = async (io: any, socket: any) => {
+  // Listen for Client location update event
   socket.on('updateLocation', async (data: any) => {
-    const { riderId, coordinates } = data;
+    const { ClientId, coordinates } = data;
 
     if (!coordinates || coordinates.length !== 2) {
       socket.emit('socket-error', {
@@ -15,18 +15,18 @@ const updateRiderLocation = async (io: any, socket: any) => {
     }
 
     try {
-      const updatedRider = await Rider.findByIdAndUpdate(
-        riderId,
+      const updatedClient = await Client.findByIdAndUpdate(
+        ClientId,
         { location: { type: 'Point', coordinates } },
         { new: true },
       );
 
-      if (!updatedRider) {
-        socket.emit('socket-error', { message: 'Rider not found' });
+      if (!updatedClient) {
+        socket.emit('socket-error', { message: 'Client not found' });
       } else {
         socket.emit('locationUpdated', {
-          message: 'Rider location updated successfully',
-          rider: updatedRider,
+          message: 'Client location updated successfully',
+          Client: updatedClient,
         });
       }
     } catch (error) {
@@ -35,4 +35,4 @@ const updateRiderLocation = async (io: any, socket: any) => {
   });
 };
 
-export default updateRiderLocation;
+export default updateClientLocation;

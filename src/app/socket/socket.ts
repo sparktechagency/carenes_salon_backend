@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Server, Socket } from 'socket.io';
-import updateRiderLocation from './updateRiderLocation';
+import updateClientLocation from './updateRiderLocation';
 
 const socket = (io: Server) => {
   io.on('connection', async (socket: Socket) => {
@@ -11,8 +11,8 @@ const socket = (io: Server) => {
       console.log('data', data);
     });
 
-    // update rider location
-    updateRiderLocation(io, socket);
+    // update Client location
+    updateClientLocation(io, socket);
     // Disconnect user
     socket.on('disconnect', () => {
       console.log('A user disconnected');

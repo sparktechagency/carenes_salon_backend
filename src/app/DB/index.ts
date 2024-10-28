@@ -6,6 +6,7 @@ const superUser = {
   email: 'maniksarker.official@gmail.com',
   password: config.super_admin_password,
   role: USER_ROLE.superAdmin,
+  phoneNumber: '+8801775770439',
   status: 'in-progress',
   isDeleted: false,
 };

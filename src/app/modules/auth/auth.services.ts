@@ -14,7 +14,7 @@ const generateVerifyCode = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
 };
 const loginUserIntoDB = async (payload: TLoginUser) => {
-  const user = await User.isUserExists(payload.phoneNumber);
+  const user = await User.isUserExists(payload.email);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
   }
@@ -30,7 +30,7 @@ const loginUserIntoDB = async (payload: TLoginUser) => {
   }
   const jwtPayload = {
     id: user?._id,
-    // email: user?.email,
+    email: user?.email,
     phoneNumber: user?.phoneNumber,
     role: user?.role as TUserRole,
   };
@@ -271,6 +271,33 @@ const resetPassword = async (payload: {
 
   return { accessToken, refreshToken };
 };
+
+const resendResetCode = async (phoneNumber: string) => {
+  const user = await User.isUserExists(phoneNumber);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
+  }
+  if (user.isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is already deleted');
+  }
+  if (user.status === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
+  }
+
+  const resetCode = generateVerifyCode();
+  await User.findOneAndUpdate(
+    { phoneNumber: phoneNumber },
+    {
+      resetCode: resetCode,
+      isResetVerified: false,
+      codeExpireIn: new Date(Date.now() + 5 * 60000),
+    },
+  );
+  const smsMessage = `Your reset password code is: ${resetCode}`;
+  await sendSMS(phoneNumber, smsMessage);
+  return null;
+};
+
 const authServices = {
   loginUserIntoDB,
   changePasswordIntoDB,
@@ -278,6 +305,7 @@ const authServices = {
   forgetPassword,
   resetPassword,
   verifyResetOtp,
+  resendResetCode,
 };
 
 export default authServices;

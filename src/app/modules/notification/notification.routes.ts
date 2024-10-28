@@ -9,8 +9,8 @@ router.get(
   auth(
     USER_ROLE.superAdmin,
     USER_ROLE.customer,
-    USER_ROLE.rider,
-    USER_ROLE.vendor,
+    USER_ROLE.Client,
+    USER_ROLE.Admin,
   ),
   notificationController.getAllNotification,
 );
@@ -19,8 +19,8 @@ router.patch(
   auth(
     USER_ROLE.superAdmin,
     USER_ROLE.customer,
-    USER_ROLE.rider,
-    USER_ROLE.vendor,
+    USER_ROLE.Client,
+    USER_ROLE.Admin,
   ),
   notificationController.seeNotification,
 );

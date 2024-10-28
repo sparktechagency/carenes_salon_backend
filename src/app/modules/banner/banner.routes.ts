@@ -9,22 +9,22 @@ const router = express.Router();
 router.post(
   '/create-shop-banner',
   uploadFile(),
-  auth(USER_ROLE.vendor),
+  auth(USER_ROLE.Admin),
   bannerController.createShopBanner,
 );
 router.get(
   '/my-shop-banners',
-  auth(USER_ROLE.vendor),
+  auth(USER_ROLE.Admin),
   bannerController.getMyShopBanner,
 );
 router.delete(
   '/delete-shop-banner/:id',
-  auth(USER_ROLE.vendor),
+  auth(USER_ROLE.Admin),
   bannerController.deleteMyShopBanner,
 );
 router.patch(
   '/update-shop-banner/:id',
-  auth(USER_ROLE.vendor),
+  auth(USER_ROLE.Admin),
   uploadFile(),
   bannerController.updateShopBanner,
 );

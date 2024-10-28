@@ -11,8 +11,8 @@ const getAminDashboardMetaData = catchAsync(async (req, res) => {
     data: result,
   });
 });
-const getVendorDashboardMetaData = catchAsync(async (req, res) => {
-  const result = await metaServices.getVendorDashboardMetaData(
+const getAdminDashboardMetaData = catchAsync(async (req, res) => {
+  const result = await metaServices.getAdminDashboardMetaData(
     req?.user?.profileId,
   );
   sendResponse(res, {
@@ -62,7 +62,7 @@ const getAreaChartDataForSales = catchAsync(async (req, res) => {
 
 const metaController = {
   getAminDashboardMetaData,
-  getVendorDashboardMetaData,
+  getAdminDashboardMetaData,
   getShopChartData,
   getAreaChartDataForIncome,
   getAreaChartDataForSales,

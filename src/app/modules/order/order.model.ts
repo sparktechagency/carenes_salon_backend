@@ -24,7 +24,7 @@ const OrderSchema = new Schema<IOrder>(
       type: Schema.Types.ObjectId,
 
       required: true,
-      ref: 'Vendor',
+      ref: 'Admin',
     },
     shopName: {
       type: String,
@@ -69,10 +69,10 @@ const OrderSchema = new Schema<IOrder>(
       type: Number,
       required: true,
     },
-    rider: {
+    Client: {
       type: Schema.Types.ObjectId,
       default: null,
-      ref: 'Rider',
+      ref: 'Client',
     },
     deliveryFee: {
       type: Number,

@@ -33,7 +33,11 @@ const aboutUsSchema = new mongoose.Schema(
 //! Terms Conditions
 const termsAndConditionsSchema = new mongoose.Schema(
   {
-    description: {
+    descriptionForCustomerApp: {
+      type: String,
+      required: true,
+    },
+    descriptionForClientApp: {
       type: String,
       required: true,
     },

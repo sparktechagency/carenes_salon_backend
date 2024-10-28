@@ -20,12 +20,12 @@ router.get(
 );
 router.get(
   '/my-orders',
-  auth(USER_ROLE.customer, USER_ROLE.rider, USER_ROLE.vendor),
+  auth(USER_ROLE.customer, USER_ROLE.Client, USER_ROLE.Admin),
   orderController.getMyOrders,
 );
 router.get(
   '/nearby-orders',
-  auth(USER_ROLE.rider),
+  auth(USER_ROLE.Client),
   validateRequest(orderValidations.getNearbyByOrderValidationSchema),
   orderController.getNearbyOrders,
 );
@@ -33,8 +33,8 @@ router.patch(
   '/update-order-status/:id',
   auth(
     USER_ROLE.customer,
-    USER_ROLE.rider,
-    USER_ROLE.vendor,
+    USER_ROLE.Client,
+    USER_ROLE.Admin,
     USER_ROLE.superAdmin,
   ),
   orderController.updateOrderStatus,

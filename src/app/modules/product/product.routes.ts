@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post(
   '/create-product',
-  auth(USER_ROLE.vendor),
+  auth(USER_ROLE.admin),
   uploadFile(),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
@@ -24,9 +24,9 @@ router.get(
   '/all-products',
   auth(
     USER_ROLE.customer,
-    USER_ROLE.rider,
+    USER_ROLE.client,
     USER_ROLE.superAdmin,
-    USER_ROLE.vendor,
+    USER_ROLE.admin,
   ),
   productController.getAllProduct,
 );
@@ -39,15 +39,15 @@ router.get(
   '/single-product/:id',
   auth(
     USER_ROLE.customer,
-    USER_ROLE.rider,
+    USER_ROLE.client,
     USER_ROLE.superAdmin,
-    USER_ROLE.vendor,
+    USER_ROLE.admin,
   ),
   productController.getSingleProduct,
 );
 router.patch(
   '/update-product/:id',
-  auth(USER_ROLE.vendor),
+  auth(USER_ROLE.admin),
   uploadFile(),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
@@ -58,17 +58,17 @@ router.patch(
 );
 router.delete(
   '/delete-product/:id',
-  auth(USER_ROLE.vendor),
+  auth(USER_ROLE.admin),
   productController.deleteProduct,
 );
 router.patch(
   '/change-product-status/:id',
-  auth(USER_ROLE.vendor),
+  auth(USER_ROLE.admin),
   productController.changeProductStatus,
 );
 router.get(
   '/my-products',
-  auth(USER_ROLE.vendor),
+  auth(USER_ROLE.admin),
   productController.getMyProducts,
 );
 export const productRoutes = router;

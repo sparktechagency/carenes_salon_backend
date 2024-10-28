@@ -10,7 +10,7 @@ export interface TUser {
   phoneNumber: string;
   password: string;
   passwordChangedAt?: Date;
-  role: 'customer' | 'rider' | 'vendor' | 'superAdmin';
+  role: 'customer' | 'client' | 'admin' | 'superAdmin';
   status: 'in-progress' | 'blocked';
   verifyCode: number;
   resetCode: number;
@@ -27,7 +27,7 @@ export interface TLoginUser {
 
 export interface UserModel extends Model<TUser> {
   // myStaticMethod(): number;
-  isUserExists(phoneNumber: string): Promise<TUser>;
+  isUserExists(email: string): Promise<TUser>;
   //   isUserDeleted(email: string): Promise<boolean>;
   //   isUserBlocked(email: string): Promise<boolean>;
   isPasswordMatched(

@@ -17,8 +17,8 @@ const registerCustomer = catchAsync(async (req, res) => {
   });
 });
 
-// register rider
-const registerRider = catchAsync(async (req, res) => {
+// register Client
+const registerClient = catchAsync(async (req, res) => {
   // const { files } = req;
   // let drivingLicence;
   // if (files && typeof files === 'object' && 'licence_image' in files) {
@@ -28,27 +28,27 @@ const registerRider = catchAsync(async (req, res) => {
   // }
   // const payload = {
   //   ...req.body,
-  //   rider: {
-  //     ...req.body.rider,
+  //   Client: {
+  //     ...req.body.Client,
   //     drivingLicence,
   //   },
   // };
 
-  const result = await userServices.registerRider(
+  const result = await userServices.registerClient(
     req?.body?.password,
     req?.body?.confirmPassword,
-    req?.body?.rider,
+    req?.body?.Client,
   );
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Rider register successfully',
+    message: 'Client register successfully',
     data: result,
   });
 });
 
-// register vendor
-const registerVendor = catchAsync(async (req, res) => {
+// register Admin
+const registerAdmin = catchAsync(async (req, res) => {
   // const { files } = req;
   // let storeLicence;
   // if (files && typeof files === 'object' && 'licence_image' in files) {
@@ -64,22 +64,21 @@ const registerVendor = catchAsync(async (req, res) => {
   // }
   // const payload = {
   //   ...req.body,
-  //   vendor: {
-  //     ...req.body.vendor,
+  //   Admin: {
+  //     ...req.body.Admin,
   //     storeLicence,
   //     storeImage,
   //   },
   // };
 
-  const result = await userServices.registerVendor(
+  const result = await userServices.registerAdmin(
     req?.body?.password,
-    req?.body?.confirmPassword,
-    req?.body?.vendor,
+    req?.body?.admin,
   );
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Rider register successfully',
+    message: 'Client register successfully',
     data: result,
   });
 });
@@ -121,8 +120,8 @@ const resendVerifyCode = catchAsync(async (req, res) => {
 
 const userController = {
   registerCustomer,
-  registerRider,
-  registerVendor,
+  registerClient,
+  registerAdmin,
   getMyProfile,
   verifyCode,
   resendVerifyCode,

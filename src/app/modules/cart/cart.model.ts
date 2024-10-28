@@ -13,7 +13,7 @@ const CartSchema = new Schema<ICart>(
     shop: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'Vendor',
+      ref: 'Admin',
     },
     items: [
       {

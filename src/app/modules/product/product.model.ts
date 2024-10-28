@@ -7,7 +7,7 @@ const productSchema = new Schema<IProduct>(
     shop: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'Vendor',
+      ref: 'Admin',
     },
     images: {
       type: [String],

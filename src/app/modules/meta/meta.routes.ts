@@ -10,9 +10,9 @@ router.get(
   metaController.getAminDashboardMetaData,
 );
 router.get(
-  '/get-vendor-meta-data',
-  auth(USER_ROLE.vendor),
-  metaController.getVendorDashboardMetaData,
+  '/get-Admin-meta-data',
+  auth(USER_ROLE.Admin),
+  metaController.getAdminDashboardMetaData,
 );
 router.get(
   '/get-shop-chart-data',
@@ -26,7 +26,7 @@ router.get(
 );
 router.get(
   '/get-sales-chart-data',
-  auth(USER_ROLE.vendor),
+  auth(USER_ROLE.Admin),
   metaController.getAreaChartDataForSales,
 );
 

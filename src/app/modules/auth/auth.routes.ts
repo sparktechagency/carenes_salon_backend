@@ -17,8 +17,8 @@ router.post(
   '/change-password',
   auth(
     USER_ROLE.customer,
-    USER_ROLE.rider,
-    USER_ROLE.vendor,
+    USER_ROLE.client,
+    USER_ROLE.admin,
     USER_ROLE.superAdmin,
   ),
   validateRequest(authValidations.changePasswordValidationSchema),
@@ -28,8 +28,8 @@ router.post(
   '/refresh-token',
   auth(
     USER_ROLE.customer,
-    USER_ROLE.rider,
-    USER_ROLE.vendor,
+    USER_ROLE.client,
+    USER_ROLE.admin,
     USER_ROLE.superAdmin,
   ),
   validateRequest(authValidations.refreshTokenValidationSchema),
@@ -40,8 +40,8 @@ router.post(
   '/forget-password',
   // auth(
   //   USER_ROLE.customer,
-  //   USER_ROLE.rider,
-  //   USER_ROLE.vendor,
+  //   USER_ROLE.Client,
+  //   USER_ROLE.Admin,
   //   USER_ROLE.superAdmin,
   // ),
   validateRequest(authValidations.forgetPasswordValidationSchema),
@@ -51,8 +51,8 @@ router.post(
   '/reset-password',
   // auth(
   //   USER_ROLE.customer,
-  //   USER_ROLE.rider,
-  //   USER_ROLE.vendor,
+  //   USER_ROLE.Client,
+  //   USER_ROLE.Admin,
   //   USER_ROLE.superAdmin,
   // ),
   validateRequest(authValidations.resetPasswordValidationSchema),
@@ -62,12 +62,18 @@ router.post(
   '/verify-reset-otp',
   // auth(
   //   USER_ROLE.customer,
-  //   USER_ROLE.rider,
-  //   USER_ROLE.vendor,
+  //   USER_ROLE.Client,
+  //   USER_ROLE.Admin,
   //   USER_ROLE.superAdmin,
   // ),
   validateRequest(authValidations.verifyResetOtpValidationSchema),
   authControllers.verifyResetOtp,
+);
+
+router.post(
+  '/resend-reset-code',
+  validateRequest(authValidations.resendResetCodeValidationSchema),
+  authControllers.resendResetCode,
 );
 
 export const authRoutes = router;

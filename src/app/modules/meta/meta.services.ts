@@ -1,6 +1,6 @@
 import { ENUM_ORDER_STATUS, ENUM_SHOP_TYPE } from '../../utilities/enum';
+import Client from '../client/client.model';
 import Order from '../order/order.model';
-import Vendor from '../vendor/vendor.model';
 
 const getAdminDashboardMetaDataFromDB = async () => {
   //   const income = await Transaction.aggregate([
@@ -16,11 +16,11 @@ const getAdminDashboardMetaDataFromDB = async () => {
   //   ]);
   //   const totalIncome = income?.length > 0 ? income[0].totalIncome : 0;
 
-  const totalGrocery = await Vendor.countDocuments({
+  const totalGrocery = await Client.countDocuments({
     shopType: ENUM_SHOP_TYPE.GROCERY,
     status: 'activate',
   });
-  const totalRestaurant = await Vendor.countDocuments({
+  const totalRestaurant = await Client.countDocuments({
     shopType: ENUM_SHOP_TYPE.RESTAURANT,
     status: 'activate',
   });
@@ -36,7 +36,7 @@ const getAdminDashboardMetaDataFromDB = async () => {
     totalCompletedOrder,
   };
 };
-const getVendorDashboardMetaData = async (profileId: string) => {
+const getAdminDashboardMetaData = async (profileId: string) => {
   //   const income = await Transaction.aggregate([
   //     {
   //       $match: { paymentStatus: ENUM_PAYMENT_STATUS.PAID },
@@ -73,7 +73,7 @@ const getShopChartDataFromDB = async (year: number) => {
   const prevEndDate = new Date(`${year}-01-01T00:00:00.000Z`);
 
   // Aggregation for Restaurant and Grocery per month for the current year
-  const shopData = await Vendor.aggregate([
+  const shopData = await Client.aggregate([
     {
       $match: {
         createdAt: {
@@ -137,7 +137,7 @@ const getShopChartDataFromDB = async (year: number) => {
   const todayStart = new Date(today.setHours(0, 0, 0, 0));
   const yesterdayStart = new Date(today.setDate(today.getDate() - 1));
 
-  const todayVendorsData = await Vendor.aggregate([
+  const todayAdminsData = await Client.aggregate([
     {
       $match: {
         createdAt: {
@@ -149,12 +149,12 @@ const getShopChartDataFromDB = async (year: number) => {
     {
       $group: {
         _id: null,
-        totalVendors: { $sum: 1 },
+        totalAdmins: { $sum: 1 },
       },
     },
   ]);
 
-  const yesterdayVendorsData = await Vendor.aggregate([
+  const yesterdayAdminsData = await Client.aggregate([
     {
       $match: {
         createdAt: {
@@ -166,27 +166,25 @@ const getShopChartDataFromDB = async (year: number) => {
     {
       $group: {
         _id: null,
-        totalVendors: { $sum: 1 },
+        totalAdmins: { $sum: 1 },
       },
     },
   ]);
 
-  const todayVendors = todayVendorsData[0]
-    ? todayVendorsData[0].totalVendors
-    : 0;
-  const yesterdayVendors = yesterdayVendorsData[0]
-    ? yesterdayVendorsData[0].totalVendors
+  const todayAdmins = todayAdminsData[0] ? todayAdminsData[0].totalAdmins : 0;
+  const yesterdayAdmins = yesterdayAdminsData[0]
+    ? yesterdayAdminsData[0].totalAdmins
     : 0;
 
   const dailyGrowth =
-    yesterdayVendors > 0
-      ? ((todayVendors - yesterdayVendors) / yesterdayVendors) * 100
-      : todayVendors > 0
+    yesterdayAdmins > 0
+      ? ((todayAdmins - yesterdayAdmins) / yesterdayAdmins) * 100
+      : todayAdmins > 0
         ? 100
         : 0;
 
   // Yearly Aggregation (combined for both shop types)
-  const prevYearData = await Vendor.aggregate([
+  const prevYearData = await Client.aggregate([
     {
       $match: {
         createdAt: {
@@ -198,12 +196,12 @@ const getShopChartDataFromDB = async (year: number) => {
     {
       $group: {
         _id: null,
-        totalVendors: { $sum: 1 },
+        totalAdmins: { $sum: 1 },
       },
     },
   ]);
 
-  const currentYearData = await Vendor.aggregate([
+  const currentYearData = await Client.aggregate([
     {
       $match: {
         createdAt: {
@@ -215,20 +213,20 @@ const getShopChartDataFromDB = async (year: number) => {
     {
       $group: {
         _id: null,
-        totalVendors: { $sum: 1 },
+        totalAdmins: { $sum: 1 },
       },
     },
   ]);
 
-  const prevYearVendors = prevYearData[0] ? prevYearData[0].totalVendors : 0;
-  const currentYearVendors = currentYearData[0]
-    ? currentYearData[0].totalVendors
+  const prevYearAdmins = prevYearData[0] ? prevYearData[0].totalAdmins : 0;
+  const currentYearAdmins = currentYearData[0]
+    ? currentYearData[0].totalAdmins
     : 0;
 
   const yearlyGrowth =
-    prevYearVendors > 0
-      ? ((currentYearVendors - prevYearVendors) / prevYearVendors) * 100
-      : currentYearVendors > 0
+    prevYearAdmins > 0
+      ? ((currentYearAdmins - prevYearAdmins) / prevYearAdmins) * 100
+      : currentYearAdmins > 0
         ? 100
         : 0;
 
@@ -399,7 +397,7 @@ const getAreaChartDataForIncomeFromDB = async (year: number) => {
   };
 };
 const getAreaChartDataForSalesFromDB = async (
-  vendorId: string,
+  AdminId: string,
   year: number,
 ) => {
   // Create date objects for the start and end of the year
@@ -414,7 +412,7 @@ const getAreaChartDataForSalesFromDB = async (
           $gte: startDate,
           $lt: endDate,
         },
-        shop: vendorId,
+        shop: AdminId,
       },
     },
     {
@@ -452,7 +450,7 @@ const getAreaChartDataForSalesFromDB = async (
           $gte: new Date(`${year - 1}-01-01T00:00:00.000Z`),
           $lt: new Date(`${year}-01-01T00:00:00.000Z`),
         },
-        shop: vendorId,
+        shop: AdminId,
       },
     },
     {
@@ -507,7 +505,7 @@ const getAreaChartDataForSalesFromDB = async (
           $gte: yesterdayStart,
           $lt: new Date(yesterdayStart.setHours(24)), // Next day at midnight
         },
-        shop: vendorId,
+        shop: AdminId,
       },
     },
     {
@@ -525,7 +523,7 @@ const getAreaChartDataForSalesFromDB = async (
           $gte: todayStart,
           $lt: new Date(todayStart.setHours(24)), // Next day at midnight
         },
-        shop: vendorId,
+        shop: AdminId,
       },
     },
     {
@@ -559,7 +557,7 @@ const getAreaChartDataForSalesFromDB = async (
 
 const metaServices = {
   getAdminDashboardMetaDataFromDB,
-  getVendorDashboardMetaData,
+  getAdminDashboardMetaData,
   getShopChartDataFromDB,
   getAreaChartDataForIncomeFromDB,
   getAreaChartDataForSalesFromDB,

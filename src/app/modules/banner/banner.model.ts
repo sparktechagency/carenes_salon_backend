@@ -5,7 +5,7 @@ const shopBannerSchema = new Schema<IShopBanner>({
   shop: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'Vendor',
+    ref: 'Admin',
   },
   image: {
     type: String,

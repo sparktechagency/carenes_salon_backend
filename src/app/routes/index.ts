@@ -2,8 +2,6 @@ import { Router } from 'express';
 import { userRoutes } from '../modules/user/user.routes';
 import { authRoutes } from '../modules/auth/auth.routes';
 import { customerRoutes } from '../modules/customer/customer.routes';
-import { vendorRoutes } from '../modules/vendor/vendor.routes';
-import { riderRoutes } from '../modules/rider/rider.routes';
 import { productRoutes } from '../modules/product/product.routes';
 import { categoryRoutes } from '../modules/category/category.routes';
 import { bannerRoutes } from '../modules/banner/banner.routes';
@@ -15,6 +13,9 @@ import { cartRoutes } from '../modules/cart/cart.routes';
 import { orderRoutes } from '../modules/order/order.routes';
 import { metaRoutes } from '../modules/meta/meta.routes';
 import { paymentRoutes } from '../modules/payment/payment.routes';
+import { AdminRoutes } from '../modules/admin/admin.routes';
+import { clientRoutes } from '../modules/client/client.routes';
+import { shopCategoryRoutes } from '../modules/shopCategory/shopCategory.routes';
 
 const router = Router();
 
@@ -32,12 +33,12 @@ const moduleRoutes = [
     router: customerRoutes,
   },
   {
-    path: '/vendor',
-    router: vendorRoutes,
+    path: '/admin',
+    router: AdminRoutes,
   },
   {
-    path: '/rider',
-    router: riderRoutes,
+    path: '/client',
+    router: clientRoutes,
   },
   {
     path: '/product',
@@ -82,6 +83,10 @@ const moduleRoutes = [
   {
     path: '/payment',
     router: paymentRoutes,
+  },
+  {
+    path: '/shop-category',
+    router: shopCategoryRoutes,
   },
 ];
 

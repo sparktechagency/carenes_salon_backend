@@ -7,11 +7,11 @@ import { TUser } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
-import { IRider } from '../rider/rider.interface';
-import Rider from '../rider/rider.model';
-import { IVendor } from '../vendor/vendor.interface';
-import Vendor from '../vendor/vendor.model';
 import sendSMS from '../../helper/sendSms';
+import { IClient } from '../client/client.interface';
+import Client from '../client/client.model';
+import { IAdmin } from '../admin/admin.interface';
+import Admin from '../admin/admin.model';
 
 const generateVerifyCode = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
@@ -69,11 +69,11 @@ const registerCustomer = async (
   }
 };
 
-// register rider
-const registerRider = async (
+// register Client
+const registerClient = async (
   password: string,
   confirmPassword: string,
-  riderData: IRider,
+  clientData: IClient,
 ) => {
   if (password !== confirmPassword) {
     throw new AppError(
@@ -81,8 +81,8 @@ const registerRider = async (
       "Password and confirm password doesn't match",
     );
   }
-  const rider = await User.isUserExists(riderData?.email);
-  if (rider) {
+  const client = await User.isUserExists(clientData?.email);
+  if (client) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
   }
   const session = await mongoose.startSession();
@@ -91,10 +91,10 @@ const registerRider = async (
   try {
     const verifyCode = generateVerifyCode();
     const userData: Partial<TUser> = {
-      email: riderData?.email,
-      phoneNumber: riderData?.phoneNumber,
+      email: clientData?.email,
+      phoneNumber: clientData?.phoneNumber,
       password: password,
-      role: USER_ROLE.rider,
+      role: USER_ROLE.client,
       isActive: false,
       verifyCode,
       codeExpireIn: new Date(Date.now() + 5 * 60000),
@@ -104,17 +104,17 @@ const registerRider = async (
     const user = await User.create([userData], { session });
 
     const smsMessage = `Your verification code is: ${verifyCode}`;
-    await sendSMS(riderData?.phoneNumber, smsMessage);
-    const riderPayload = {
-      ...riderData,
+    await sendSMS(clientData?.phoneNumber, smsMessage);
+    const ClientPayload = {
+      ...clientData,
       user: user[0]._id,
     };
-    const rider = await Rider.create([riderPayload], { session });
+    const client = await Client.create([ClientPayload], { session });
 
     await session.commitTransaction();
     session.endSession();
 
-    return rider[0];
+    return client[0];
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -122,51 +122,37 @@ const registerRider = async (
   }
 };
 
-// register vendor
-const registerVendor = async (
-  password: string,
-  confirmPassword: string,
-  vendorData: IVendor,
-) => {
-  if (password !== confirmPassword) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "Password and confirm password doesn't match",
-    );
-  }
-  const rider = await User.isUserExists(vendorData?.email);
-  if (rider) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
+// register Admin
+const registerAdmin = async (password: string, adminData: IAdmin) => {
+  const admin = await User.isUserExists(adminData?.email);
+  if (admin) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'This admin already exists');
   }
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const verifyCode = generateVerifyCode();
     const userData: Partial<TUser> = {
-      email: vendorData?.email,
-      phoneNumber: vendorData?.phoneNumber,
+      email: adminData?.email,
+      phoneNumber: adminData?.phoneNumber,
       password: password,
-      role: USER_ROLE.vendor,
-      isActive: false,
-      verifyCode,
-      codeExpireIn: new Date(Date.now() + 5 * 60000),
+      role: USER_ROLE.admin,
+      isActive: true,
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
-    const smsMessage = `Your verification code is: ${verifyCode}`;
-    await sendSMS(vendorData?.phoneNumber, smsMessage);
-    const vendorPayload = {
-      ...vendorData,
+
+    const adminPayload = {
+      ...adminData,
       user: user[0]._id,
     };
-    const vendor = await Vendor.create([vendorPayload], { session });
+    const admin = await Admin.create([adminPayload], { session });
 
     await session.commitTransaction();
     session.endSession();
 
-    return vendor[0];
+    return admin[0];
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -179,11 +165,11 @@ const getMyProfile = async (phoneNumber: string, role: string) => {
   if (role === USER_ROLE.customer) {
     result = await Customer.findOne({ phoneNumber });
   }
-  if (role === USER_ROLE.rider) {
-    result = await Rider.findOne({ phoneNumber });
+  if (role === USER_ROLE.client) {
+    result = await Client.findOne({ phoneNumber });
   }
-  if (role === USER_ROLE.vendor) {
-    result = await Vendor.findOne({ phoneNumber });
+  if (role === USER_ROLE.admin) {
+    result = await Admin.findOne({ phoneNumber });
   }
   return result;
 };
@@ -215,7 +201,7 @@ const resendVerifyCode = async (phoneNumber: string) => {
   const verifyCode = generateVerifyCode();
   const updateUser = await User.findOneAndUpdate(
     { phoneNumber: phoneNumber },
-    { verifyCode: verifyCode },
+    { verifyCode: verifyCode, codeExpireIn: new Date(Date.now() + 5 * 60000) },
   );
   const smsMessage = `Your verification code is: ${updateUser?.verifyCode}`;
   await sendSMS(user?.phoneNumber, smsMessage);
@@ -223,8 +209,8 @@ const resendVerifyCode = async (phoneNumber: string) => {
 
 const userServices = {
   registerCustomer,
-  registerRider,
-  registerVendor,
+  registerClient,
+  registerAdmin,
   getMyProfile,
   verifyCode,
   resendVerifyCode,

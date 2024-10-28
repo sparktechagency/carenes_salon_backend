@@ -75,7 +75,7 @@ export const removeCartItem = async (customerId: string, productId: string) => {
 const viewCart = async (costumerId: string) => {
   const cart = await Cart.findOne({ customer: costumerId }).populate(
     'items.product',
-    'name quantity price',
+    'name quantity price images',
   );
 
   if (!cart) {
@@ -109,7 +109,7 @@ const increaseCartItemQuantity = async (
   return cart;
 };
 
-// decrease quantity
+// decrease quantity---------------
 
 export const decreaseCartItemQuantity = async (
   customerId: string,

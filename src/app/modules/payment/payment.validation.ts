@@ -14,7 +14,7 @@ const createOrderStripPaymentValidationSchema = z.object({
     //   .min(1, 'At least one item is required'),
     // totalQuantity: z.number().min(1, 'Total quantity must be at least 1'),
     // totalPrice: z.number().min(0, 'Total price must be at least 0'),
-    rider: z.string().optional().nullable(),
+    Client: z.string().optional().nullable(),
   }),
 });
 

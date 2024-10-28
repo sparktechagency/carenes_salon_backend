@@ -1,0 +1,4 @@
+Sun Oct 27 2024 17:3 3 [Food Delivery] error: Unhandled Rejection: User validation failed: phoneNumber: Path `phoneNumber` is required.
+Sun Oct 27 2024 17:3 6 [Food Delivery] error: Unhandled Rejection: User validation failed: phoneNumber: Path `phoneNumber` is required.
+Sun Oct 27 2024 17:59 6 [Food Delivery] error: Error in main function: bad auth : Authentication failed.
+Sun Oct 27 2024 17:59 6 [Food Delivery] error: Main function error: bad auth : Authentication failed.

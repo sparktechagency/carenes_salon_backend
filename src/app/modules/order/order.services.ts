@@ -6,13 +6,13 @@ import { IOrder } from './order.interface';
 import Order from './order.model';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { USER_ROLE } from '../user/user.constant';
-import Vendor from '../vendor/vendor.model';
-import Rider from '../rider/rider.model';
 import { ENUM_ORDER_STATUS } from '../../utilities/enum';
 import { JwtPayload } from 'jsonwebtoken';
 import Stripe from 'stripe';
 import config from '../../config';
 import Notification from '../notification/notification.model';
+import Admin from '../admin/admin.model';
+import Client from '../client/client.model';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 const createOrder = async (
   customerId: string,
@@ -98,9 +98,9 @@ const getMyOrders = async (user: any, query: Record<string, any>) => {
       meta,
       result,
     };
-  } else if (user.role === USER_ROLE.rider) {
+  } else if (user.role === USER_ROLE.client) {
     const orderQuery = new QueryBuilder(
-      Order.find({ rider: user?.profileId })
+      Order.find({ Client: user?.profileId })
         .populate({
           path: 'items.product',
           select: 'name price images',
@@ -121,7 +121,7 @@ const getMyOrders = async (user: any, query: Record<string, any>) => {
       meta,
       result,
     };
-  } else if (user.role === USER_ROLE.vendor) {
+  } else if (user.role === USER_ROLE.admin) {
     const orderQuery = new QueryBuilder(
       Order.find({ shop: user?.profileId })
         .populate({
@@ -193,7 +193,7 @@ const updateOrderStatus = async (
   }
 
   // make canceled
-  if (status === ENUM_ORDER_STATUS.CANCELED && user.role === USER_ROLE.vendor) {
+  if (status === ENUM_ORDER_STATUS.CANCELED && user.role === USER_ROLE.admin) {
     try {
       const refund = await stripe.refunds.create({
         payment_intent: order.paymentId,
@@ -225,7 +225,7 @@ const updateOrderStatus = async (
   // accept order ------------
   else if (
     status === ENUM_ORDER_STATUS.ACCEPTED &&
-    user.role === USER_ROLE.vendor
+    user.role === USER_ROLE.admin
   ) {
     const updateOrder = await Order.findByIdAndUpdate(orderId, {
       status: ENUM_ORDER_STATUS.ACCEPTED,
@@ -251,7 +251,7 @@ const updateOrderStatus = async (
   // delivered order
   else if (
     status === ENUM_ORDER_STATUS.DELIVERED &&
-    user.role === USER_ROLE.rider
+    user.role === USER_ROLE.client
   ) {
     const updateOrder = await Order.findByIdAndUpdate(orderId, {
       status: ENUM_ORDER_STATUS.DELIVERED,
@@ -271,13 +271,13 @@ const updateOrderStatus = async (
 //     { _id: id, customer: customerId },
 //     { status: ENUM_ORDER_STATUS.COMPLETED },
 //   );
-//   // update vendor wallet
-//   //!TODO: wallet for vendor need change------------
-//   await Vendor.findByIdAndUpdate(order.shop, {
+//   // update Admin wallet
+//   //!TODO: wallet for Admin need change------------
+//   await Admin.findByIdAndUpdate(order.shop, {
 //     $inc: { walletAmount: order.subTotal },
 //   });
-//   // update rider wallet
-//   await Rider.findByIdAndUpdate(order.rider, {
+//   // update Client wallet
+//   await Client.findByIdAndUpdate(order.Client, {
 //     $inc: { walletAmount: order.deliveryFee },
 //   });
 // };
@@ -304,9 +304,9 @@ const completeOrder = async (id: string, customerId: string) => {
       { session },
     );
 
-    // update vendor wallet
-    //!TODO: wallet for vendor need change------------
-    await Vendor.findByIdAndUpdate(
+    // update Admin wallet
+    //!TODO: wallet for Admin need change------------
+    await Admin.findByIdAndUpdate(
       order.shop,
       {
         $inc: { walletAmount: order.subTotal },
@@ -314,9 +314,9 @@ const completeOrder = async (id: string, customerId: string) => {
       { session },
     );
 
-    // update rider wallet
-    await Rider.findByIdAndUpdate(
-      order.rider,
+    // update Client wallet
+    await Client.findByIdAndUpdate(
+      order.Client,
       {
         $inc: { walletAmount: order.deliveryFee },
       },

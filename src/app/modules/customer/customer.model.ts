@@ -32,6 +32,7 @@ const CustomerSchema = new Schema<ICustomer>(
     phoneNumber: {
       type: String,
       required: true,
+      unique: true,
     },
     location: {
       type: LocationSchema,

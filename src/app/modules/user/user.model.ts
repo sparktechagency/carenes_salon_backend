@@ -16,18 +16,19 @@ const userSchema = new Schema<TUser>(
     },
     phoneNumber: {
       type: String,
-      required: true,
+      default: null,
     },
     password: {
       type: String,
       required: true,
     },
+
     passwordChangedAt: {
       type: Date,
     },
     role: {
       type: String,
-      enum: ['customer', 'rider', 'vendor', 'superAdmin'],
+      enum: ['customer', 'client', 'admin', 'superAdmin'],
       required: true,
     },
     status: {
@@ -81,8 +82,8 @@ userSchema.post('save', function (doc, next) {
   next();
 });
 // statics method for check is user exists
-userSchema.statics.isUserExists = async function (phoneNumber: string) {
-  return await User.findOne({ phoneNumber }).select('+password');
+userSchema.statics.isUserExists = async function (email: string) {
+  return await User.findOne({ email }).select('+password');
 };
 // statics method for check password match  ----
 userSchema.statics.isPasswordMatched = async function (
