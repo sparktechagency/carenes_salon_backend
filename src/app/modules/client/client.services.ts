@@ -57,7 +57,6 @@ const updateClientStatus = async (id: string, status: string) => {
 
     await session.commitTransaction();
     session.endSession();
-
     return result;
   } catch (error) {
     await session.abortTransaction();
