@@ -6,8 +6,10 @@ import BusinessHour from '../bussinessHour/businessHour.model';
 const createStaffIntoDB = async (payload: IStaff) => {
   const session = await mongoose.startSession();
   session.startTransaction();
+
   try {
-    const staff = await Staff.create([payload], { session });
+    // Create staff with session
+    const [staff] = await Staff.create([payload], { session });
 
     const defaultBusinessHours = [
       { day: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
@@ -39,12 +41,20 @@ const createStaffIntoDB = async (payload: IStaff) => {
       { day: 'Sunday', openTime: '09:00', closeTime: '18:00', isClosed: true },
     ].map((hour) => ({
       ...hour,
-      entityId: staff[0]._id,
+      entityId: staff._id,
       entityType: 'Staff',
     }));
 
-    await BusinessHour.create(defaultBusinessHours);
+    // Create business hours with session
+    await BusinessHour.create(defaultBusinessHours, { session });
+
+    // Commit the transaction if everything succeeded
+    await session.commitTransaction();
+    session.endSession();
+
+    return staff;
   } catch (error) {
+    // Roll back any changes made in the transaction
     await session.abortTransaction();
     session.endSession();
     throw error;

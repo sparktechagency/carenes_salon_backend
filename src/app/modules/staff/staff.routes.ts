@@ -8,7 +8,7 @@ import auth from '../../middlewares/auth';
 
 const router = express.Router();
 
-router.patch(
+router.post(
   '/create',
   auth(USER_ROLE.client),
   uploadFile(),
