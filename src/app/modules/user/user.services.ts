@@ -13,6 +13,7 @@ import Client from '../client/client.model';
 import { IAdmin } from '../admin/admin.interface';
 import Admin from '../admin/admin.model';
 import BusinessHour from '../bussinessHour/businessHour.model';
+import ShopCategory from '../shopCategory/shopCategory.model';
 
 const generateVerifyCode = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
@@ -113,6 +114,13 @@ const registerCustomer = async (
 //   }
 // };
 const registerClient = async (password: string, clientData: IClient) => {
+  const isCategoryExist = await ShopCategory.findOne({
+    categoryName: clientData.shopCategory,
+  });
+  if (!isCategoryExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop category not found');
+  }
+
   const clientExists = await User.isUserExists(clientData?.email);
   if (clientExists) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
