@@ -20,12 +20,7 @@ router.post(
 );
 
 router.post(
-  '/register-Client',
-  // uploadFile(),
-  // (req: Request, res: Response, next: NextFunction) => {
-  //   req.body = JSON.parse(req.body.data);
-  //   next();
-  // },
+  '/register-client',
   validateRequest(ClientValidations.registerClientValidationSchema),
   userControllers.registerClient,
 );
