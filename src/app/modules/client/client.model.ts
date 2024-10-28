@@ -37,7 +37,7 @@ const clientSchema = new Schema<IClient>({
     required: true,
     index: '2dsphere',
   },
-  profile_image: { type: String, required: true },
+  profile_image: { type: String, default: '' },
   bankName: { type: String, required: true },
   bankAccountName: { type: String, required: true },
   bankAccountNumber: { type: String, required: true },

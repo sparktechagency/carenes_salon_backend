@@ -105,6 +105,8 @@
 //     return nextFiveDays;
 //   };
 
+// get available time slots-------------------------------------
+
 //   const getAvailableTimeSlots = async (staffId, date) => {
 //     const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
 //     const staffHours = await BusinessHour.findOne({ entityId: staffId, entityType: 'Staff', day });

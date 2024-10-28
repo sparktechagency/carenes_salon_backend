@@ -12,6 +12,7 @@ import { IClient } from '../client/client.interface';
 import Client from '../client/client.model';
 import { IAdmin } from '../admin/admin.interface';
 import Admin from '../admin/admin.model';
+import BusinessHour from '../bussinessHour/businessHour.model';
 
 const generateVerifyCode = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
@@ -70,11 +71,53 @@ const registerCustomer = async (
 };
 
 // register Client
+// const registerClient = async (password: string, clientData: IClient) => {
+//   const client = await User.isUserExists(clientData?.email);
+//   if (client) {
+//     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
+//   }
+//   const session = await mongoose.startSession();
+//   session.startTransaction();
+
+//   try {
+//     const verifyCode = generateVerifyCode();
+//     const userData: Partial<TUser> = {
+//       email: clientData?.email,
+//       phoneNumber: clientData?.phoneNumber,
+//       password: password,
+//       role: USER_ROLE.client,
+//       isActive: false,
+//       verifyCode,
+//       codeExpireIn: new Date(Date.now() + 5 * 60000),
+//     };
+
+//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//     const user = await User.create([userData], { session });
+
+//     const smsMessage = `Your verification code is: ${verifyCode}`;
+//     await sendSMS(clientData?.phoneNumber, smsMessage);
+//     const clientPayload = {
+//       ...clientData,
+//       user: user[0]._id,
+//     };
+//     const client = await Client.create([clientPayload], { session });
+
+//     await session.commitTransaction();
+//     session.endSession();
+
+//     return client[0];
+//   } catch (error) {
+//     await session.abortTransaction();
+//     session.endSession();
+//     throw error;
+//   }
+// };
 const registerClient = async (password: string, clientData: IClient) => {
-  const client = await User.isUserExists(clientData?.email);
-  if (client) {
+  const clientExists = await User.isUserExists(clientData?.email);
+  if (clientExists) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
   }
+
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -90,16 +133,54 @@ const registerClient = async (password: string, clientData: IClient) => {
       codeExpireIn: new Date(Date.now() + 5 * 60000),
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
 
-    const smsMessage = `Your verification code is: ${verifyCode}`;
-    await sendSMS(clientData?.phoneNumber, smsMessage);
+    // const smsMessage = `Your verification code is: ${verifyCode}`;
+    // await sendSMS(clientData?.phoneNumber, smsMessage);
+
     const clientPayload = {
       ...clientData,
       user: user[0]._id,
     };
     const client = await Client.create([clientPayload], { session });
+
+    // Define default business hours (Sunday closed, other days 9:00 AM - 6:00 PM)
+    const defaultBusinessHours = [
+      { day: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      {
+        day: 'Tuesday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      {
+        day: 'Wednesday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      {
+        day: 'Thursday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      { day: 'Friday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      {
+        day: 'Saturday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      { day: 'Sunday', openTime: '09:00', closeTime: '18:00', isClosed: true },
+    ].map((hour) => ({
+      ...hour,
+      entityId: client[0]._id, // Associate business hours with the created client
+      entityType: 'Shop', // Assuming client is a Shop entity
+    }));
+
+    // Create default business hours for the client
+    await BusinessHour.create(defaultBusinessHours, { session });
 
     await session.commitTransaction();
     session.endSession();

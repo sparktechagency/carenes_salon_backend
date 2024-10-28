@@ -36,7 +36,7 @@ const registerClient = catchAsync(async (req, res) => {
 
   const result = await userServices.registerClient(
     req?.body?.password,
-    req?.body?.Client,
+    req?.body?.client,
   );
   sendResponse(res, {
     statusCode: httpStatus.CREATED,

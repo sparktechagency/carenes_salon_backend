@@ -1,4 +1,3 @@
-import { Types } from 'mongoose';
 import { z } from 'zod';
 const locationSchema = z
   .object({
@@ -15,41 +14,28 @@ const registerClientValidationSchema = z.object({
     //   .string({ required_error: 'Confirm password is required' })
     //   .min(6, { message: 'Password must be 6 character' }),
     client: z.object({
-      user: z.instanceof(Types.ObjectId),
-      name: z
-        .string({
-          required_error: 'Name is required',
-          invalid_type_error: 'Name must be a string',
-        })
-        .nonempty(),
+      name: z.string({
+        required_error: 'Name is required',
+        invalid_type_error: 'Name must be a string',
+      }),
       email: z
         .string({ required_error: 'Email is required' })
         .email({ message: 'Please provide a valid email' }),
-      shopCategory: z
-        .string({ required_error: 'Shop category is required' })
-        .nonempty(),
+      shopCategory: z.string({ required_error: 'Shop category is required' }),
       shopGenderCategory: z.enum(['male', 'female']),
       shopImages: z.array(z.string()).optional(),
-      phoneNumber: z
-        .string({ required_error: 'Phone number is required' })
-        .nonempty(),
+      phoneNumber: z.string({ required_error: 'Phone number is required' }),
       location: locationSchema,
-      profile_image: z.string().nonempty(),
-      bankName: z
-        .string({ required_error: 'Bank name is required' })
-        .nonempty(),
-      bankAccountName: z
-        .string({ required_error: 'Bank account name is required' })
-        .nonempty(),
-      bankAccountNumber: z
-        .string({ required_error: 'Bank account number is required' })
-        .nonempty(),
-      branchCode: z
-        .string({ required_error: 'Branch code is required' })
-        .nonempty(),
-      bankCity: z
-        .string({ required_error: 'Bank city is required' })
-        .nonempty(),
+      profile_image: z.string().optional(),
+      bankName: z.string({ required_error: 'Bank name is required' }),
+      bankAccountName: z.string({
+        required_error: 'Bank account name is required',
+      }),
+      bankAccountNumber: z.string({
+        required_error: 'Bank account number is required',
+      }),
+      branchCode: z.string({ required_error: 'Branch code is required' }),
+      bankCity: z.string({ required_error: 'Bank city is required' }),
     }),
   }),
 });
