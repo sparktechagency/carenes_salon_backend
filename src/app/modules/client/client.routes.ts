@@ -23,6 +23,11 @@ router.patch(
   validateRequest(ClientValidations.updateClientProfileValidationSchema),
   ClientController.updateClientProfile,
 );
+router.patch(
+  '/update-status/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  ClientController.updateClientStatus,
+);
 
 router.get(
   '/all-riders',

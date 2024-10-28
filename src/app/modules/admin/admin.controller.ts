@@ -39,7 +39,7 @@ const updateAdminStatus = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Shop status updated successfully',
+    message: 'Admin status updated successfully',
     data: result,
   });
 });

@@ -34,9 +34,23 @@ const getAllClient = catchAsync(async (req, res) => {
   });
 });
 
+const updateClientStatus = catchAsync(async (req, res) => {
+  const result = await ClientServices.updateClientStatus(
+    req?.params?.id,
+    req?.body?.status,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Client status updated successfully',
+    data: result,
+  });
+});
+
 const ClientController = {
   updateClientProfile,
   getAllClient,
+  updateClientStatus,
 };
 
 export default ClientController;
