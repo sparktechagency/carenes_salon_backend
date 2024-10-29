@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
 import { IStaff } from './staff.interface';
 import Staff from './staff.model';
 import BusinessHour from '../bussinessHour/businessHour.model';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const createStaffIntoDB = async (profileId:string,payload: IStaff) => {
   const session = await mongoose.startSession();
@@ -83,10 +85,29 @@ const deleteStaffFromDB = async (id: string) => {
   return null;
 };
 
+// get all staff 
+const getAllStaff = async(query:Record<string,any>)=>{
+  const staffQuery = new QueryBuilder(Staff.find(), query)
+  .search(['name',"email"])
+  .filter()
+  .sort()
+  .paginate()
+  .fields();
+const meta = await staffQuery.countTotal();
+const result = await staffQuery.modelQuery;
+
+return {
+  meta,
+  result,
+};
+  return result;
+}
+
 const StaffServices = {
   createStaffIntoDB,
   updateStaffIntoDB,
   deleteStaffFromDB,
+  getAllStaff
 };
 
 export default StaffServices;

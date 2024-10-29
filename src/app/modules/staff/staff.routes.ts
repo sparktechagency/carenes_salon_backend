@@ -21,6 +21,7 @@ router.post(
   validateRequest(staffValidations.createStaffValidationSchema),
   StaffController.createStaff,
 );
+router.get("/all-staff",auth(USER_ROLE.admin,USER_ROLE.superAdmin),StaffController.getAllStaff);
 router.patch(
   '/update/:id',
   auth(USER_ROLE.client),
