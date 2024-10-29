@@ -17,6 +17,7 @@ import { AdminRoutes } from '../modules/admin/admin.routes';
 import { clientRoutes } from '../modules/client/client.routes';
 import { shopCategoryRoutes } from '../modules/shopCategory/shopCategory.routes';
 import { staffRoutes } from '../modules/staff/staff.routes';
+import { serviceRoutes } from '../modules/service/service.routes';
 
 const router = Router();
 
@@ -92,6 +93,10 @@ const moduleRoutes = [
   {
     path: '/shop-category',
     router: shopCategoryRoutes,
+  },
+  {
+    path: '/service',
+    router: serviceRoutes,
   },
 ];
 
