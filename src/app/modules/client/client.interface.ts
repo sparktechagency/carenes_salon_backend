@@ -24,5 +24,7 @@ export interface IClient {
   branchCode: string;
   bankCity: string;
   status: 'active' | 'inactive';
+  totalRating:number;
+  totalRatingCount:number;
   isDeleted: boolean;
 }

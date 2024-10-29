@@ -62,6 +62,14 @@ const clientSchema = new Schema<IClient>({
     enum: ['active', 'inactive'],
     default: 'inactive',
   },
+  totalRating: {
+    type: Number,
+    default: 0,
+  },
+  totalRatingCount: {
+    type: Number,
+    default: 0,
+  },
   isDeleted: { type: Boolean, default: false },
 });
 

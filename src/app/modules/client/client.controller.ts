@@ -47,10 +47,25 @@ const updateClientStatus = catchAsync(async (req, res) => {
   });
 });
 
+const getNearbyShop = catchAsync(async (req, res) => {
+  const result = await ClientServices.getNearbyShopWithTime(
+    req?.user?.profileId,
+    req?.body,
+    req.query,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Shop retrieved successfully',
+    data: result,
+  });
+});
+
 const ClientController = {
   updateClientProfile,
   getAllClient,
   updateClientStatus,
+  getNearbyShop
 };
 
 export default ClientController;

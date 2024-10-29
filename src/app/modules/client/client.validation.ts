@@ -96,9 +96,17 @@ const updateClientProfileValidationSchema = z.object({
       .optional(),
   }),
 });
+
+const getNearbyShopValidationSchema = z.object({
+  body: z.object({
+    latitude: z.number({ required_error: 'Latitude is required' }),
+    longitude: z.number({ required_error: 'Longitude is required' }),
+  }),
+});
 const ClientValidations = {
   registerClientValidationSchema,
   updateClientProfileValidationSchema,
+  getNearbyShopValidationSchema
 };
 
 export default ClientValidations;

@@ -7,6 +7,7 @@ import { uploadFile } from '../../helper/fileUploader';
 import { USER_ROLE } from '../user/user.constant';
 import ClientValidations from './client.validation';
 import ClientController from './client.controller';
+import simpleAuth from '../../middlewares/simpleAuth';
 
 const router = Router();
 
@@ -30,9 +31,15 @@ router.patch(
 );
 
 router.get(
-  '/all-riders',
+  '/get-all-client',
   auth(USER_ROLE.superAdmin),
   ClientController.getAllClient,
+);
+router.get(
+  '/get-nearby-shop',
+  simpleAuth,
+  validateRequest(ClientValidations.getNearbyShopValidationSchema),
+  ClientController.getNearbyShop,
 );
 
 export const clientRoutes = router;
