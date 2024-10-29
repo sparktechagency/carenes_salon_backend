@@ -21,5 +21,22 @@ router.post(
   validateRequest(staffValidations.createStaffValidationSchema),
   StaffController.createStaff,
 );
+router.patch(
+  '/update/:id',
+  auth(USER_ROLE.client),
+  uploadFile(),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
+    next();
+  },
+  validateRequest(staffValidations.updateStaffValidationSchema),
+  StaffController.updateStaff,
+);
+
+router.delete("/delete/:id",auth(USER_ROLE.client),StaffController.deleteStaff);
+
+
 
 export const staffRoutes = router;

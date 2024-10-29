@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import { IStaff } from './staff.interface';
 import Staff from './staff.model';
 import BusinessHour from '../bussinessHour/businessHour.model';
+import AppError from '../../error/appError';
+import httpStatus from 'http-status';
 
 const createStaffIntoDB = async (payload: IStaff) => {
   const session = await mongoose.startSession();
@@ -61,8 +63,30 @@ const createStaffIntoDB = async (payload: IStaff) => {
   }
 };
 
+// update staff
+const updateStaffIntoDB = async (id: string, payload: Partial<IStaff>) => {
+  const staff = await Staff.findById(id);
+  if (!staff) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Staff not found');
+  }
+
+  const result = await Staff.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return result;
+};
+
+const deleteStaffFromDB = async (id: string) => {
+  await Staff.findByIdAndDelete(id);
+  await BusinessHour.deleteMany({ entityId: id, entityType: 'Staff' });
+  return null;
+};
+
 const StaffServices = {
   createStaffIntoDB,
+  updateStaffIntoDB,
+  deleteStaffFromDB,
 };
 
 export default StaffServices;

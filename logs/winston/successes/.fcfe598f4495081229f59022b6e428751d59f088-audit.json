@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\.fcfe598f4495081229f59022b6e428751d59f088-audit.json",
+    "files": [
+        {
+            "date": 1730174816525,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-28-21-success.log",
+            "hash": "4bdd12a42d67bc466e32e69e8b84c70d913887b03014c5fd600df3f6497c2f0d"
+        }
+    ],
+    "hashType": "sha256"
+}
