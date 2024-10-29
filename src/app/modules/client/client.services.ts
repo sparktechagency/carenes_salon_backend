@@ -150,7 +150,7 @@ const getNearbyShopWithTime = async (
   return enrichedResult;
 };
 
-// get single shop 
+// get single shop -----------------------------
 
 
 // const getSingleShop = (id: string) => {
@@ -200,7 +200,7 @@ const getSingleShop = async (id: string) => {
 
   // Check if the shop was found
   if (!shop) {
-    throw new Error('Shop not found'); // Reject if shop is not found
+   throw new AppError(httpStatus.NOT_FOUND,'Shop not found'); 
   }
 
   // Fetch categories related to the shop's ID
