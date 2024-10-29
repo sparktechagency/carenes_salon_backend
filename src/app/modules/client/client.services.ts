@@ -7,6 +7,7 @@ import Client from './client.model';
 import { User } from '../user/user.model';
 import { customerSpeed, maxDistanceForShop } from '../../constant';
 import ShopBookmark from '../shopBookmak/shop.bookmark.model';
+import mongoose from 'mongoose';
 const updateClientProfile = async (
   userId: string,
   payload: Partial<IClient>,
@@ -84,11 +85,11 @@ const getNearbyShopWithTime = async (
   query: Record<string, any>,
 ) => {
   const matchStage: any[] = [
-    ...(query.storeName
+    ...(query.shopName
       ? [
           {
             $match: {
-              storeName: { $regex: query.storeName, $options: 'i' },
+              shopName: { $regex: query.shopName, $options: 'i' },
             },
           },
         ]
@@ -112,19 +113,29 @@ const getNearbyShopWithTime = async (
   ];
 
   // If categoryId is present in the query, perform a lookup
-  if (query.categoryId) {
+  // if (query.shopCategoryId) {
+  //   pipeline.push(
+  //     {
+  //       $lookup: {
+  //         from: 'shopcategories', // Name of the categories collection
+  //         localField: 'shopCategoryId', // Field in Vendor that holds category IDs
+  //         foreignField: '_id', // Field in Categories collection
+  //         as: 'categoryDetails', // Name of the output array field
+  //       },
+  //     },
+  //     {
+  //       $match: {
+  //         'categoryDetails._id': query.shopCategoryId, // Filter by category ID
+  //       },
+  //     },
+  //   );
+  // }
+  if (query.shopCategoryId) {
     pipeline.push(
       {
-        $lookup: {
-          from: 'categories', // Name of the categories collection
-          localField: 'categories', // Field in Vendor that holds category IDs
-          foreignField: '_id', // Field in Categories collection
-          as: 'categoryDetails', // Name of the output array field
-        },
-      },
-      {
         $match: {
-          'categoryDetails._id': query.categoryId, // Filter by category ID
+          // shopCategoryId: query.shopCategoryId,
+          shopCategoryId: new mongoose.Types.ObjectId(query.shopCategoryId)
         },
       },
     );

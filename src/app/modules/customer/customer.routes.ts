@@ -23,5 +23,7 @@ router.patch(
   validateRequest(customerValidations.updateCustomerProfileValidationSchema),
   customerController.updateCustomerProfile,
 );
+router.get("/get-all",customerController.getAllCustomer);
+
 
 export const customerRoutes = router;

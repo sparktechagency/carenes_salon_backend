@@ -5,9 +5,10 @@ import AppError from '../../error/appError';
 import Customer from './customer.model';
 import { ICustomer } from './customer.interface';
 
+//!TODO: need to get total speeding for this customer ----
 const getAllCustomer = async (query: Record<string, any>) => {
   const customerQuery = new QueryBuilder(Customer.find(), query)
-    .search(['name'])
+    .search(['firstName',"lastName","email"])
     .filter()
     .sort()
     .paginate()

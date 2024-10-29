@@ -21,7 +21,7 @@ router.patch(
     }
     next();
   },
-  validateRequest(ClientValidations.updateClientProfileValidationSchema),
+  // validateRequest(ClientValidations.updateClientProfileValidationSchema),
   ClientController.updateClientProfile,
 );
 router.patch(
