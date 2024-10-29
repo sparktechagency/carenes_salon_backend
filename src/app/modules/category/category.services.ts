@@ -23,10 +23,7 @@ const updateCategoryIntoDB = async (
 };
 
 const getAllCategories = async () => {
-  const result = await Category.find().populate({
-    path: 'shop',
-    select: 'shopType',
-  });
+  const result = await Category.find();
   return result;
 };
 const getSpecificShopCategories = async (shopId: string) => {

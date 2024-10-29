@@ -4,13 +4,6 @@ import sendResponse from '../../utilities/sendResponse';
 import categoryService from './category.services';
 
 const createCategory = catchAsync(async (req, res) => {
-  const { files } = req;
-
-  // Check if files and store_image exist, and process multiple images
-  if (files && typeof files === 'object' && 'category_image' in files) {
-    req.body.image = files['category_image'][0].path;
-  }
-
   const result = await categoryService.createCategoryIntoDB(
     req?.user?.profileId,
     req?.body,
