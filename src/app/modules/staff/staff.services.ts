@@ -100,6 +100,11 @@ return {
   meta,
   result,
 };
+}
+
+// get my staff 
+const getMyStaff = async(shopId:string)=>{
+  const result = await Staff.find({shop:shopId});
   return result;
 }
 
@@ -107,7 +112,8 @@ const StaffServices = {
   createStaffIntoDB,
   updateStaffIntoDB,
   deleteStaffFromDB,
-  getAllStaff
+  getAllStaff,
+  getMyStaff
 };
 
 export default StaffServices;

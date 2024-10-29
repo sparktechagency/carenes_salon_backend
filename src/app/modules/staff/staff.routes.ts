@@ -22,6 +22,7 @@ router.post(
   StaffController.createStaff,
 );
 router.get("/all-staff",auth(USER_ROLE.admin,USER_ROLE.superAdmin),StaffController.getAllStaff);
+router.get("/my-staff",auth(USER_ROLE.client),StaffController.getMyStaff);
 router.patch(
   '/update/:id',
   auth(USER_ROLE.client),
