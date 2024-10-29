@@ -42,4 +42,6 @@ router.get(
   ClientController.getNearbyShop,
 );
 
+router.get('/single-shop/:id',ClientController.getSingleShop)
+
 export const clientRoutes = router;
