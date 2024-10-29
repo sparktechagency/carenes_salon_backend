@@ -21,15 +21,8 @@ const generateVerifyCode = (): number => {
 
 const registerCustomer = async (
   password: string,
-  confirmPassword: string,
   customerData: ICustomer,
 ) => {
-  if (password !== confirmPassword) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "Password and confirm password doesn't match",
-    );
-  }
   const user = await User.isUserExists(customerData?.phoneNumber);
   if (user) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
@@ -51,8 +44,8 @@ const registerCustomer = async (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
 
-    const smsMessage = `Your verification code is: ${verifyCode}`;
-    await sendSMS(customerData?.phoneNumber, smsMessage);
+    // const smsMessage = `Your verification code is: ${verifyCode}`;
+    // await sendSMS(customerData?.phoneNumber, smsMessage);
 
     const customerPayload = {
       ...customerData,

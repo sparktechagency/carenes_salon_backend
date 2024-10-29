@@ -10,8 +10,11 @@ export interface ICustomer {
   lastName:string;
   email: string;
   phoneNumber: string;
-  location: ILocation;
+  city:string;
+  country:string;
+  gender:"male"|"female";
+  age:number;
+  // location: ILocation;
   profile_image: string;
-  walletAmount: number;
   isDeleted: boolean;
 }

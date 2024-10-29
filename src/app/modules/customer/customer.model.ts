@@ -1,17 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { ICustomer, ILocation } from './customer.interface';
-
-const LocationSchema = new Schema<ILocation>({
-  type: {
-    type: String,
-    enum: ['Point'],
-    required: true,
-  },
-  coordinates: {
-    type: [Number],
-    required: true,
-  },
-});
+import { ICustomer } from './customer.interface';
 
 const CustomerSchema = new Schema<ICustomer>(
   {
@@ -20,13 +8,17 @@ const CustomerSchema = new Schema<ICustomer>(
       required: true,
       ref: 'User',
     },
-    name: {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
       type: String,
       required: true,
     },
     email: {
       type: String,
-      // required: true,
+      required: true,
       unique: true,
     },
     phoneNumber: {
@@ -34,11 +26,28 @@ const CustomerSchema = new Schema<ICustomer>(
       required: true,
       unique: true,
     },
-    location: {
-      type: LocationSchema,
-      default: null,
-      index: '2dsphere',
+    city:{
+      type:String,
+      required:true
     },
+    country:{
+      type:String,
+      required:true
+    },
+    gender: {
+      type: String,
+      enum: ['male', 'female'],
+      required: true,
+    },
+    age:{
+      type:Number
+    },
+
+    // location: {
+    //   type: LocationSchema,
+    //   default: null,
+    //   index: '2dsphere',
+    // },
     profile_image: {
       type: String,
       default: '',
@@ -47,10 +56,7 @@ const CustomerSchema = new Schema<ICustomer>(
       type: Boolean,
       default: false,
     },
-    walletAmount: {
-      type: Number,
-      default: 0,
-    },
+
   },
   {
     timestamps: true,

@@ -6,7 +6,6 @@ import userServices from './user.services';
 const registerCustomer = catchAsync(async (req, res) => {
   const result = await userServices.registerCustomer(
     req?.body?.password,
-    req?.body?.confirmPassword,
     req?.body?.customer,
   );
   sendResponse(res, {
