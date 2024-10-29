@@ -16,6 +16,7 @@ import { paymentRoutes } from '../modules/payment/payment.routes';
 import { AdminRoutes } from '../modules/admin/admin.routes';
 import { clientRoutes } from '../modules/client/client.routes';
 import { shopCategoryRoutes } from '../modules/shopCategory/shopCategory.routes';
+import { staffRoutes } from '../modules/staff/staff.routes';
 
 const router = Router();
 
@@ -39,6 +40,10 @@ const moduleRoutes = [
   {
     path: '/client',
     router: clientRoutes,
+  },
+  {
+    path: '/staff',
+    router: staffRoutes,
   },
   {
     path: '/product',

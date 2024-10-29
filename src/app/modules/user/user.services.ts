@@ -12,6 +12,8 @@ import { IClient } from '../client/client.interface';
 import Client from '../client/client.model';
 import { IAdmin } from '../admin/admin.interface';
 import Admin from '../admin/admin.model';
+import BusinessHour from '../bussinessHour/businessHour.model';
+import ShopCategory from '../shopCategory/shopCategory.model';
 
 const generateVerifyCode = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
@@ -19,15 +21,8 @@ const generateVerifyCode = (): number => {
 
 const registerCustomer = async (
   password: string,
-  confirmPassword: string,
   customerData: ICustomer,
 ) => {
-  if (password !== confirmPassword) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "Password and confirm password doesn't match",
-    );
-  }
   const user = await User.isUserExists(customerData?.phoneNumber);
   if (user) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
@@ -49,8 +44,8 @@ const registerCustomer = async (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
 
-    const smsMessage = `Your verification code is: ${verifyCode}`;
-    await sendSMS(customerData?.phoneNumber, smsMessage);
+    // const smsMessage = `Your verification code is: ${verifyCode}`;
+    // await sendSMS(customerData?.phoneNumber, smsMessage);
 
     const customerPayload = {
       ...customerData,
@@ -69,12 +64,19 @@ const registerCustomer = async (
   }
 };
 
-// register Client
 const registerClient = async (password: string, clientData: IClient) => {
-  const client = await User.isUserExists(clientData?.email);
-  if (client) {
+  const isCategoryExist = await ShopCategory.findOne({
+    categoryName: clientData.shopCategory,
+  });
+  if (!isCategoryExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop category not found');
+  }
+
+  const clientExists = await User.isUserExists(clientData?.email);
+  if (clientExists) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
   }
+
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -90,16 +92,54 @@ const registerClient = async (password: string, clientData: IClient) => {
       codeExpireIn: new Date(Date.now() + 5 * 60000),
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
 
-    const smsMessage = `Your verification code is: ${verifyCode}`;
-    await sendSMS(clientData?.phoneNumber, smsMessage);
+    // const smsMessage = `Your verification code is: ${verifyCode}`;
+    // await sendSMS(clientData?.phoneNumber, smsMessage);
+
     const clientPayload = {
       ...clientData,
       user: user[0]._id,
     };
     const client = await Client.create([clientPayload], { session });
+
+    // Define default business hours (Sunday closed, other days 9:00 AM - 6:00 PM)
+    const defaultBusinessHours = [
+      { day: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      {
+        day: 'Tuesday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      {
+        day: 'Wednesday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      {
+        day: 'Thursday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      { day: 'Friday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      {
+        day: 'Saturday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      { day: 'Sunday', openTime: '09:00', closeTime: '18:00', isClosed: true },
+    ].map((hour) => ({
+      ...hour,
+      entityId: client[0]._id, // Associate business hours with the created client
+      entityType: 'Shop', // Assuming client is a Shop entity
+    }));
+
+    // Create default business hours for the client
+    await BusinessHour.create(defaultBusinessHours, { session });
 
     await session.commitTransaction();
     session.endSession();
@@ -197,6 +237,20 @@ const resendVerifyCode = async (phoneNumber: string) => {
   await sendSMS(user?.phoneNumber, smsMessage);
 };
 
+
+// block , unblock user
+const blockUnblockUser = async(id:string,status:string)=>{
+  const user = await User.findById(id);
+  if(!user){
+    throw new AppError(httpStatus.NOT_FOUND,"User not found");
+  }
+
+  const result = await User.findByIdAndUpdate(id,{status:status},{new:true,runValidators:true});
+
+  return result;
+
+}
+
 const userServices = {
   registerCustomer,
   registerClient,
@@ -204,6 +258,7 @@ const userServices = {
   getMyProfile,
   verifyCode,
   resendVerifyCode,
+  blockUnblockUser
 };
 
 export default userServices;

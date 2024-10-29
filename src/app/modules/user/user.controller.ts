@@ -6,7 +6,6 @@ import userServices from './user.services';
 const registerCustomer = catchAsync(async (req, res) => {
   const result = await userServices.registerCustomer(
     req?.body?.password,
-    req?.body?.confirmPassword,
     req?.body?.customer,
   );
   sendResponse(res, {
@@ -36,7 +35,7 @@ const registerClient = catchAsync(async (req, res) => {
 
   const result = await userServices.registerClient(
     req?.body?.password,
-    req?.body?.Client,
+    req?.body?.client,
   );
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -95,6 +94,16 @@ const resendVerifyCode = catchAsync(async (req, res) => {
   });
 });
 
+const blockUnblockUser = catchAsync(async(req,res)=>{
+  const result = await userServices.blockUnblockUser(req.params.id,req.body.status);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message:`User successfully ${result?.status === "blocked" ? "blocked" : "unblocked"}`,
+    data: result,
+  });
+})
+
 const userController = {
   registerCustomer,
   registerClient,
@@ -102,5 +111,6 @@ const userController = {
   getMyProfile,
   verifyCode,
   resendVerifyCode,
+  blockUnblockUser
 };
 export default userController;

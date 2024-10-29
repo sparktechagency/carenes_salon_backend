@@ -5,11 +5,11 @@ import ClientServices from './client.services';
 
 const updateClientProfile = catchAsync(async (req, res) => {
   const { files } = req;
-  if (files && typeof files === 'object' && 'licence_image' in files) {
-    req.body.drivingLicence = files['licence_image'][0].path;
-  }
   if (files && typeof files === 'object' && 'profile_image' in files) {
     req.body.profile_image = files['profile_image'][0].path;
+  }
+  if (files && typeof files === 'object' && 'shop_image' in files) {
+    req.body.shopImages = files['shop_image'].map((file) => file.path);
   }
 
   const result = await ClientServices.updateClientProfile(
@@ -34,9 +34,38 @@ const getAllClient = catchAsync(async (req, res) => {
   });
 });
 
+const updateClientStatus = catchAsync(async (req, res) => {
+  const result = await ClientServices.updateClientStatus(
+    req?.params?.id,
+    req?.body?.status,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Client status updated successfully',
+    data: result,
+  });
+});
+
+const getNearbyShop = catchAsync(async (req, res) => {
+  const result = await ClientServices.getNearbyShopWithTime(
+    req?.user?.profileId,
+    req?.body,
+    req.query,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Shop retrieved successfully',
+    data: result,
+  });
+});
+
 const ClientController = {
   updateClientProfile,
   getAllClient,
+  updateClientStatus,
+  getNearbyShop
 };
 
 export default ClientController;

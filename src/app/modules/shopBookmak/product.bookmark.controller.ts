@@ -22,7 +22,7 @@ const getMyBookmark = catchAsync(async (req, res) => {
   );
 
   sendResponse(res, {
-    statusCode: 201,
+    statusCode: 200,
     success: true,
     message: 'Bookmark retrieved successfully',
     data: result,

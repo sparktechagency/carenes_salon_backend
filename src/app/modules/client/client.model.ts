@@ -20,8 +20,22 @@ const clientSchema = new Schema<IClient>({
     required: true,
     ref: 'User',
   },
-  name: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  phoneNumber: { type: String, required: true },
+  gender:{
+    type:String,
+    required:true
+  },
+  dateOfBirth:{
+    type:Date,
+    required:true
+  },
+  shopName:{
+    type:String,
+    required:true
+  },
   shopCategory: { type: String, required: true },
   shopGenderCategory: {
     type: String,
@@ -31,18 +45,31 @@ const clientSchema = new Schema<IClient>({
   shopImages: {
     type: [String],
   },
-  phoneNumber: { type: String, required: true },
+
   location: {
     type: locationSchema,
     required: true,
     index: '2dsphere',
   },
-  profile_image: { type: String, required: true },
+  profile_image: { type: String, default: '' },
   bankName: { type: String, required: true },
   bankAccountName: { type: String, required: true },
   bankAccountNumber: { type: String, required: true },
   branchCode: { type: String, required: true },
   bankCity: { type: String, required: true },
+  status: {
+    type: String,
+    enum: ['active', 'inactive'],
+    default: 'inactive',
+  },
+  totalRating: {
+    type: Number,
+    default: 0,
+  },
+  totalRatingCount: {
+    type: Number,
+    default: 0,
+  },
   isDeleted: { type: Boolean, default: false },
 });
 

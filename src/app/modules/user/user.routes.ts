@@ -60,4 +60,11 @@ router.post(
   userControllers.resendVerifyCode,
 );
 
+router.patch(
+  '/block-unblock/:id',
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  validateRequest(userValidations.blockUnblockUserValidationSchema),
+  userControllers.blockUnblockUser,
+);
+
 export const userRoutes = router;

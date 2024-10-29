@@ -6,11 +6,15 @@ export interface ILocation {
 }
 export interface ICustomer {
   user: Types.ObjectId;
-  name: string;
+  firstName: string;
+  lastName:string;
   email: string;
   phoneNumber: string;
-  location: ILocation;
+  city:string;
+  country:string;
+  gender:"male"|"female";
+  age:number;
+  // location: ILocation;
   profile_image: string;
-  walletAmount: number;
   isDeleted: boolean;
 }
