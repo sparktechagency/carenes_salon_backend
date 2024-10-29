@@ -20,6 +20,11 @@ const clientSchema = new Schema<IClient>({
     required: true,
     ref: 'User',
   },
+  shopCategoryId:{
+    type:Schema.Types.ObjectId,
+    required:true,
+    ref:"ShopCategory"
+  },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },

@@ -12,14 +12,14 @@ const router = express.Router();
 
 router.post(
   '/create-category',
-  auth(USER_ROLE.Admin),
+  auth(USER_ROLE.client),
   uploadFile(),
   validateRequest(categoryValidation.createCategoryValidationSchema),
   categoryController.createCategory,
 );
 router.patch(
   '/update-category/:id',
-  auth(USER_ROLE.Admin),
+  auth(USER_ROLE.client),
   uploadFile(),
   validateRequest(categoryValidation.updateCategoryValidationSchema),
   categoryController.updateCategory,
@@ -27,7 +27,7 @@ router.patch(
 
 router.get(
   '/my-categories',
-  auth(USER_ROLE.Admin),
+  auth(USER_ROLE.client),
   categoryController.getMyCategories,
 );
 
@@ -39,20 +39,20 @@ router.get(
 
 router.delete(
   '/delete-category/:id',
-  auth(USER_ROLE.Admin),
+  auth(USER_ROLE.client),
   categoryController.deleteCategory,
 );
 // sub category -------------------------------------
 router.post(
   '/create-sub-category',
-  auth(USER_ROLE.Admin),
+  auth(USER_ROLE.client),
   uploadFile(),
   validateRequest(createSubCategoryValidationSchema),
   categoryController.createSubCategory,
 );
 router.patch(
   '/update-sub-category/:id',
-  auth(USER_ROLE.Admin),
+  auth(USER_ROLE.client),
   uploadFile(),
   validateRequest(categoryValidation.updateCategoryValidationSchema),
   categoryController.updateSubCategory,
@@ -60,13 +60,13 @@ router.patch(
 
 router.get(
   '/my-sub-categories',
-  auth(USER_ROLE.Admin),
+  auth(USER_ROLE.client),
   categoryController.getMySubCategories,
 );
 
 router.delete(
   '/delete-sub-category/:id',
-  auth(USER_ROLE.Admin),
+  auth(USER_ROLE.client),
   categoryController.deleteSubCategory,
 );
 

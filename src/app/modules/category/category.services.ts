@@ -3,6 +3,7 @@ import AppError from '../../error/appError';
 import { ICategory, ISubCategory } from './category.interface';
 import Category, { SubCategory } from './category.model';
 import mongoose from 'mongoose';
+import Service from '../service/service.model';
 
 const createCategoryIntoDB = async (shopId: string, payload: ICategory) => {
   const result = await Category.create({ ...payload, shop: shopId });
@@ -23,10 +24,7 @@ const updateCategoryIntoDB = async (
 };
 
 const getAllCategories = async () => {
-  const result = await Category.find().populate({
-    path: 'shop',
-    select: 'shopType',
-  });
+  const result = await Category.find();
   return result;
 };
 const getSpecificShopCategories = async (shopId: string) => {
@@ -84,7 +82,7 @@ const deleteCategoryFromDB = async (profileId: string, categoryId: string) => {
       );
     }
 
-    await SubCategory.deleteMany({ category: categoryId }, { session });
+    await Service.deleteMany({ category: categoryId }, { session });
 
     await session.commitTransaction();
     session.endSession();

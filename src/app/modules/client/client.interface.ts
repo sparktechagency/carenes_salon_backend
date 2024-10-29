@@ -6,6 +6,7 @@ export interface ILocation {
 // client interface
 export interface IClient {
   user: Types.ObjectId;
+  shopCategoryId:Types.ObjectId;
   firstName: string;
   lastName:string;
   email: string;

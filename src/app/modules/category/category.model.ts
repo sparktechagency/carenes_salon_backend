@@ -2,9 +2,11 @@ import { model, Schema } from 'mongoose';
 import { ICategory, ISubCategory } from './category.interface';
 
 const CategorySchema: Schema = new Schema<ICategory>({
-  shop: { type: Schema.Types.ObjectId, required: true, ref: 'Admin' },
-  name: { type: String, required: true, unique: true },
-  image: { type: String, required: true },
+  shop: { type: Schema.Types.ObjectId, required: true, ref: 'Client' },
+  categoryName: { type: String, required: true, unique: true },
+  appointmentColor: { type: String, required: true },
+},{
+  timestamps:true
 });
 
 const subCategorySchema: Schema = new Schema<ISubCategory>({
