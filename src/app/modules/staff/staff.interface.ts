@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 
 export interface IStaff {
+  shop:Types.ObjectId;
   name: string;
   specialty: string;
   phoneNumber: string;

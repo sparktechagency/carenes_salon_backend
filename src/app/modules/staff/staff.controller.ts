@@ -9,7 +9,7 @@ const createStaff = catchAsync(async (req, res) => {
     req.body.profile_image = files['profile_image'][0].path;
   }
 
-  const result = await StaffServices.createStaffIntoDB(req.body);
+  const result = await StaffServices.createStaffIntoDB(req.user.profileId,req.body);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,

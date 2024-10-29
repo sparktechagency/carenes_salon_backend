@@ -5,13 +5,13 @@ import BusinessHour from '../bussinessHour/businessHour.model';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
 
-const createStaffIntoDB = async (payload: IStaff) => {
+const createStaffIntoDB = async (profileId:string,payload: IStaff) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     // Create staff with session
-    const [staff] = await Staff.create([payload], { session });
+    const [staff] = await Staff.create([{...payload,shop:profileId}], { session });
 
     const defaultBusinessHours = [
       { day: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },

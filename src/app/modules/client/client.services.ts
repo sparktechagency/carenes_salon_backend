@@ -33,6 +33,11 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
 };
 
 const updateClientStatus = async (id: string, status: string) => {
+
+  const client=  await Client.findById(id);
+  if(!client){
+    throw new AppError(httpStatus.NOT_FOUND,"Client not found")
+  }
   const session = await Client.startSession();
   session.startTransaction();
 
@@ -47,7 +52,7 @@ const updateClientStatus = async (id: string, status: string) => {
       throw new AppError(httpStatus.NOT_FOUND, 'Client not found');
     }
 
-    const isActive = status === 'activate';
+    const isActive = status === 'active';
 
     await User.findOneAndUpdate(
       { _id: result.user },

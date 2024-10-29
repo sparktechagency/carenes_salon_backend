@@ -4,6 +4,11 @@ import { IStaff } from './staff.interface';
 
 const staffSchema = new Schema<IStaff>(
   {
+    shop:{
+      type:Schema.Types.ObjectId,
+      required:true,
+      ref:"Client",
+    },
     name: { type: String, required: true },
     specialty: { type: String, required: true },
     phoneNumber: { type: String, required: true, unique: true },

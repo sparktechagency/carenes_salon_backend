@@ -6,7 +6,8 @@ export interface ILocation {
 }
 export interface ICustomer {
   user: Types.ObjectId;
-  name: string;
+  firstName: string;
+  lastName:string;
   email: string;
   phoneNumber: string;
   location: ILocation;

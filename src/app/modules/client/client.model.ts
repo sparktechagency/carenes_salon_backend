@@ -20,8 +20,22 @@ const clientSchema = new Schema<IClient>({
     required: true,
     ref: 'User',
   },
-  name: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  phoneNumber: { type: String, required: true },
+  gender:{
+    type:String,
+    required:true
+  },
+  dateOfBirth:{
+    type:Date,
+    required:true
+  },
+  shopName:{
+    type:String,
+    required:true
+  },
   shopCategory: { type: String, required: true },
   shopGenderCategory: {
     type: String,
@@ -31,7 +45,7 @@ const clientSchema = new Schema<IClient>({
   shopImages: {
     type: [String],
   },
-  phoneNumber: { type: String, required: true },
+
   location: {
     type: locationSchema,
     required: true,
