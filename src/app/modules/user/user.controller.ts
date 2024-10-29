@@ -94,6 +94,16 @@ const resendVerifyCode = catchAsync(async (req, res) => {
   });
 });
 
+const blockUnblockUser = catchAsync(async(req,res)=>{
+  const result = await userServices.blockUnblockUser(req.params.id,req.body.status);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message:`User successfully ${result?.status === "blocked" ? "blocked" : "unblocked"}`,
+    data: result,
+  });
+})
+
 const userController = {
   registerCustomer,
   registerClient,
@@ -101,5 +111,6 @@ const userController = {
   getMyProfile,
   verifyCode,
   resendVerifyCode,
+  blockUnblockUser
 };
 export default userController;

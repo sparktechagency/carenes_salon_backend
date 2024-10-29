@@ -70,6 +70,12 @@ const resendVerifyCodeSchema = z.object({
   }),
 });
 
+const blockUnblockUserValidationSchema = z.object({
+  body:z.object({
+    status:z.enum(["blocked","in-progress"])
+  })
+})
+
 const userValidations = {
   registerUserValidationSchema,
   loginValidationSchema,
@@ -79,6 +85,7 @@ const userValidations = {
   resetPasswordValidationSchema,
   verifyCodeValidationSchema,
   resendVerifyCodeSchema,
+  blockUnblockUserValidationSchema
 };
 
 export default userValidations;

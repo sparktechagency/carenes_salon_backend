@@ -64,48 +64,6 @@ const registerCustomer = async (
   }
 };
 
-// register Client
-// const registerClient = async (password: string, clientData: IClient) => {
-//   const client = await User.isUserExists(clientData?.email);
-//   if (client) {
-//     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
-//   }
-//   const session = await mongoose.startSession();
-//   session.startTransaction();
-
-//   try {
-//     const verifyCode = generateVerifyCode();
-//     const userData: Partial<TUser> = {
-//       email: clientData?.email,
-//       phoneNumber: clientData?.phoneNumber,
-//       password: password,
-//       role: USER_ROLE.client,
-//       isActive: false,
-//       verifyCode,
-//       codeExpireIn: new Date(Date.now() + 5 * 60000),
-//     };
-
-//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//     const user = await User.create([userData], { session });
-
-//     const smsMessage = `Your verification code is: ${verifyCode}`;
-//     await sendSMS(clientData?.phoneNumber, smsMessage);
-//     const clientPayload = {
-//       ...clientData,
-//       user: user[0]._id,
-//     };
-//     const client = await Client.create([clientPayload], { session });
-
-//     await session.commitTransaction();
-//     session.endSession();
-
-//     return client[0];
-//   } catch (error) {
-//     await session.abortTransaction();
-//     session.endSession();
-//     throw error;
-//   }
-// };
 const registerClient = async (password: string, clientData: IClient) => {
   const isCategoryExist = await ShopCategory.findOne({
     categoryName: clientData.shopCategory,
@@ -279,6 +237,20 @@ const resendVerifyCode = async (phoneNumber: string) => {
   await sendSMS(user?.phoneNumber, smsMessage);
 };
 
+
+// block , unblock user
+const blockUnblockUser = async(id:string,status:string)=>{
+  const user = await User.findById(id);
+  if(!user){
+    throw new AppError(httpStatus.NOT_FOUND,"User not found");
+  }
+
+  const result = await User.findByIdAndUpdate(id,{status:status},{new:true,runValidators:true});
+
+  return result;
+
+}
+
 const userServices = {
   registerCustomer,
   registerClient,
@@ -286,6 +258,7 @@ const userServices = {
   getMyProfile,
   verifyCode,
   resendVerifyCode,
+  blockUnblockUser
 };
 
 export default userServices;
