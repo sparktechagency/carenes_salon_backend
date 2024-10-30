@@ -7,7 +7,6 @@ import StaffController from './staff.controller';
 import auth from '../../middlewares/auth';
 
 const router = express.Router();
-
 router.post(
   '/create',
   auth(USER_ROLE.client),
@@ -38,6 +37,7 @@ router.patch(
 );
 
 router.delete("/delete/:id",auth(USER_ROLE.client),StaffController.deleteStaff);
+router.get("/get-available-staff",validateRequest(staffValidations.getAvailableStaffValidationSchema),StaffController.getAvailableStaff)
 
 
 

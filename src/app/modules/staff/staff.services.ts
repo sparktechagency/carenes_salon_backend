@@ -7,13 +7,15 @@ import AppError from '../../error/appError';
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 
-const createStaffIntoDB = async (profileId:string,payload: IStaff) => {
+const createStaffIntoDB = async (profileId: string, payload: IStaff) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     // Create staff with session
-    const [staff] = await Staff.create([{...payload,shop:profileId}], { session });
+    const [staff] = await Staff.create([{ ...payload, shop: profileId }], {
+      session,
+    });
 
     const defaultBusinessHours = [
       { day: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
@@ -85,35 +87,55 @@ const deleteStaffFromDB = async (id: string) => {
   return null;
 };
 
-// get all staff 
-const getAllStaff = async(query:Record<string,any>)=>{
+// get all staff
+const getAllStaff = async (query: Record<string, any>) => {
   const staffQuery = new QueryBuilder(Staff.find(), query)
-  .search(['name',"email"])
-  .filter()
-  .sort()
-  .paginate()
-  .fields();
-const meta = await staffQuery.countTotal();
-const result = await staffQuery.modelQuery;
+    .search(['name', 'email'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const meta = await staffQuery.countTotal();
+  const result = await staffQuery.modelQuery;
 
-return {
-  meta,
-  result,
+  return {
+    meta,
+    result,
+  };
 };
-}
 
-// get my staff 
-const getMyStaff = async(shopId:string)=>{
-  const result = await Staff.find({shop:shopId});
+// get my staff
+const getMyStaff = async (shopId: string) => {
+  const result = await Staff.find({ shop: shopId });
   return result;
-}
+};
+
+// get available staff
+
+const getAvailableStaff = async (payload: {
+  shopId: string;
+  services: string[];
+}) => {
+  const { shopId, services } = payload;
+  // Find staff with matching shopId and whose services array includes all specified service IDs
+  const result = await Staff.find({
+    shop: shopId,
+    $or: [
+      { services: { $all: services } },  
+      { services: "all-services" }     
+    ]
+  });
+
+  return result;
+};
 
 const StaffServices = {
   createStaffIntoDB,
   updateStaffIntoDB,
   deleteStaffFromDB,
   getAllStaff,
-  getMyStaff
+  getMyStaff,
+  getAvailableStaff,
 };
 
 export default StaffServices;

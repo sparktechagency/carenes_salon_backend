@@ -69,9 +69,17 @@ const updateStaffValidationSchema = z.object({
   }),
 });
 
+const getAvailableStaffValidationSchema = z.object({
+  body: z.object({
+    shopId: z.string(),
+    services: z.array(z.string()),
+  }),
+});
+
 const staffValidations = {
   createStaffValidationSchema,
   updateStaffValidationSchema,
+  getAvailableStaffValidationSchema,
 };
 
 export default staffValidations;
