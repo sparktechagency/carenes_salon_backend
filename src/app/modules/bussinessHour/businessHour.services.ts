@@ -260,9 +260,38 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
   return availableSlots;
 };
 
+const getBusinessHour = async (entityId: string, entityType: string) => {
+  // Fetch business hours
+  const businessHours = await BusinessHour.find({ entityId, entityType });
+  
+  // Fetch block hours
+  const blockHours = await BlockHour.find({ entityId, entityType });
+
+  // Combine business hours and block hours by day
+  const result = businessHours.map(bh => {
+    // Get block hours for the specific day
+    const blocksForDay = blockHours
+      .filter(bhBlock => bhBlock.day === bh.day)
+      .map(bhBlock => ({
+        startTime: bhBlock.startTime,
+        endTime: bhBlock.endTime,
+        _id:bhBlock._id
+      }));
+
+    return {
+      ...bh.toObject(),
+      blockHours: blocksForDay,
+    };
+  });
+
+  return result;
+};
+
+
 const BusinessHourServices = {
   getAvailableDates,
   getAvailableTimeSlots,
+  getBusinessHour
 };
 
 export default BusinessHourServices;
