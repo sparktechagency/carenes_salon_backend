@@ -12,13 +12,23 @@ const getAvailableDates = catchAsync(async (req, res) => {
       data: result,
     });
   });
+const getAvailableSlots = catchAsync(async (req, res) => {
+   const result = await BusinessHourServices.getAvailableTimeSlots(req.body.staffId,req.body.date);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Available slots retrieved successfully',
+      data: result,
+    });
+  });
 
 
 
 
 
 const BusinessHourController = {
-    getAvailableDates
+    getAvailableDates,
+    getAvailableSlots
 }
 
 export default BusinessHourController;

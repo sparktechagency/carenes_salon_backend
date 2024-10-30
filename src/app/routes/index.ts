@@ -19,6 +19,7 @@ import { shopCategoryRoutes } from '../modules/shopCategory/shopCategory.routes'
 import { staffRoutes } from '../modules/staff/staff.routes';
 import { serviceRoutes } from '../modules/service/service.routes';
 import { businessHourRoutes } from '../modules/bussinessHour/businessHour.routes';
+import { bookingRoutes } from '../modules/booking/booking.routes';
 
 const router = Router();
 
@@ -102,6 +103,10 @@ const moduleRoutes = [
   {
     path: '/business-hour',
     router: businessHourRoutes,
+  },
+  {
+    path: '/booking',
+    router: bookingRoutes,
   },
 ];
 
