@@ -31,6 +31,16 @@ const getBusinessHour = catchAsync(async (req, res) => {
     });
   });
 
+const updateBusinessHour  = catchAsync(async(req,res)=>{
+  const result = await BusinessHourServices.updateBusinessHour(req.params.id,req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Business hour updated successfully',
+    data: result,
+  });
+})
+
 
 
 
@@ -38,7 +48,8 @@ const getBusinessHour = catchAsync(async (req, res) => {
 const BusinessHourController = {
     getAvailableDates,
     getAvailableSlots,
-    getBusinessHour
+    getBusinessHour,
+    updateBusinessHour
 }
 
 export default BusinessHourController;

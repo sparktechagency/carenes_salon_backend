@@ -1,6 +1,11 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import httpStatus from 'http-status';
+import AppError from '../../error/appError';
 import BlockHour from '../blockHour/blockHour.model';
 import Booking from '../booking/booking.model';
 import Staff from '../staff/staff.model';
+import { IBusinessHour } from './businessHour.interface';
 import BusinessHour from './businessHour.model';
 
 const getAvailableDates = async (staffId: string) => {
@@ -288,10 +293,23 @@ const getBusinessHour = async (entityId: string, entityType: string) => {
 };
 
 
+const updateBusinessHour = async(id:string,payload:Partial<IBusinessHour>)=>{
+  const businessHour = await BusinessHour.findById(id);
+  const {day,entityId,entityType,...updatedPayload} = payload;
+
+  if(!businessHour){
+    throw new AppError(httpStatus.NOT_FOUND,"Business hour not found")
+  }
+  const result = await BusinessHour.findByIdAndUpdate(id,updatedPayload,{new:true,runValidators:true})
+  return result;
+}
+
+
 const BusinessHourServices = {
   getAvailableDates,
   getAvailableTimeSlots,
-  getBusinessHour
+  getBusinessHour,
+  updateBusinessHour
 };
 
 export default BusinessHourServices;

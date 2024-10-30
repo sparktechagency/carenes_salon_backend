@@ -7,9 +7,27 @@ const getBusinessHourValidationSchema = z.object({
     })
 })
 
+const updateBusinessHourSchema = z.object({
+   body:z.object({
+    day: z.enum([
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+      ]).optional(),
+      openTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid open time format").optional(), // Format: HH:mm
+      closeTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid close time format").optional(), // Format: HH:mm
+      isClosed: z.boolean().optional(),
+   })
+  });
+
 
 const businessHourValidations = {
-    getBusinessHourValidationSchema
+    getBusinessHourValidationSchema,
+    updateBusinessHourSchema
 }
 
 export default businessHourValidations;
