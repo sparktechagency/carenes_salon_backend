@@ -8,7 +8,19 @@ const blockHourSchema = new Schema<IBlockHour>({
     refPath: 'entityType',
   },
   entityType: { type: String, enum: ['Shop', 'Staff'], required: true },
-  day: { type: String, required: true },
+  day: {
+    type: String,
+    enum: [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ],
+    required: true,
+  },
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },
 });

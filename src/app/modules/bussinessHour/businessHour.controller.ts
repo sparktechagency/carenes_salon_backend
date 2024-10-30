@@ -21,6 +21,25 @@ const getAvailableSlots = catchAsync(async (req, res) => {
       data: result,
     });
   });
+const getBusinessHour = catchAsync(async (req, res) => {
+   const result = await BusinessHourServices.getBusinessHour(req.body.entityId,req.body.entityType);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Business hour retrieved successfully',
+      data: result,
+    });
+  });
+
+const updateBusinessHour  = catchAsync(async(req,res)=>{
+  const result = await BusinessHourServices.updateBusinessHour(req.params.id,req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Business hour updated successfully',
+    data: result,
+  });
+})
 
 
 
@@ -28,7 +47,9 @@ const getAvailableSlots = catchAsync(async (req, res) => {
 
 const BusinessHourController = {
     getAvailableDates,
-    getAvailableSlots
+    getAvailableSlots,
+    getBusinessHour,
+    updateBusinessHour
 }
 
 export default BusinessHourController;

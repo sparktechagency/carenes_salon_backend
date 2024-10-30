@@ -1,6 +1,11 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import httpStatus from 'http-status';
+import AppError from '../../error/appError';
 import BlockHour from '../blockHour/blockHour.model';
 import Booking from '../booking/booking.model';
 import Staff from '../staff/staff.model';
+import { IBusinessHour } from './businessHour.interface';
 import BusinessHour from './businessHour.model';
 
 const getAvailableDates = async (staffId: string) => {
@@ -167,6 +172,7 @@ const getAvailableDates = async (staffId: string) => {
 //   };
 
 const getAvailableTimeSlots = async (staffId: string, date: string) => {
+  const staff = await Staff.findById(staffId);
   const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
   const staffHours = await BusinessHour.findOne({
     entityId: staffId,
@@ -197,6 +203,13 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
     entityType: 'Staff',
     day,
   });
+  const businessBlockHour = await BlockHour.find({
+    entityId: staff?.shop,
+    entityType: 'Shop',
+    day,
+  });
+
+  console.log("block hours",blockHours)
 
   const existingBookings = await Booking.find({
     staffId,
@@ -210,12 +223,25 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
     const slotEnd = new Date(slotStart);
     slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
+    // const isBlocked = blockHours.some(
+    //   (bh) =>
+    //     slotStart.toISOString().slice(11, 16) >= bh.startTime &&
+    //     slotStart.toISOString().slice(11, 16) < bh.endTime,
+    // );
     const isBlocked = blockHours.some(
       (bh) =>
-        slotStart.toISOString().slice(11, 16) >= bh.startTime &&
-        slotStart.toISOString().slice(11, 16) < bh.endTime,
+        slotStart.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) >= bh.startTime &&
+        slotStart.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) < bh.endTime,
     );
-
+    const isBlocked2 = businessBlockHour.some(
+      (bh) =>
+        slotStart.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) >= bh.startTime &&
+        slotStart.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) < bh.endTime,
+    );
+    
+    // console.log("slot start", slotStart.toISOString().slice(11, 16));
+    // console.log("slot end",  slotEnd.toISOString().slice(11, 16))
+    // console.log("is blocked",isBlocked);
     const isBooked = existingBookings.some(
       (b) => 
         (slotStart < b.endTime && slotEnd > b.startTime) // This condition checks for any overlap
@@ -223,7 +249,7 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
 
 
     // Push slot information with isBooked status
-    if (!isBlocked) {
+    if (!isBlocked && !isBlocked2) {
       availableSlots.push({
         time: slotStart.toLocaleTimeString('en-US', {
           hour: '2-digit',
@@ -239,9 +265,51 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
   return availableSlots;
 };
 
+const getBusinessHour = async (entityId: string, entityType: string) => {
+  // Fetch business hours
+  const businessHours = await BusinessHour.find({ entityId, entityType });
+  
+  // Fetch block hours
+  const blockHours = await BlockHour.find({ entityId, entityType });
+
+  // Combine business hours and block hours by day
+  const result = businessHours.map(bh => {
+    // Get block hours for the specific day
+    const blocksForDay = blockHours
+      .filter(bhBlock => bhBlock.day === bh.day)
+      .map(bhBlock => ({
+        startTime: bhBlock.startTime,
+        endTime: bhBlock.endTime,
+        _id:bhBlock._id
+      }));
+
+    return {
+      ...bh.toObject(),
+      blockHours: blocksForDay,
+    };
+  });
+
+  return result;
+};
+
+
+const updateBusinessHour = async(id:string,payload:Partial<IBusinessHour>)=>{
+  const businessHour = await BusinessHour.findById(id);
+  const {day,entityId,entityType,...updatedPayload} = payload;
+
+  if(!businessHour){
+    throw new AppError(httpStatus.NOT_FOUND,"Business hour not found")
+  }
+  const result = await BusinessHour.findByIdAndUpdate(id,updatedPayload,{new:true,runValidators:true})
+  return result;
+}
+
+
 const BusinessHourServices = {
   getAvailableDates,
   getAvailableTimeSlots,
+  getBusinessHour,
+  updateBusinessHour
 };
 
 export default BusinessHourServices;
