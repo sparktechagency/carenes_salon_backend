@@ -7,7 +7,6 @@ import StaffController from './staff.controller';
 import auth from '../../middlewares/auth';
 
 const router = express.Router();
-
 router.post(
   '/create',
   auth(USER_ROLE.client),
@@ -21,6 +20,8 @@ router.post(
   validateRequest(staffValidations.createStaffValidationSchema),
   StaffController.createStaff,
 );
+router.get("/all-staff",auth(USER_ROLE.admin,USER_ROLE.superAdmin),StaffController.getAllStaff);
+router.get("/my-staff",auth(USER_ROLE.client),StaffController.getMyStaff);
 router.patch(
   '/update/:id',
   auth(USER_ROLE.client),
@@ -36,6 +37,7 @@ router.patch(
 );
 
 router.delete("/delete/:id",auth(USER_ROLE.client),StaffController.deleteStaff);
+router.get("/get-available-staff",validateRequest(staffValidations.getAvailableStaffValidationSchema),StaffController.getAvailableStaff)
 
 
 

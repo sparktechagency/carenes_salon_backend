@@ -240,6 +240,7 @@ const resendVerifyCode = async (phoneNumber: string) => {
 
 // block , unblock user
 const blockUnblockUser = async(id:string,status:string)=>{
+  
   const user = await User.findById(id);
   if(!user){
     throw new AppError(httpStatus.NOT_FOUND,"User not found");

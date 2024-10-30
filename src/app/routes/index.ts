@@ -18,6 +18,7 @@ import { clientRoutes } from '../modules/client/client.routes';
 import { shopCategoryRoutes } from '../modules/shopCategory/shopCategory.routes';
 import { staffRoutes } from '../modules/staff/staff.routes';
 import { serviceRoutes } from '../modules/service/service.routes';
+import { businessHourRoutes } from '../modules/bussinessHour/businessHour.routes';
 
 const router = Router();
 
@@ -97,6 +98,10 @@ const moduleRoutes = [
   {
     path: '/service',
     router: serviceRoutes,
+  },
+  {
+    path: '/business-hour',
+    router: businessHourRoutes,
   },
 ];
 
