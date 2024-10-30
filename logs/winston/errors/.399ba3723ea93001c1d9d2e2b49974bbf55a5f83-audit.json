@@ -59,6 +59,16 @@
             "date": 1730260951031,
             "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-10-error.log",
             "hash": "ebf9a1705baf108d232affbdc0c8a8c87519da9f905e942db757d36eb663c549"
+        },
+        {
+            "date": 1730267312779,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-11-error.log",
+            "hash": "04bdd3a4302118317e1fa9c4cd435192cde808edf7666d91df87f5ddf31e78ec"
+        },
+        {
+            "date": 1730268026256,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-12-error.log",
+            "hash": "c8dafdcab584a143f492abcb09df24d1df2ad64af962e9aeb63fa819dcdef825"
         }
     ],
     "hashType": "sha256"
