@@ -167,6 +167,7 @@ const getAvailableDates = async (staffId: string) => {
 //   };
 
 const getAvailableTimeSlots = async (staffId: string, date: string) => {
+  const staff = await Staff.findById(staffId);
   const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
   const staffHours = await BusinessHour.findOne({
     entityId: staffId,
@@ -197,6 +198,13 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
     entityType: 'Staff',
     day,
   });
+  const businessBlockHour = await BlockHour.find({
+    entityId: staff?.shop,
+    entityType: 'Shop',
+    day,
+  });
+
+  console.log("block hours",blockHours)
 
   const existingBookings = await Booking.find({
     staffId,
@@ -210,12 +218,25 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
     const slotEnd = new Date(slotStart);
     slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
+    // const isBlocked = blockHours.some(
+    //   (bh) =>
+    //     slotStart.toISOString().slice(11, 16) >= bh.startTime &&
+    //     slotStart.toISOString().slice(11, 16) < bh.endTime,
+    // );
     const isBlocked = blockHours.some(
       (bh) =>
-        slotStart.toISOString().slice(11, 16) >= bh.startTime &&
-        slotStart.toISOString().slice(11, 16) < bh.endTime,
+        slotStart.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) >= bh.startTime &&
+        slotStart.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) < bh.endTime,
     );
-
+    const isBlocked2 = businessBlockHour.some(
+      (bh) =>
+        slotStart.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) >= bh.startTime &&
+        slotStart.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) < bh.endTime,
+    );
+    
+    // console.log("slot start", slotStart.toISOString().slice(11, 16));
+    // console.log("slot end",  slotEnd.toISOString().slice(11, 16))
+    // console.log("is blocked",isBlocked);
     const isBooked = existingBookings.some(
       (b) => 
         (slotStart < b.endTime && slotEnd > b.startTime) // This condition checks for any overlap
@@ -223,7 +244,7 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
 
 
     // Push slot information with isBooked status
-    if (!isBlocked) {
+    if (!isBlocked && !isBlocked2) {
       availableSlots.push({
         time: slotStart.toLocaleTimeString('en-US', {
           hour: '2-digit',
