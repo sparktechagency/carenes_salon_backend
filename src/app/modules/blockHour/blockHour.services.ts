@@ -24,9 +24,22 @@ const updateBusinessHour = async(id:string,payload:Partial<IBlockHour>)=>{
 
 
 
+  const deleteBlockHour = async(id:string)=>{
+    const blockHour = await BlockHour.findById(id);
+
+    if(!blockHour){
+        throw new AppError(httpStatus.NOT_FOUND,"Block hour not found");
+    }
+
+    const result  = await BlockHour.findByIdAndDelete(id);
+    return result;
+
+  }
+
 const BlockHourService = {
     addBlockHour,
-    updateBusinessHour
+    updateBusinessHour,
+    deleteBlockHour
 }
 
 export default BlockHourService;

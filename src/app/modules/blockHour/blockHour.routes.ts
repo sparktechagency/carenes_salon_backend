@@ -14,4 +14,6 @@ router.patch(
     validateRequest(blockHourValidations.updateBlockHourSchema),
     BlockHourController.updateBlockHour,
   );
+
+router.delete("/delete-block-hour/:id",auth(USER_ROLE.client),BlockHourController.deleteBlockHour);
 export const blockHourRoutes = router

@@ -22,9 +22,20 @@ const addBlockHour = catchAsync(async (req, res) => {
     });
   })
 
+const deleteBlockHour = catchAsync(async(req,res)=>{
+    const result = await BlockHourService.deleteBlockHour(req.params.id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Block hour deleted successfully',
+        data: result,
+      });
+})
+
 const BlockHourController = {
     addBlockHour,
-    updateBlockHour
+    updateBlockHour,
+    deleteBlockHour
 }
 
 export default BlockHourController;
