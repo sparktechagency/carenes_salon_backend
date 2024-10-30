@@ -23,9 +23,24 @@ const createBlockHourValidationSchema = z.object({
   }),
   })
 });
-
+const updateBlockHourSchema = z.object({
+    body:z.object({
+     day: z.enum([
+         'Sunday',
+         'Monday',
+         'Tuesday',
+         'Wednesday',
+         'Thursday',
+         'Friday',
+         'Saturday',
+       ]).optional(),
+       startTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid open time format").optional(), // Format: HH:mm
+       endTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid close time format").optional(), // Format: HH:mm
+    })
+   });
 const blockHourValidations = {
   createBlockHourValidationSchema,
+  updateBlockHourSchema
 };
 
 export default blockHourValidations;

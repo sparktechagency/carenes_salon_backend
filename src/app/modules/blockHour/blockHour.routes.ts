@@ -8,5 +8,10 @@ import BlockHourController from "./blockHour.controller";
 const router = express.Router();
 
 router.post("/add-block-hour",auth(USER_ROLE.client),validateRequest(blockHourValidations.createBlockHourValidationSchema),BlockHourController.addBlockHour);
-
+router.patch(
+    '/update-block-hour/:id',
+    auth(USER_ROLE.client),
+    validateRequest(blockHourValidations.updateBlockHourSchema),
+    BlockHourController.updateBlockHour,
+  );
 export const blockHourRoutes = router

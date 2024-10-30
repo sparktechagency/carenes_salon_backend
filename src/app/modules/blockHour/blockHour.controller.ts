@@ -12,10 +12,19 @@ const addBlockHour = catchAsync(async (req, res) => {
        data: result,
      });
    });
-
+   const updateBlockHour  = catchAsync(async(req,res)=>{
+    const result = await BlockHourService.updateBusinessHour(req.params.id,req.body);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Block hour updated successfully',
+      data: result,
+    });
+  })
 
 const BlockHourController = {
-    addBlockHour
+    addBlockHour,
+    updateBlockHour
 }
 
 export default BlockHourController;
