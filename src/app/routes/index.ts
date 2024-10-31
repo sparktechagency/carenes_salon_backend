@@ -21,6 +21,7 @@ import { serviceRoutes } from '../modules/service/service.routes';
 import { businessHourRoutes } from '../modules/bussinessHour/businessHour.routes';
 import { bookingRoutes } from '../modules/booking/booking.routes';
 import { blockHourRoutes } from '../modules/blockHour/blockHour.routes';
+import { discountRoutes } from '../modules/discount/discount.routes';
 
 const router = Router();
 
@@ -112,6 +113,10 @@ const moduleRoutes = [
   {
     path: '/booking',
     router: bookingRoutes,
+  },
+  {
+    path: '/discount',
+    router: discountRoutes,
   },
 ];
 
