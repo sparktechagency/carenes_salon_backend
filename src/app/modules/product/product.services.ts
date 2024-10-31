@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import QueryBuilder from '../../builder/QueryBuilder';
-import Admin from '../admin/admin.model';
 import ProductBookmark from '../productBookmark/product.bookmark.model';
-import { IProduct } from './product.interface';
-import Product from './product.model';
+import { IProduct } from './product.interface'
+import { Product } from './product.model';
 
-const createProductIntoDB = async (userId: string, payload: IProduct) => {
-  const shop = await Admin.findOne({ user: userId }).select('_id');
-  const result = await Product.create({ ...payload, shop: shop?._id });
+const createProductIntoDB = async (shopId: string, payload: IProduct) => {
+  const result = await Product.create({ ...payload, shop: shopId });
   return result;
 };
 

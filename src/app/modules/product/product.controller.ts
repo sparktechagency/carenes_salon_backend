@@ -7,11 +7,11 @@ const createProduct = catchAsync(async (req, res) => {
   const { files } = req;
   // Check if files and store_image exist, and process multiple images
   if (files && typeof files === 'object' && 'product_image' in files) {
-    req.body.images = files['product_image'].map((file) => file.path);
+    req.body.product_image = files['product_image'][0].path;
   }
 
   const result = await productServices.createProductIntoDB(
-    req?.user?.id,
+    req?.user?.profileId,
     req?.body,
   );
   sendResponse(res, {

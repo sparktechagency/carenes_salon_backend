@@ -10,13 +10,15 @@ const router = express.Router();
 
 router.post(
   '/create-product',
-  auth(USER_ROLE.admin),
+  auth(USER_ROLE.client),
   uploadFile(),
   (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
     next();
   },
-  validateRequest(productValidations.createProductValidationSchema),
+  validateRequest(productValidations.createProductSchema),
   productController.createProduct,
 );
 

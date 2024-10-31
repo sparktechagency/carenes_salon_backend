@@ -31,12 +31,23 @@ const deleteService = catchAsync(async (req, res) => {
     });
   });
 
+  const getAllService = catchAsync(async(req,res)=>{
+    const result = await ServiceService.getAllService(req.query);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Service retrieved successfully',
+      data: result,
+    });
+  })
+
 
 
 const ServiceController = {
     createService,
     updateService,
-    deleteService
+    deleteService,
+    getAllService
 }
 
 export default ServiceController;

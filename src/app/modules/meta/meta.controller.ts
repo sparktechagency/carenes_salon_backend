@@ -2,38 +2,18 @@ import catchAsync from '../../utilities/catchasync';
 import sendResponse from '../../utilities/sendResponse';
 import metaServices from './meta.services';
 
-const getAminDashboardMetaData = catchAsync(async (req, res) => {
-  const result = await metaServices.getAdminDashboardMetaDataFromDB();
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: 'Dashboard meta data successfully retrieved',
-    data: result,
-  });
-});
-const getAdminDashboardMetaData = catchAsync(async (req, res) => {
-  const result = await metaServices.getAdminDashboardMetaData(
-    req?.user?.profileId,
-  );
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: 'Dashboard meta data successfully retrieved',
-    data: result,
-  });
-});
-const getShopChartData = catchAsync(async (req, res) => {
-  const result = await metaServices.getShopChartDataFromDB(
-    Number(req?.query?.year),
-  );
 
+const getDashboardMetaData = catchAsync(async(req,res)=>{
+  const result = await metaServices.getDashboardMetaData();
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: 'Shop chart data retrieved successfully',
+    message: 'Dashboard data retrieved successfully',
     data: result,
   });
-});
+})
+
+
 const getAreaChartDataForIncome = catchAsync(async (req, res) => {
   const result = await metaServices.getAreaChartDataForIncomeFromDB(
     Number(req?.query?.year),
@@ -61,9 +41,7 @@ const getAreaChartDataForSales = catchAsync(async (req, res) => {
 });
 
 const metaController = {
-  getAminDashboardMetaData,
-  getAdminDashboardMetaData,
-  getShopChartData,
+  getDashboardMetaData,
   getAreaChartDataForIncome,
   getAreaChartDataForSales,
 };

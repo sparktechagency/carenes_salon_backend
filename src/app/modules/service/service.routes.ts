@@ -24,6 +24,7 @@ router.delete(
   auth(USER_ROLE.client),
   ServiceController.deleteService,
 );
+router.get("/get-all",auth(USER_ROLE.admin,USER_ROLE.superAdmin),ServiceController.getAllService);
 
 
 export const serviceRoutes = router;
