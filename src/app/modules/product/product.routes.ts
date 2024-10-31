@@ -31,9 +31,9 @@ router.get(
   productController.getAllProduct,
 );
 router.get(
-  '/shop-products',
+  '/my-products',
   auth(USER_ROLE.client),
-  productController.getSpecificShopProducts,
+  productController.getMyProducts,
 );
 router.get(
   '/single-product/:id',
@@ -69,8 +69,8 @@ router.patch(
   productController.changeProductStatus,
 );
 router.get(
-  '/my-products',
+  '/get-shop-products/:id',
   auth(USER_ROLE.client),
-  productController.getMyProducts,
+  productController.getShopProducts,
 );
 export const productRoutes = router;

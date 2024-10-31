@@ -104,6 +104,36 @@
             "date": 1730351612427,
             "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-11-success.log",
             "hash": "8760c9291871a8c70bcfe619cbb32ff1b2c71304dc857efbaaef85a715c7ccaf"
+        },
+        {
+            "date": 1730355952913,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-12-success.log",
+            "hash": "f9a497ea107c814e1d3368c4df547fc5462a7bf8486559f0da732328dc62c3ba"
+        },
+        {
+            "date": 1730358065399,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-13-success.log",
+            "hash": "009ec64ab294dda201c500640d0e72f007ab37ab5c4ed894113a216aa1d33a69"
+        },
+        {
+            "date": 1730362282288,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-14-success.log",
+            "hash": "bc3142c17bde5a5b3c155f46a39f74bc31cf40d5e6dc950aa25422ece477186f"
+        },
+        {
+            "date": 1730369415556,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-16-success.log",
+            "hash": "b6115d0cb5ea3bc5e4a1bfcb0655a1695b21fa418947982daf6bb7d7787b3d8c"
+        },
+        {
+            "date": 1730372487887,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-17-success.log",
+            "hash": "03929331f35706e8940b890f32f8a997f99e57f0d150e98b18ab02d97b1173b9"
+        },
+        {
+            "date": 1730376639363,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-18-success.log",
+            "hash": "d5cc340bb0d4a0c713da4744775e676552220fc405b29240269f909978718df4"
         }
     ],
     "hashType": "sha256"

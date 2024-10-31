@@ -12,6 +12,7 @@ import Category from '../category/category.model';
 import Service from '../service/service.model';
 import getCurrentDay from '../../helper/getCurrentDay';
 import BusinessHour from '../bussinessHour/businessHour.model';
+import Discount from '../discount/discount.model';
 const updateClientProfile = async (
   userId: string,
   payload: Partial<IClient>,
@@ -151,81 +152,105 @@ const getNearbyShopWithTime = async (
 };
 
 // get single shop -----------------------------
+// const getSingleShop = async (id: string) => {
+//   const currentDay = getCurrentDay();
+//   const businessHour = await BusinessHour.findOne({entityId:id,day:currentDay}).select("day openTime closeTime isClose");
 
-
-// const getSingleShop = (id: string) => {
-//   const currentDay =  getCurrentDay();
-//   console.log("currentDay",currentDay) 
-  
 //   // Find the client/shop by ID and populate the shopCategoryId
-//   return Client.findById(id)
-//     .populate('shopCategoryId') // Populate the shop category details
-//     .then(shop => {
-//       // Check if the shop was found
-//       if (!shop) {
-//         return Promise.reject(new Error('Shop not found'));
-//       }
+//   const shop = await Client.findById(id).populate('shopCategoryId').select("shopImages shopName location totalRating totalRatingCount _id shopGenderCategory"); // Populate the shop category details
 
-//       // Fetch categories related to the shop's ID
-//       return Category.find({ shop: shop._id }).exec()
-//         .then(categories => {
-//           // For each category, fetch associated services
-//           return Promise.all(categories.map(category => {
-//             return Service.find({ category: category._id }).exec()
-//               .then(services => {
-//                 return {
-//                   ...category.toObject(), // Convert category document to plain object
-//                   services: services.map(service => ({
-//                     ...service.toObject(), // Convert service document to plain object
-//                   })),
-//                 };
-//               });
-//           }))
-//           .then(categoriesWithServices => {
-//             // Format the response as required
-//             return {
-//               ...shop.toObject(), // Convert shop document to plain object
-//               categories: categoriesWithServices,
-//             };
-//           });
-//         });
-//     });
+//   // Check if the shop was found
+//   if (!shop) {
+//    throw new AppError(httpStatus.NOT_FOUND,'Shop not found'); 
+//   }
+
+//   // Fetch categories related to the shop's ID
+//   const categories = await Category.find({ shop: shop._id }).select("categoryName appointmentColor").exec();
+
+//   // For each category, fetch associated services
+//   const categoriesWithServices = await Promise.all(
+//     categories.map(async (category) => {
+//       const services = await Service.find({ category: category._id }).select("serviceName availableFor durationMinutes price").exec();
+//       return {
+//         ...category.toObject(), // Convert category document to plain object
+//         services: services.map(service => ({
+//           ...service.toObject(), // Convert service document to plain object
+//         })),
+//       };
+//     })
+//   );
+
+//   // Format the response as required
+//   return {
+//     ...shop.toObject(), // Convert shop document to plain object
+//     categories: categoriesWithServices,
+//     businessHour
+//   };
 // };
+
 const getSingleShop = async (id: string) => {
   const currentDay = getCurrentDay();
-  const businessHour = await BusinessHour.findOne({entityId:id,day:currentDay}).select("day openTime closeTime isClose");
+  const now = new Date();
+
+  // Fetch business hours for the current day
+  const businessHour = await BusinessHour.findOne({ entityId: id, day: currentDay }).select("day openTime closeTime isClose");
 
   // Find the client/shop by ID and populate the shopCategoryId
-  const shop = await Client.findById(id).populate('shopCategoryId').select("shopImages shopName location totalRating totalRatingCount _id shopGenderCategory"); // Populate the shop category details
+  const shop = await Client.findById(id).populate('shopCategoryId').select("shopImages shopName location totalRating totalRatingCount _id shopGenderCategory");
 
   // Check if the shop was found
   if (!shop) {
-   throw new AppError(httpStatus.NOT_FOUND,'Shop not found'); 
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
   }
 
   // Fetch categories related to the shop's ID
   const categories = await Category.find({ shop: shop._id }).select("categoryName appointmentColor").exec();
 
-  // For each category, fetch associated services
+  // Check for an active discount
+  const discount = await Discount.findOne({
+    shop: id,
+    discountStartDate: { $lte: now },
+    discountEndDate: { $gte: now },
+  });
+
+  const isAllServicesDiscounted = discount?.services === 'all-services';
+
+  // For each category, fetch associated services and apply discount if applicable
   const categoriesWithServices = await Promise.all(
     categories.map(async (category) => {
       const services = await Service.find({ category: category._id }).select("serviceName availableFor durationMinutes price").exec();
+
+      const servicesWithDiscount = services.map((service) => {
+        const isServiceDiscounted = isAllServicesDiscounted || (discount?.services instanceof Array && discount.services.includes(service._id));
+
+        if (isServiceDiscounted) {
+          const discountAmount = service.price * (discount.discountPercentage / 100);
+          const discountPrice = service.price - discountAmount;
+          return {
+            ...service.toObject(),
+            discountPrice: discountPrice,
+          };
+        }
+
+        return service.toObject();
+      });
+
       return {
-        ...category.toObject(), // Convert category document to plain object
-        services: services.map(service => ({
-          ...service.toObject(), // Convert service document to plain object
-        })),
+        ...category.toObject(),
+        services: servicesWithDiscount,
       };
     })
   );
 
   // Format the response as required
   return {
-    ...shop.toObject(), // Convert shop document to plain object
+    ...shop.toObject(),
     categories: categoriesWithServices,
-    businessHour
+    businessHour,
   };
 };
+
+
 
 
 const ClientServices = {

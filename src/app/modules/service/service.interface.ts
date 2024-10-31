@@ -1,6 +1,9 @@
-import { Schema } from 'mongoose';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Schema, Types } from 'mongoose';
 
 interface IService {
+  _id:Types.ObjectId;
+  toObject: any;
   shop: Schema.Types.ObjectId;
   serviceName: string;
   category: Schema.Types.ObjectId;

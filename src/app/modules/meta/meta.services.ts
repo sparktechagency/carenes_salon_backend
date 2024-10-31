@@ -1,23 +1,23 @@
-
+import Customer from '../customer/customer.model';
 import Order from '../order/order.model';
 import Service from '../service/service.model';
 
-
-
-// get dashboard meta data 
-const getDashboardMetaData = async()=>{
+// get dashboard meta data
+const getDashboardMetaData = async () => {
   const totalSales = 1000;
   const profitOnSales = 400;
   const totalService = await Service.countDocuments();
   const totalProduct = 1000;
+  const totalCustomer = await Customer.countDocuments();
 
   return {
     totalSales,
     profitOnSales,
     totalService,
-    totalProduct
-  }
-}
+    totalProduct,
+    totalCustomer,
+  };
+};
 
 const getAreaChartDataForIncomeFromDB = async (year: number) => {
   // Create date objects for the start and end of the year

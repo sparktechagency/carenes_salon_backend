@@ -1,44 +1,87 @@
-import httpStatus from "http-status";
-import AppError from "../../error/appError";
-import { IDiscount } from "./discount.interface";
-import Discount from "./discount.model";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import httpStatus from 'http-status';
+import AppError from '../../error/appError';
+import { IDiscount } from './discount.interface';
+import Discount from './discount.model';
+import { Product } from '../product/product.model';
+import { Types } from 'mongoose';
 
-const createDiscount = async(shopId:string,payload:IDiscount)=>{
-    const discount = await Discount.findOne({shop:shopId});
+const createDiscount = async (shopId: string, payload: IDiscount) => {
+  const discount = await Discount.findOne({ shop: shopId });
 
-    if(discount){
-        throw new AppError(httpStatus.BAD_REQUEST,"You already have a discount schedule")
+  if (discount) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'You already have a discount schedule',
+    );
+  }
+
+  const result = await Discount.create({ ...payload, shop: shopId });
+
+  return result;
+};
+
+// const getDiscount = async (shopId: string) => {
+//   const discount = await Discount.findOne({ shop: shopId })
+
+//   if (!discount) {
+//     throw new AppError(httpStatus.BAD_REQUEST, "You don't add any discount");
+//   }
+  
+  
+//   return discount;
+// };
+const getDiscount = async (shopId: string) => {
+    const discount = await Discount.findOne({ shop: shopId }).exec();
+  
+    if (!discount) {
+      throw new AppError(httpStatus.BAD_REQUEST, "You don't have any discount added");
     }
-
-    const result = await Discount.create({...payload,shop:shopId});
-
-    return result;
-}
-
-const getDiscount = async(shopId:string)=>{
-    const discount = await Discount.findOne({shop:shopId});
-
-    if(!discount){
-        throw new AppError(httpStatus.BAD_REQUEST,"You don't add any discount");
+  
+    if (discount.products !== 'all-products') {
+      // Ensure TypeScript understands that product IDs are of type ObjectId
+      const products = await Promise.all(
+        discount.products.map((productId: Types.ObjectId) => Product.findById(productId))
+      );
+    //   discount.products = products;
+    discount.products = products.filter((product): product is NonNullable<typeof product> => product !== null) as any;
     }
+    if (discount.services !== 'all-services') {
+      // Ensure TypeScript understands that product IDs are of type ObjectId
+      const products = await Promise.all(
+        discount.services.map((serviceId: Types.ObjectId) => Product.findById(serviceId))
+      );
+    //   discount.products  = products;
+    discount.services = products.filter((service): service is NonNullable<typeof service> => service !== null) as any;
+    }
+  
     return discount;
-}
+  };
+const updateDiscount = async (
+  shopId: string,
+  id: string,
+  payload: Partial<IDiscount>,
+) => {
+  const discount = await Discount.findOne({ _id: id, shop: shopId });
 
-const updateDiscount = async(shopId:string,id:string,payload:Partial<IDiscount>)=>{
-    const discount = await Discount.findOne({_id:id,shop:shopId});
-
-    if(!discount){
-        throw new AppError(httpStatus.NOT_FOUND,"You don't have any discount schedule")
-    }
-    const result = await Discount.findOne({_id:id,shop:shopId},payload,{new:true,runValidators:true});
-    return result;
-}
-
+  if (!discount) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      "You don't have any discount schedule",
+    );
+  }
+  console.log("discont update payload",payload)
+  const result = await Discount.findOne({ _id: id, shop: shopId }, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return result;
+};
 
 const DiscountService = {
-    createDiscount,
-    getDiscount,
-    updateDiscount
-}
+  createDiscount,
+  getDiscount,
+  updateDiscount,
+};
 
 export default DiscountService;
