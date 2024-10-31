@@ -25,8 +25,6 @@ router.post(
 router.get(
   '/all-products',
   auth(
-    USER_ROLE.customer,
-    USER_ROLE.client,
     USER_ROLE.superAdmin,
     USER_ROLE.admin,
   ),
@@ -34,7 +32,7 @@ router.get(
 );
 router.get(
   '/shop-products',
-  auth(USER_ROLE.customer),
+  auth(USER_ROLE.client),
   productController.getSpecificShopProducts,
 );
 router.get(
@@ -49,18 +47,20 @@ router.get(
 );
 router.patch(
   '/update-product/:id',
-  auth(USER_ROLE.admin),
+  auth(USER_ROLE.client),
   uploadFile(),
   (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
     next();
   },
-  validateRequest(productValidations.updateProductValidationSchema),
+  validateRequest(productValidations.updateProductSchema),
   productController.updateProduct,
 );
 router.delete(
   '/delete-product/:id',
-  auth(USER_ROLE.admin),
+  auth(USER_ROLE.client),
   productController.deleteProduct,
 );
 router.patch(
@@ -70,7 +70,7 @@ router.patch(
 );
 router.get(
   '/my-products',
-  auth(USER_ROLE.admin),
+  auth(USER_ROLE.client),
   productController.getMyProducts,
 );
 export const productRoutes = router;

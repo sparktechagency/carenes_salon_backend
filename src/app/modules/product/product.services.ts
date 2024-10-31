@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
-import ProductBookmark from '../productBookmark/product.bookmark.model';
-import { IProduct } from './product.interface'
+import AppError from '../../error/appError';
+import { IProduct } from './product.interface';
 import { Product } from './product.model';
 
 const createProductIntoDB = async (shopId: string, payload: IProduct) => {
@@ -9,10 +10,7 @@ const createProductIntoDB = async (shopId: string, payload: IProduct) => {
   return result;
 };
 
-const getAllProduct = async (
-  customerId: string,
-  query: Record<string, any>,
-) => {
+const getAllProduct = async (query: Record<string, any>) => {
   const productQuery = new QueryBuilder(Product.find(), query)
     .search(['name'])
     .filter()
@@ -21,18 +19,10 @@ const getAllProduct = async (
     .fields();
   const meta = await productQuery.countTotal();
   const result = await productQuery.modelQuery;
-  const bookmarks = await ProductBookmark.find({ costumer: customerId }).select(
-    'product',
-  );
-  const bookmarkedShopIds = new Set(bookmarks.map((b) => b.product.toString()));
 
-  const enrichedResult = result.map((product) => ({
-    ...product.toObject(),
-    isBookmark: bookmarkedShopIds.has(product._id.toString()),
-  }));
   return {
     meta,
-    result: enrichedResult,
+    result,
   };
 };
 
@@ -41,9 +31,13 @@ const getSingleProduct = async (id: string) => {
   return result;
 };
 
-const updateProduct = async (id: string, payload: Partial<IProduct>) => {
+const updateProduct = async (id: string,shopId:string, payload: Partial<IProduct>) => {
   //!TODO: need to use id and shop id both for update product
-  const result = await Product.findByIdAndUpdate(id, payload, {
+  const product = await Product.findOne({_id:id,shop:shopId});
+  if(!product){
+    throw new AppError(httpStatus.BAD_REQUEST,"Unauthorized access")
+  }
+  const result = await Product.findOneAndUpdate({_id:id,shop:shopId}, payload, {
     new: true,
     runValidators: true,
   });
@@ -53,8 +47,8 @@ const updateProduct = async (id: string, payload: Partial<IProduct>) => {
 
 const deleteProductFromDB = async (id: string, profileId: string) => {
   //!TODO: need to use id and shop id both for update product
-  const product = await Product.findOneAndDelete({ _id: id, shop: profileId });
-  return product;
+  const result = await Product.findOneAndDelete({ _id: id, shop: profileId });
+  return result;
 };
 
 const changeProductStatus = async (
@@ -99,18 +93,10 @@ const getSpecificShopProducts = async (
     .fields();
   const meta = await productQuery.countTotal();
   const result = await productQuery.modelQuery;
-  const bookmarks = await ProductBookmark.find({ costumer: customerId }).select(
-    'product',
-  );
-  const bookmarkedShopIds = new Set(bookmarks.map((b) => b.product.toString()));
 
-  const enrichedResult = result.map((product) => ({
-    ...product.toObject(),
-    isBookmark: bookmarkedShopIds.has(product._id.toString()),
-  }));
   return {
     meta,
-    result: enrichedResult,
+    result,
   };
 };
 

@@ -94,6 +94,11 @@
             "date": 1730345526690,
             "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-31-09-error.log",
             "hash": "6ab26ecd526a69c85edc72012a8bf74a36600594a301543597a8123d38afbf6e"
+        },
+        {
+            "date": 1730347738185,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-31-10-error.log",
+            "hash": "66e49eb0d10192d5897d1f5e6ec91c58fdf2a14d554b5e2f2df548ce2f5df8f3"
         }
     ],
     "hashType": "sha256"

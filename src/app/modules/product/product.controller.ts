@@ -24,7 +24,6 @@ const createProduct = catchAsync(async (req, res) => {
 
 const getAllProduct = catchAsync(async (req, res) => {
   const result = await productServices.getAllProduct(
-    req?.user?.profileId,
     req?.query,
   );
   sendResponse(res, {
@@ -74,14 +73,13 @@ const getSpecificShopProducts = catchAsync(async (req, res) => {
 
 const updateProduct = catchAsync(async (req, res) => {
   const { files } = req;
-  // Check if files and store_image exist, and process multiple images
   if (files && typeof files === 'object' && 'product_image' in files) {
-    const newImages = files['product_image'].map((file) => file.path);
-    req.body.images.push(...newImages);
+    req.body.product_image =files['product_image'][0].path;
   }
 
   const result = await productServices.updateProduct(
     req?.params?.id,
+    req.user.profileId,
     req?.body,
   );
   sendResponse(res, {
