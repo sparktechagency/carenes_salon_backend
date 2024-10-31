@@ -54,7 +54,7 @@ const getAllProduct = async (query: Record<string, any>) => {
   );
 
   // Step 3: Build the product query with pagination, search, etc.
-  const productQuery = new QueryBuilder(Product.find(), query)
+  const productQuery = new QueryBuilder(Product.find().populate({path:"shop",select:"shopName"}), query)
     .search(['name'])
     .filter()
     .sort()

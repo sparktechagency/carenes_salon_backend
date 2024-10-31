@@ -56,7 +56,7 @@ const getAllService = async (query: Record<string, any>) => {
   }, {} as Record<string, number>);
 
   // Step 3: Build the service query with pagination, search, etc.
-  const serviceQuery = new QueryBuilder(Service.find(), query)
+  const serviceQuery = new QueryBuilder(Service.find().populate({path:"shop",select:"shopName"}), query)
     .search(['serviceName'])
     .filter()
     .sort()
