@@ -14,7 +14,7 @@ const router = Router();
 
 router.patch(
   '/update',
-  auth(USER_ROLE.client),
+  authWithoutActive(USER_ROLE.client),
   uploadFile(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
