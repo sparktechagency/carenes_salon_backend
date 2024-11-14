@@ -20,3 +20,8 @@ export const ENUM_ORDER_STATUS = {
   DELIVERED: 'delivered',
   COMPLETED: 'completed',
 };
+
+export const ENUM_GENDER = {
+  MALE: 'Male',
+  FEMALE: 'Female',
+};

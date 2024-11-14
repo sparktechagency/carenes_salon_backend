@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));
 app.use(express.static('uploads'));
 // application routers ----------------
-app.use('/api', router);
+app.use('', router);
 
 const test = (req: Request, res: Response) => {
   Promise.reject();

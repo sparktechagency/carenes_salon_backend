@@ -6,91 +6,6 @@
     "auditLog": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\.399ba3723ea93001c1d9d2e2b49974bbf55a5f83-audit.json",
     "files": [
         {
-            "date": 1730174816528,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-28-21-error.log",
-            "hash": "e3715557d6fb30617251a9f609b407dc285d311162edd9d6ebd53c53525492fc"
-        },
-        {
-            "date": 1730176555162,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-29-10-error.log",
-            "hash": "b559859b0260927deadc72de34e7327dc0ec16fe3af83d191f77418bed98b3a4"
-        },
-        {
-            "date": 1730178384519,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-29-11-error.log",
-            "hash": "0fcfb29e11d78f8f7ed748cc982839de0ec2587d71a80bf41da8a1d95fdc4000"
-        },
-        {
-            "date": 1730181635809,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-29-12-error.log",
-            "hash": "ea9f52e76af61dd49259e176587f157c0ea612c183371d6663de3e78defe2bf2"
-        },
-        {
-            "date": 1730188192493,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-29-13-error.log",
-            "hash": "1a22414dcc8415b40f29f944b67514fc99849be9ad7abba2c66d80af57b3449e"
-        },
-        {
-            "date": 1730188842487,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-29-14-error.log",
-            "hash": "7ba247cc69aa48932d9c7d3eeb370ded83e0ff179f990c31262a00e56395531e"
-        },
-        {
-            "date": 1730192485196,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-29-15-error.log",
-            "hash": "d7ea5af0eecc65afd0c8e421783a44ef791d3df5732d151d0da8690ad97086f7"
-        },
-        {
-            "date": 1730196243266,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-29-16-error.log",
-            "hash": "b0c328e0cfaba3cb83be64ac659bb832b9ae2cc2e0d811f5f43365c0c279ffc8"
-        },
-        {
-            "date": 1730199649830,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-29-17-error.log",
-            "hash": "98f30587c1b5d2dbdd1a3e1d21f3895f5e97adb1d854cff7f69ca95b5570ce7e"
-        },
-        {
-            "date": 1730257577990,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-09-error.log",
-            "hash": "a5a5fbd8b28ae94c1b893c64435ced8fe57c88506a2d269afe00df854ebf4c70"
-        },
-        {
-            "date": 1730260951031,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-10-error.log",
-            "hash": "ebf9a1705baf108d232affbdc0c8a8c87519da9f905e942db757d36eb663c549"
-        },
-        {
-            "date": 1730267312779,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-11-error.log",
-            "hash": "04bdd3a4302118317e1fa9c4cd435192cde808edf7666d91df87f5ddf31e78ec"
-        },
-        {
-            "date": 1730268026256,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-12-error.log",
-            "hash": "c8dafdcab584a143f492abcb09df24d1df2ad64af962e9aeb63fa819dcdef825"
-        },
-        {
-            "date": 1730274935062,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-13-error.log",
-            "hash": "43a138d865aee747fee3db4e87ff191f788a7f8c47990f38fa8b7112feb2b964"
-        },
-        {
-            "date": 1730275400779,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-14-error.log",
-            "hash": "7f6a40ed275a584f7fa95cd7b7440b0721c0adb26631d965c2da9ef4ce2482f2"
-        },
-        {
-            "date": 1730278855964,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-15-error.log",
-            "hash": "b73a2ed1cfd102edb845aad443ded227ef08ccbe7d0778fb079d1c6b90e671da"
-        },
-        {
-            "date": 1730282402169,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-30-16-error.log",
-            "hash": "5258bcc11270a1a6adc146ee32aaee604877bc8b3b339cf364f2a071730ffea5"
-        },
-        {
             "date": 1730345526690,
             "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-31-09-error.log",
             "hash": "6ab26ecd526a69c85edc72012a8bf74a36600594a301543597a8123d38afbf6e"
@@ -134,6 +49,26 @@
             "date": 1730376639365,
             "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-10-31-18-error.log",
             "hash": "aeaf2f2224174f24c70618a8085daa1d7b15a402b13524c47def2f287d3f2b88"
+        },
+        {
+            "date": 1731401845646,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-12-14-error.log",
+            "hash": "f42f9be24ee5aa300b6d2d412099312ea1728fd41e4dc4357af31905c8e79619"
+        },
+        {
+            "date": 1731477082279,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-13-11-error.log",
+            "hash": "46a0b142c3f6a00ed4686b4fbab1440588752a1918882b75041615ed2298d11a"
+        },
+        {
+            "date": 1731477668147,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-13-12-error.log",
+            "hash": "2887482184007be153e8897e065fdc31491cf3a90a7b27245e66c7dd4f47288b"
+        },
+        {
+            "date": 1731554133639,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-14-09-error.log",
+            "hash": "9bab3121491b92408a9259649c28c15087b8d034c7b9f3366b1de1660a123f60"
         }
     ],
     "hashType": "sha256"

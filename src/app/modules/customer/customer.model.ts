@@ -23,31 +23,26 @@ const CustomerSchema = new Schema<ICustomer>(
     },
     phoneNumber: {
       type: String,
-      required: true,
       unique: true,
     },
-    city:{
-      type:String,
-      required:true
+    city: {
+      type: String,
     },
-    country:{
-      type:String,
-      required:true
+    country: {
+      type: String,
     },
     gender: {
       type: String,
       enum: ['male', 'female'],
-      required: true,
     },
-    age:{
-      type:Number
+    age: {
+      type: Number,
     },
 
-    // location: {
-    //   type: LocationSchema,
-    //   default: null,
-    //   index: '2dsphere',
-    // },
+    isProfileComplete: {
+      type: Boolean,
+      default: false,
+    },
     profile_image: {
       type: String,
       default: '',
@@ -56,7 +51,6 @@ const CustomerSchema = new Schema<ICustomer>(
       type: Boolean,
       default: false,
     },
-
   },
   {
     timestamps: true,

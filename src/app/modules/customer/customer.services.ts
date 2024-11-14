@@ -3,12 +3,12 @@ import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../error/appError';
 import Customer from './customer.model';
-import { ICustomer } from './customer.interface';
+import { ICompleteCustomer, ICustomer } from './customer.interface';
 
 //!TODO: need to get total speeding for this customer ----
 const getAllCustomer = async (query: Record<string, any>) => {
   const customerQuery = new QueryBuilder(Customer.find(), query)
-    .search(['firstName',"lastName","email"])
+    .search(['firstName', 'lastName', 'email'])
     .filter()
     .sort()
     .paginate()
@@ -40,9 +40,31 @@ const updateCustomerProfile = async (
   return result;
 };
 
+const completeCustomerProfile = async (
+  id: string,
+  payload: ICompleteCustomer,
+) => {
+  const customer = await Customer.findById(id);
+  if (!customer) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Customer not found');
+  }
+
+  const result = await Customer.findByIdAndUpdate(
+    id,
+    { ...payload, isProfileComplete: true },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  return result;
+};
+
 const customerServices = {
   getAllCustomer,
   updateCustomerProfile,
+  completeCustomerProfile,
 };
 
 export default customerServices;

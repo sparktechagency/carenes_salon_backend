@@ -38,34 +38,17 @@ router.post(
 
 router.post(
   '/forget-password',
-  // auth(
-  //   USER_ROLE.customer,
-  //   USER_ROLE.Client,
-  //   USER_ROLE.Admin,
-  //   USER_ROLE.superAdmin,
-  // ),
   validateRequest(authValidations.forgetPasswordValidationSchema),
   authControllers.forgetPassword,
 );
 router.post(
   '/reset-password',
-  // auth(
-  //   USER_ROLE.customer,
-  //   USER_ROLE.Client,
-  //   USER_ROLE.Admin,
-  //   USER_ROLE.superAdmin,
-  // ),
   validateRequest(authValidations.resetPasswordValidationSchema),
   authControllers.resetPassword,
 );
 router.post(
   '/verify-reset-otp',
-  // auth(
-  //   USER_ROLE.customer,
-  //   USER_ROLE.Client,
-  //   USER_ROLE.Admin,
-  //   USER_ROLE.superAdmin,
-  // ),
+
   validateRequest(authValidations.verifyResetOtpValidationSchema),
   authControllers.verifyResetOtp,
 );

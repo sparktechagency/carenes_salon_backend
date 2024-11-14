@@ -14,6 +14,8 @@ import { IAdmin } from '../admin/admin.interface';
 import Admin from '../admin/admin.model';
 import BusinessHour from '../bussinessHour/businessHour.model';
 import ShopCategory from '../shopCategory/shopCategory.model';
+import sendEmail from '../../utilities/sendEmail';
+import registrationSuccessEmailBody from '../../mailTemplete/registerSuccessEmail';
 
 const generateVerifyCode = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
@@ -21,9 +23,16 @@ const generateVerifyCode = (): number => {
 
 const registerCustomer = async (
   password: string,
+  confirmPassword: string,
   customerData: ICustomer,
 ) => {
-  const user = await User.isUserExists(customerData?.phoneNumber);
+  if (password !== confirmPassword) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Password and confirm password doesn't match",
+    );
+  }
+  const user = await User.isUserExists(customerData.email);
   if (user) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
   }
@@ -34,7 +43,6 @@ const registerCustomer = async (
     const verifyCode = generateVerifyCode();
     const userData: Partial<TUser> = {
       email: customerData?.email,
-      phoneNumber: customerData?.phoneNumber,
       password: password,
       role: USER_ROLE.customer,
       verifyCode,
@@ -44,14 +52,17 @@ const registerCustomer = async (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
 
-    // const smsMessage = `Your verification code is: ${verifyCode}`;
-    // await sendSMS(customerData?.phoneNumber, smsMessage);
-
     const customerPayload = {
       ...customerData,
       user: user[0]._id,
     };
     const customer = await Customer.create([customerPayload], { session });
+
+    sendEmail({
+      email: user[0].email,
+      subject: 'Activate Your Account',
+      html: registrationSuccessEmailBody(customer[0].firstName, user[0].verifyCode),
+    });
 
     await session.commitTransaction();
     session.endSession();
@@ -204,18 +215,21 @@ const getMyProfile = async (phoneNumber: string, role: string) => {
   return result;
 };
 
-const verifyCode = async (phoneNumber: string, verifyCode: number) => {
-  const user = await User.findOne({ phoneNumber: phoneNumber });
+const verifyCode = async (email: string, verifyCode: number) => {
+  const user = await User.findOne({ email:email });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
   if (user.codeExpireIn < new Date(Date.now())) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Verify code is expired');
   }
+  if (verifyCode !== user.verifyCode) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Code doesn't match");
+  }
   let result;
   if (user.verifyCode === verifyCode) {
     result = await User.findOneAndUpdate(
-      { phoneNumber: phoneNumber },
+      { email: email },
       { isVerified: true },
       { new: true, runValidators: true },
     );
@@ -237,20 +251,21 @@ const resendVerifyCode = async (phoneNumber: string) => {
   await sendSMS(user?.phoneNumber, smsMessage);
 };
 
-
 // block , unblock user
-const blockUnblockUser = async(id:string,status:string)=>{
-  
+const blockUnblockUser = async (id: string, status: string) => {
   const user = await User.findById(id);
-  if(!user){
-    throw new AppError(httpStatus.NOT_FOUND,"User not found");
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
 
-  const result = await User.findByIdAndUpdate(id,{status:status},{new:true,runValidators:true});
+  const result = await User.findByIdAndUpdate(
+    id,
+    { status: status },
+    { new: true, runValidators: true },
+  );
 
   return result;
-
-}
+};
 
 const userServices = {
   registerCustomer,
@@ -259,7 +274,7 @@ const userServices = {
   getMyProfile,
   verifyCode,
   resendVerifyCode,
-  blockUnblockUser
+  blockUnblockUser,
 };
 
 export default userServices;

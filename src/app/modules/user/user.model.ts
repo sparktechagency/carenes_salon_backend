@@ -16,7 +16,6 @@ const userSchema = new Schema<TUser>(
     },
     phoneNumber: {
       type: String,
-      default: null,
     },
     password: {
       type: String,
