@@ -25,3 +25,9 @@ export const ENUM_GENDER = {
   MALE: 'Male',
   FEMALE: 'Female',
 };
+
+export const ENUM_PAYMENT_PREFERENCES = {
+  ONLINE_ONLY: 'online-only',
+  CASH_ONLY: 'cash-only',
+  BOTH: 'both',
+};

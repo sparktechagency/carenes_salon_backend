@@ -36,6 +36,7 @@ const registerClient = catchAsync(async (req, res) => {
 
   const result = await userServices.registerClient(
     req?.body?.password,
+    req.body.confirmPassword,
     req?.body?.client,
   );
   sendResponse(res, {

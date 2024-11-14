@@ -13,6 +13,7 @@ import Service from '../service/service.model';
 import getCurrentDay from '../../helper/getCurrentDay';
 import BusinessHour from '../bussinessHour/businessHour.model';
 import Discount from '../discount/discount.model';
+import ShopCategory from '../shopCategory/shopCategory.model';
 const updateClientProfile = async (
   userId: string,
   payload: Partial<IClient>,
@@ -21,6 +22,46 @@ const updateClientProfile = async (
     new: true,
     runValidators: true,
   });
+  return result;
+};
+
+const addShopDetails = async (id: string, payload: Partial<IClient>) => {
+  const shop = await Client.findById(id);
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+
+  const isCategoryExist = await ShopCategory.findOne({
+    categoryName: payload.shopCategory,
+  });
+  if (!isCategoryExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop category not found');
+  }
+
+  const result = await Client.findByIdAndUpdate(
+    id,
+    { ...payload, isShopInfoProvided: true },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  return result;
+};
+
+const addBankDetails = async (id: string, payload: Partial<IClient>) => {
+  const shop = await await Client.findById(id);
+
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+
+  const result = await Client.findByIdAndUpdate(
+    id,
+    { ...payload, isProfileCompleted: true },
+    { new: true, runValidators: true },
+  );
   return result;
 };
 
@@ -41,10 +82,9 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
 };
 
 const updateClientStatus = async (id: string, status: string) => {
-
-  const client=  await Client.findById(id);
-  if(!client){
-    throw new AppError(httpStatus.NOT_FOUND,"Client not found")
+  const client = await Client.findById(id);
+  if (!client) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Client not found');
   }
   const session = await Client.startSession();
   session.startTransaction();
@@ -117,14 +157,12 @@ const getNearbyShopWithTime = async (
     ...matchStage,
   ];
   if (query.shopCategoryId) {
-    pipeline.push(
-      {
-        $match: {
-          // shopCategoryId: query.shopCategoryId,
-          shopCategoryId: new mongoose.Types.ObjectId(query.shopCategoryId)
-        },
+    pipeline.push({
+      $match: {
+        // shopCategoryId: query.shopCategoryId,
+        shopCategoryId: new mongoose.Types.ObjectId(query.shopCategoryId),
       },
-    );
+    });
   }
 
   // Add estimated time calculation
@@ -161,7 +199,7 @@ const getNearbyShopWithTime = async (
 
 //   // Check if the shop was found
 //   if (!shop) {
-//    throw new AppError(httpStatus.NOT_FOUND,'Shop not found'); 
+//    throw new AppError(httpStatus.NOT_FOUND,'Shop not found');
 //   }
 
 //   // Fetch categories related to the shop's ID
@@ -193,10 +231,17 @@ const getSingleShop = async (id: string) => {
   const now = new Date();
 
   // Fetch business hours for the current day
-  const businessHour = await BusinessHour.findOne({ entityId: id, day: currentDay }).select("day openTime closeTime isClose");
+  const businessHour = await BusinessHour.findOne({
+    entityId: id,
+    day: currentDay,
+  }).select('day openTime closeTime isClose');
 
   // Find the client/shop by ID and populate the shopCategoryId
-  const shop = await Client.findById(id).populate('shopCategoryId').select("shopImages shopName location totalRating totalRatingCount _id shopGenderCategory");
+  const shop = await Client.findById(id)
+    .populate('shopCategoryId')
+    .select(
+      'shopImages shopName location totalRating totalRatingCount _id shopGenderCategory',
+    );
 
   // Check if the shop was found
   if (!shop) {
@@ -204,7 +249,9 @@ const getSingleShop = async (id: string) => {
   }
 
   // Fetch categories related to the shop's ID
-  const categories = await Category.find({ shop: shop._id }).select("categoryName appointmentColor").exec();
+  const categories = await Category.find({ shop: shop._id })
+    .select('categoryName appointmentColor')
+    .exec();
 
   // Check for an active discount
   const discount = await Discount.findOne({
@@ -218,13 +265,19 @@ const getSingleShop = async (id: string) => {
   // For each category, fetch associated services and apply discount if applicable
   const categoriesWithServices = await Promise.all(
     categories.map(async (category) => {
-      const services = await Service.find({ category: category._id }).select("serviceName availableFor durationMinutes price").exec();
+      const services = await Service.find({ category: category._id })
+        .select('serviceName availableFor durationMinutes price')
+        .exec();
 
       const servicesWithDiscount = services.map((service) => {
-        const isServiceDiscounted = isAllServicesDiscounted || (discount?.services instanceof Array && discount.services.includes(service._id));
+        const isServiceDiscounted =
+          isAllServicesDiscounted ||
+          (discount?.services instanceof Array &&
+            discount.services.includes(service._id));
 
         if (isServiceDiscounted) {
-          const discountAmount = service.price * (discount.discountPercentage / 100);
+          const discountAmount =
+            service.price * (discount.discountPercentage / 100);
           const discountPrice = service.price - discountAmount;
           return {
             ...service.toObject(),
@@ -239,7 +292,7 @@ const getSingleShop = async (id: string) => {
         ...category.toObject(),
         services: servicesWithDiscount,
       };
-    })
+    }),
   );
 
   // Format the response as required
@@ -250,15 +303,14 @@ const getSingleShop = async (id: string) => {
   };
 };
 
-
-
-
 const ClientServices = {
   updateClientProfile,
   getAllClientFromDB,
   updateClientStatus,
   getNearbyShopWithTime,
-  getSingleShop
+  getSingleShop,
+  addShopDetails,
+  addBankDetails
 };
 
 export default ClientServices;
