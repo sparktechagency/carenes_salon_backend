@@ -121,73 +121,82 @@ const updateClientStatus = async (id: string, status: string) => {
   }
 };
 
-const getNearbyShopWithTime = async (
-  customerId: string,
-  payload: {
-    latitude: number;
-    longitude: number;
-  },
-  query: Record<string, any>,
-) => {
-  const matchStage: any[] = [
-    ...(query.shopName
-      ? [
-          {
-            $match: {
-              shopName: { $regex: query.shopName, $options: 'i' },
-            },
-          },
-        ]
-      : []),
-  ];
+// const getNearbyShopWithTime = async (
+//   customerId: string,
+//   payload: {
+//     latitude: number;
+//     longitude: number;
+//   },
+//   query: Record<string, any>,
+// ) => {
+//   const matchStage: any[] = [
+//     ...(query.shopName
+//       ? [
+//           {
+//             $match: {
+//               shopName: { $regex: query.shopName, $options: 'i' },
+//             },
+//           },
+//         ]
+//       : []),
+//     ...(query.shopGenderCategory
+//       ? [
+//           {
+//             $match: {
+//               shopGenderCategory: query.shopGenderCategory,
+//             },
+//           },
+//         ]
+//       : []),
+//   ];
 
-  // Base aggregation pipeline
-  const pipeline: any[] = [
-    {
-      $geoNear: {
-        near: {
-          type: 'Point',
-          coordinates: [payload.longitude, payload.latitude],
-        },
-        distanceField: 'distance', // This will store the distance in meters
-        maxDistance: maxDistanceForShop, // Distance in meters
-        spherical: true, // Use spherical geometry for Earth-like distances
-      },
-    },
-    ...matchStage,
-  ];
-  if (query.shopCategoryId) {
-    pipeline.push({
-      $match: {
-        // shopCategoryId: query.shopCategoryId,
-        shopCategoryId: new mongoose.Types.ObjectId(query.shopCategoryId),
-      },
-    });
-  }
+//   // Base aggregation pipeline
+//   const pipeline: any[] = [
+//     {
+//       $geoNear: {
+//         near: {
+//           type: 'Point',
+//           coordinates: [payload.longitude, payload.latitude],
+//         },
+//         distanceField: 'distance', // This will store the distance in meters
+//         maxDistance: maxDistanceForShop, // Distance in meters
+//         spherical: true, // Use spherical geometry for Earth-like distances
+//       },
+//     },
+//     ...matchStage,
+//   ];
+//   if (query.shopCategoryId) {
+//     pipeline.push({
+//       $match: {
+//         // shopCategoryId: query.shopCategoryId,
+//         shopCategoryId: new mongoose.Types.ObjectId(query.shopCategoryId),
+//       },
+//     });
+//   }
 
-  // Add estimated time calculation
-  pipeline.push({
-    $addFields: {
-      estimatedTime: {
-        $divide: ['$distance', customerSpeed], // distance / speed
-      },
-    },
-  });
+//   // Add estimated time calculation
+//   pipeline.push({
+//     $addFields: {
+//       estimatedTime: {
+//         $divide: ['$distance', customerSpeed], // distance / speed
+//       },
+//     },
+//   });
 
-  const result = await Client.aggregate(pipeline);
+//   const result = await Client.aggregate(pipeline);
 
-  const bookmarks = await ShopBookmark.find({ customer: customerId }).select(
-    'shop',
-  );
-  const bookmarkedShopIds = new Set(bookmarks.map((b) => b.shop.toString()));
+//   const bookmarks = await ShopBookmark.find({ customer: customerId }).select(
+//     'shop',
+//   );
+//   const bookmarkedShopIds = new Set(bookmarks.map((b) => b.shop.toString()));
 
-  const enrichedResult = result.map((shop) => ({
-    ...shop,
-    isBookmark: bookmarkedShopIds.has(shop._id.toString()),
-  }));
+//   const enrichedResult = result.map((shop) => ({
+//     ...shop,
+//     isBookmark: bookmarkedShopIds.has(shop._id.toString()),
+//   }));
 
-  return enrichedResult;
-};
+//   return enrichedResult;
+// };
 
 // get single shop -----------------------------
 // const getSingleShop = async (id: string) => {
@@ -225,6 +234,88 @@ const getNearbyShopWithTime = async (
 //     businessHour
 //   };
 // };
+const getNearbyShopWithTime = async (
+  customerId: string,
+  payload: {
+    latitude: number;
+    longitude: number;
+  },
+  query: Record<string, any>,
+) => {
+  const matchStage: any[] = [
+    ...(query.shopName
+      ? [
+          {
+            $match: {
+              shopName: { $regex: query.shopName, $options: 'i' },
+            },
+          },
+        ]
+      : []),
+    ...(query.shopGenderCategory
+      ? [
+          {
+            $match: {
+              shopGenderCategory: query.shopGenderCategory,
+            },
+          },
+        ]
+      : []),
+  ];
+
+  // Base aggregation pipeline
+  const pipeline: any[] = [];
+
+  // Conditionally add $geoNear if nearby is true
+  if (query.nearby) {
+    pipeline.push({
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [payload.longitude, payload.latitude],
+        },
+        distanceField: 'distance', // This will store the distance in meters
+        maxDistance: maxDistanceForShop, // Distance in meters
+        spherical: true, // Use spherical geometry for Earth-like distances
+      },
+    });
+  }
+
+  // Add match stages for shopName and shopGenderCategory if provided
+  pipeline.push(...matchStage);
+
+  // Add filter for shopCategoryId if provided
+  if (query.shopCategoryId) {
+    pipeline.push({
+      $match: {
+        shopCategoryId: new mongoose.Types.ObjectId(query.shopCategoryId),
+      },
+    });
+  }
+
+  // Add estimated time calculation
+  pipeline.push({
+    $addFields: {
+      estimatedTime: {
+        $divide: ['$distance', customerSpeed], // distance / speed
+      },
+    },
+  });
+
+  const result = await Client.aggregate(pipeline);
+
+  const bookmarks = await ShopBookmark.find({ customer: customerId }).select(
+    'shop',
+  );
+  const bookmarkedShopIds = new Set(bookmarks.map((b) => b.shop.toString()));
+
+  const enrichedResult = result.map((shop) => ({
+    ...shop,
+    isBookmark: bookmarkedShopIds.has(shop._id.toString()),
+  }));
+
+  return enrichedResult;
+};
 
 const getSingleShop = async (id: string) => {
   const currentDay = getCurrentDay();
@@ -310,7 +401,7 @@ const ClientServices = {
   getNearbyShopWithTime,
   getSingleShop,
   addShopDetails,
-  addBankDetails
+  addBankDetails,
 };
 
 export default ClientServices;

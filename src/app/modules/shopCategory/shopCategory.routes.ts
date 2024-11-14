@@ -24,5 +24,5 @@ router.delete(
   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   ShopCategoryController.deleteShopCategory,
 );
-
+router.get("/get-all",ShopCategoryController.getAllShopCategory);
 export const shopCategoryRoutes = router;

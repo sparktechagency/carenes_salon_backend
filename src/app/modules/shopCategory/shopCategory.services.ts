@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import AppError from '../../error/appError';
 import { IShopCategory } from './shopCategory.interface';
 import ShopCategory from './shopCategory.model';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const createShopCategory = async (payload: IShopCategory) => {
   const result = await ShopCategory.create(payload);
@@ -31,10 +33,28 @@ const deleteShopCategory = async (id: string) => {
   return result;
 };
 
+const getAllShopCategory = async (query: Record<string, any>) => {
+  const shopCategoryQuery = new QueryBuilder(ShopCategory.find(), query)
+    .search(['name'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const meta = await shopCategoryQuery.countTotal();
+  const result = await shopCategoryQuery.modelQuery;
+
+  return {
+    meta,
+    result,
+  };
+};
+
 const ShopCategoryServices = {
   createShopCategory,
   updateShopCategory,
   deleteShopCategory,
+  getAllShopCategory
 };
 
 export default ShopCategoryServices;
