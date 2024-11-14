@@ -10,7 +10,7 @@ export interface ICustomer {
   firstName: string;
   lastName:string;
   email: string;
-  phoneNumber: string;
+  email: string;
   city:string;
   country:string;
   gender:"male"|"female";

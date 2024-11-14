@@ -212,16 +212,16 @@ const registerAdmin = async (password: string, adminData: IAdmin) => {
   }
 };
 
-const getMyProfile = async (phoneNumber: string, role: string) => {
+const getMyProfile = async (email: string, role: string) => {
   let result = null;
   if (role === USER_ROLE.customer) {
-    result = await Customer.findOne({ phoneNumber });
+    result = await Customer.findOne({ email: email });
   }
   if (role === USER_ROLE.client) {
-    result = await Client.findOne({ phoneNumber });
+    result = await Client.findOne({ email: email });
   }
   if (role === USER_ROLE.admin) {
-    result = await Admin.findOne({ phoneNumber });
+    result = await Admin.findOne({ email: email });
   }
   return result;
 };

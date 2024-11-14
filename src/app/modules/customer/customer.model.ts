@@ -21,7 +21,7 @@ const CustomerSchema = new Schema<ICustomer>(
       required: true,
       unique: true,
     },
-    phoneNumber: {
+    email: {
       type: String,
       unique: true,
     },

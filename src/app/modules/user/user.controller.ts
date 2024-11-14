@@ -63,8 +63,8 @@ const registerAdmin = catchAsync(async (req, res) => {
 
 // get me
 const getMyProfile = catchAsync(async (req, res) => {
-  const { phoneNumber, role } = req.user;
-  const result = await userServices.getMyProfile(phoneNumber, role);
+  const { email, role } = req.user;
+  const result = await userServices.getMyProfile(email, role);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
