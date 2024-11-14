@@ -9,4 +9,6 @@ export interface IStaff {
   employmentStartDate: Date;
   services: 'all-services' | Types.ObjectId[];
   profile_image?: string;
+  totalRating:number;
+  totalRatingCount:number;
 }

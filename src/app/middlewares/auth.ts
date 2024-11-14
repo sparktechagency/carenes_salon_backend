@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utilities/catchasync';
 import AppError from '../error/appError';
@@ -67,15 +69,15 @@ const auth = (...requiredRoles: TUserRole[]) => {
     }
 
     decoded.profileId = profileData?._id;
-    if (
-      user?.passwordChangedAt &&
-      (await User.isJWTIssuedBeforePasswordChange(
-        user?.passwordChangedAt,
-        iat as number,
-      ))
-    ) {
-      throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized 2');
-    }
+    // if (
+    //   user?.passwordChangedAt &&
+    //   (await User.isJWTIssuedBeforePasswordChange(
+    //     user?.passwordChangedAt,
+    //     iat as number,
+    //   ))
+    // ) {
+    //   throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized 2');
+    // }
     if (requiredRoles && !requiredRoles.includes(role)) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'Your are not authorized 3');
     }
