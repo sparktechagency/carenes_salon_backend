@@ -11,7 +11,8 @@ const loginValidationSchema = z.object({
 const changePasswordValidationSchema = z.object({
   body: z.object({
     oldPassword: z.string({ required_error: 'Old password is required' }),
-    newPassword: z.string({ required_error: 'Password is required' }),
+    newPassword: z.string({ required_error: 'New Password is required' }),
+    confirmNewPassword:z.string({required_error:"Confirm new password is required"})
   }),
 });
 
@@ -25,13 +26,13 @@ const refreshTokenValidationSchema = z.object({
 // forget password validation schema
 const forgetPasswordValidationSchema = z.object({
   body: z.object({
-    phoneNumber: z.string({ required_error: 'Phone number is required' }),
+    email: z.string({ required_error: 'Email is required' }),
   }),
 });
 // reset password validation schema
 const resetPasswordValidationSchema = z.object({
   body: z.object({
-    phoneNumber: z.string({ required_error: 'Phone number is required' }),
+    email: z.string({ required_error: 'Email is required' }),
     password: z.string({ required_error: 'Password is required' }),
     confirmPassword: z.string({
       required_error: 'Confirm password is required',
@@ -41,7 +42,7 @@ const resetPasswordValidationSchema = z.object({
 
 const verifyResetOtpValidationSchema = z.object({
   body: z.object({
-    phoneNumber: z.string({ required_error: 'Phone number is required' }),
+    email: z.string({ required_error: 'Email is required' }),
     resetCode: z.number({
       required_error: 'Reset code is required',
       invalid_type_error: 'Reset code must be number',
@@ -51,7 +52,7 @@ const verifyResetOtpValidationSchema = z.object({
 
 const resendResetCodeValidationSchema = z.object({
   body: z.object({
-    phoneNumber: z.string({ required_error: 'Phone number is required' }),
+    email: z.string({ required_error: 'Email is required' }),
   }),
 });
 

@@ -10,30 +10,30 @@ const router = express.Router();
 
 router.post(
   '/create-product',
-  auth(USER_ROLE.admin),
+  auth(USER_ROLE.client),
   uploadFile(),
   (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
     next();
   },
-  validateRequest(productValidations.createProductValidationSchema),
+  validateRequest(productValidations.createProductSchema),
   productController.createProduct,
 );
 
 router.get(
   '/all-products',
   auth(
-    USER_ROLE.customer,
-    USER_ROLE.client,
     USER_ROLE.superAdmin,
     USER_ROLE.admin,
   ),
   productController.getAllProduct,
 );
 router.get(
-  '/shop-products',
-  auth(USER_ROLE.customer),
-  productController.getSpecificShopProducts,
+  '/my-products',
+  auth(USER_ROLE.client),
+  productController.getMyProducts,
 );
 router.get(
   '/single-product/:id',
@@ -47,18 +47,20 @@ router.get(
 );
 router.patch(
   '/update-product/:id',
-  auth(USER_ROLE.admin),
+  auth(USER_ROLE.client),
   uploadFile(),
   (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
     next();
   },
-  validateRequest(productValidations.updateProductValidationSchema),
+  validateRequest(productValidations.updateProductSchema),
   productController.updateProduct,
 );
 router.delete(
   '/delete-product/:id',
-  auth(USER_ROLE.admin),
+  auth(USER_ROLE.client),
   productController.deleteProduct,
 );
 router.patch(
@@ -67,8 +69,8 @@ router.patch(
   productController.changeProductStatus,
 );
 router.get(
-  '/my-products',
-  auth(USER_ROLE.admin),
-  productController.getMyProducts,
+  '/get-shop-products/:id',
+  auth(USER_ROLE.client),
+  productController.getShopProducts,
 );
 export const productRoutes = router;

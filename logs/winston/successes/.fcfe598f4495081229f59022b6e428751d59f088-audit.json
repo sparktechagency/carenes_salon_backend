@@ -6,89 +6,69 @@
     "auditLog": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\.fcfe598f4495081229f59022b6e428751d59f088-audit.json",
     "files": [
         {
-            "date": 1730174816525,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-28-21-success.log",
-            "hash": "4bdd12a42d67bc466e32e69e8b84c70d913887b03014c5fd600df3f6497c2f0d"
+            "date": 1730345526687,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-09-success.log",
+            "hash": "3fae2d89ffca1ec991a29cc2d0618e3fab3e94b8bf5c601b2342ca997466c25b"
         },
         {
-            "date": 1730176555160,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-29-10-success.log",
-            "hash": "39555fd675ac3471d1fadbd3577e5e494d9a1c6ef2ab323e49f280a4deadfdc4"
+            "date": 1730347738183,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-10-success.log",
+            "hash": "d802c51f7dc71f5a13ab62a26678db35a5ff1f740d7c0c69bd76129231424d6e"
         },
         {
-            "date": 1730178384517,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-29-11-success.log",
-            "hash": "b5e7c333db628a512046dd3757a4cbc64d814cc0431a10783d7360143efbe441"
+            "date": 1730351612427,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-11-success.log",
+            "hash": "8760c9291871a8c70bcfe619cbb32ff1b2c71304dc857efbaaef85a715c7ccaf"
         },
         {
-            "date": 1730181635807,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-29-12-success.log",
-            "hash": "b9ded5f076154f0e029666a5e845d67197fcc7e610c1ce8120953652fc0862a0"
+            "date": 1730355952913,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-12-success.log",
+            "hash": "f9a497ea107c814e1d3368c4df547fc5462a7bf8486559f0da732328dc62c3ba"
         },
         {
-            "date": 1730188192491,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-29-13-success.log",
-            "hash": "8f44538e757ff35063a3dcebe9114529961d6675362a122b26178c92a9ac03ec"
+            "date": 1730358065399,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-13-success.log",
+            "hash": "009ec64ab294dda201c500640d0e72f007ab37ab5c4ed894113a216aa1d33a69"
         },
         {
-            "date": 1730188842485,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-29-14-success.log",
-            "hash": "d580d5dc43958f749a9a6a674364bf283469bb6df49a18348020c1af4c0c80a1"
+            "date": 1730362282288,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-14-success.log",
+            "hash": "bc3142c17bde5a5b3c155f46a39f74bc31cf40d5e6dc950aa25422ece477186f"
         },
         {
-            "date": 1730192485194,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-29-15-success.log",
-            "hash": "3aceb75f155c23308ed307048fbaa4bfa76421ce1c0f5b80e3230072f1c037db"
+            "date": 1730369415556,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-16-success.log",
+            "hash": "b6115d0cb5ea3bc5e4a1bfcb0655a1695b21fa418947982daf6bb7d7787b3d8c"
         },
         {
-            "date": 1730196243264,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-29-16-success.log",
-            "hash": "0ea0bb1fa86cd2e34703a485c12b5d5741ace0407708203a2a63423b90663c56"
+            "date": 1730372487887,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-17-success.log",
+            "hash": "03929331f35706e8940b890f32f8a997f99e57f0d150e98b18ab02d97b1173b9"
         },
         {
-            "date": 1730199649828,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-29-17-success.log",
-            "hash": "8c3044b2d718090805dee48d783ed14bd0c01b963e594d19bdbaa1fdcec44a54"
+            "date": 1730376639363,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-31-18-success.log",
+            "hash": "d5cc340bb0d4a0c713da4744775e676552220fc405b29240269f909978718df4"
         },
         {
-            "date": 1730257577988,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-30-09-success.log",
-            "hash": "3aa6e168b8c8a53b656c3445957d6d4038166ef614174892f1123eacfc84f062"
+            "date": 1731401845643,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-11-12-14-success.log",
+            "hash": "ed5df1b80c1290fc45ec0db1f95bc3271008ac3f0f7960efaa6447a75d919b0c"
         },
         {
-            "date": 1730260951028,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-30-10-success.log",
-            "hash": "675e519a422773fb6aceee48fcc902634bd6bb61306d37caf65dfe9b1e08e6a0"
+            "date": 1731477082275,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-11-13-11-success.log",
+            "hash": "5d32308438db1ca9ac24f9232158dee75034b5d16823c16c9f4f4892ba8dd745"
         },
         {
-            "date": 1730267312777,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-30-11-success.log",
-            "hash": "427553e8e7cf8ddd2a5ba5fd2497dac1fc52724a8c2f88b2be1dc710649135c2"
+            "date": 1731477668142,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-11-13-12-success.log",
+            "hash": "8eb15d9c58ef8e30c27ee1509248d65e0eabefc90dee6332a2215f284646b713"
         },
         {
-            "date": 1730268026254,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-30-12-success.log",
-            "hash": "b82811a42750e17f50b0649e942b113b1825adbb4098cc8e5156337d6f4224fc"
-        },
-        {
-            "date": 1730274935060,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-30-13-success.log",
-            "hash": "bb44fb02f3ba173b567d80e0f80c6b117dbb6272ed68571a1d8ed7eb2ab4aa8c"
-        },
-        {
-            "date": 1730275400777,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-30-14-success.log",
-            "hash": "56de1bfd3a76c1a7589977984b851116022ffbdec1bf7fcbd7b5f3c00cfafbf3"
-        },
-        {
-            "date": 1730278855962,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-30-15-success.log",
-            "hash": "91e1a8a865d3a317a1063e3895a820483e3afee2539285efdba3a5360101f7c2"
-        },
-        {
-            "date": 1730282402167,
-            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-10-30-16-success.log",
-            "hash": "7ac8bd3a2c3a65edd0f159d3cd3c0fbda6dfa1a2ae381437eaa08a644426f087"
+            "date": 1731554133636,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\successes\\um-2024-11-14-09-success.log",
+            "hash": "cf3f41cd5f322707a1c11c4907df8f7d00da21cfc44801e94d202f59cb8999c6"
         }
     ],
     "hashType": "sha256"

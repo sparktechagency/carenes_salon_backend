@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
- const createServiceValidationSchema = z.object({
+const createServiceValidationSchema = z.object({
  body:z.object({
     serviceName: z.string().min(1, { message: 'Service name is required' }),
     availableFor: z.enum(['Everyone', 'Male', 'Female'], {

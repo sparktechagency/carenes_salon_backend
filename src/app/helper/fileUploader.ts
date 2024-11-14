@@ -10,9 +10,16 @@ export const uploadFile = () => {
 
       if (file.fieldname === 'profile_image') {
         uploadPath = 'uploads/images/profile';
-      } else if (file.fieldname === 'category_image') {
+      } 
+      else if (file.fieldname === 'category_image') {
         uploadPath = 'uploads/images/category';
-      } else if (file.fieldname === 'sub_category_image') {
+        
+      }
+      else if (file.fieldname === 'product_image') {
+        uploadPath = 'uploads/images/product';
+        
+      }
+       else if (file.fieldname === 'sub_category_image') {
         uploadPath = 'uploads/images/sub_category';
       } else if (file.fieldname === 'shop_image') {
         uploadPath = 'uploads/images/shop_image';
@@ -55,6 +62,7 @@ export const uploadFile = () => {
       'image',
       'profile_image',
       'shop_image',
+      'product_image',
       'category_image',
       'sub_category_image',
       'shop_banner',
@@ -90,6 +98,7 @@ export const uploadFile = () => {
     { name: 'image', maxCount: 1 },
     { name: 'profile_image', maxCount: 1 },
     { name: 'category_image', maxCount: 1 },
+    { name: 'product_image', maxCount: 1 },
     { name: 'sub_category_image', maxCount: 1 },
     { name: 'shop_image', maxCount: 5 },
     { name: 'shop_banner', maxCount: 1 },
