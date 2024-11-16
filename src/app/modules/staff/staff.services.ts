@@ -108,7 +108,7 @@ const getAllStaff = async (query: Record<string, any>) => {
 const getMyStaff = async (shopId: string) => {
   try {
     // Fetch staff for the given shop
-    const staffList = await Staff.find({ shop: shopId }).select("name specialty profile_image");
+    const staffList = await Staff.find({ shop: shopId }).select("name specialty profile_image totalRating totalRatingCount");
 
     // Resolve services for each staff member
     // const resolvedStaffList = await Promise.all(
