@@ -15,17 +15,17 @@ const servicesSchema = new Schema({
 
 })
 
-const productsSchema = new Schema({
-  productId:{
-    type:Schema.Types.ObjectId,
-    required:true
-  }
-  ,
-  price:{
-    type:Number,
-    required:true
-  }
-})
+// const productsSchema = new Schema({
+//   productId:{
+//     type:Schema.Types.ObjectId,
+//     required:true
+//   }
+//   ,
+//   price:{
+//     type:Number,
+//     required:true
+//   }
+// })
 
 const BookingSchema = new Schema<IBooking>({
     customerId: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
@@ -33,7 +33,7 @@ const BookingSchema = new Schema<IBooking>({
     staffId: { type: Schema.Types.ObjectId, ref: 'Staff', required: true },
     // serviceIds: [{ type: Schema.Types.ObjectId, ref: 'Service', required: true }],
     services:[servicesSchema],
-    products:[productsSchema],
+    // products:[productsSchema],
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
     status: { type: String, enum: ['booked', 'completed', 'canceled'], default: 'booked' }

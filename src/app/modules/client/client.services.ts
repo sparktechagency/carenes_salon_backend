@@ -352,7 +352,7 @@ const getSingleShop = async (id: string) => {
   });
 
   const isAllServicesDiscounted = discount?.services === 'all-services';
-
+// console.log("is all service discount",isAllServicesDiscounted);
   // For each category, fetch associated services and apply discount if applicable
   const categoriesWithServices = await Promise.all(
     categories.map(async (category) => {
@@ -370,6 +370,7 @@ const getSingleShop = async (id: string) => {
           const discountAmount =
             service.price * (discount.discountPercentage / 100);
           const discountPrice = service.price - discountAmount;
+          console.log("discount price",discountPrice);
           return {
             ...service.toObject(),
             discountPrice: discountPrice,
