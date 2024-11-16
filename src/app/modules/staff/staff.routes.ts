@@ -38,7 +38,7 @@ router.patch(
 
 router.delete("/delete/:id",auth(USER_ROLE.client),StaffController.deleteStaff);
 router.get("/get-available-staff",validateRequest(staffValidations.getAvailableStaffValidationSchema),StaffController.getAvailableStaff)
-
+router.get("/single-staff/:id",auth(USER_ROLE.superAdmin,USER_ROLE.customer,USER_ROLE.admin,USER_ROLE.client),StaffController.getSingleStaff);
 
 
 export const staffRoutes = router;

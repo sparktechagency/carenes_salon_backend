@@ -61,6 +61,16 @@ const getMyStaff = catchAsync(async (req, res) => {
     data: result,
   });
 });
+// get single staff
+const getSingleStaff = catchAsync(async (req, res) => {
+  const result = await StaffServices.getSingleStaff(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Staff retrieved successfully',
+    data: result,
+  });
+});
 // get available staff
 const getAvailableStaff = catchAsync(async (req, res) => {
   const result = await StaffServices.getAvailableStaff(req.body);
@@ -78,7 +88,8 @@ const StaffController = {
   deleteStaff,
   getAllStaff,
   getMyStaff,
-  getAvailableStaff
+  getAvailableStaff,
+  getSingleStaff
 };
 
 export default StaffController;

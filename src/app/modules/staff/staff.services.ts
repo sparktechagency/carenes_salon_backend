@@ -108,37 +108,64 @@ const getAllStaff = async (query: Record<string, any>) => {
 const getMyStaff = async (shopId: string) => {
   try {
     // Fetch staff for the given shop
-    const staffList = await Staff.find({ shop: shopId });
+    const staffList = await Staff.find({ shop: shopId }).select("name specialty profile_image");
 
     // Resolve services for each staff member
-    const resolvedStaffList = await Promise.all(
-      staffList.map(async (staff) => {
-        if (staff.services === 'all-services') {
-          // Return 'all-services' as is
-          return {
-            ...staff.toObject(),
-            services: 'all-services',
-          };
-        } else if (Array.isArray(staff.services)) {
-          // Populate specific services
-          const specificServices = await Service.find({
-            _id: { $in: staff.services },
-          }).select('serviceName');
-          return {
-            ...staff.toObject(),
-            services: specificServices,
-          };
-        } else {
-          return staff.toObject(); // Return as is for unexpected cases
-        }
-      }),
-    );
+    // const resolvedStaffList = await Promise.all(
+    //   staffList.map(async (staff) => {
+    //     if (staff.services === 'all-services') {
+    //       // Return 'all-services' as is
+    //       return {
+    //         ...staff.toObject(),
+    //         services: 'all-services',
+    //       };
+    //     } else if (Array.isArray(staff.services)) {
+    //       // Populate specific services
+    //       const specificServices = await Service.find({
+    //         _id: { $in: staff.services },
+    //       }).select('serviceName');
+    //       return {
+    //         ...staff.toObject(),
+    //         services: specificServices,
+    //       };
+    //     } else {
+    //       return staff.toObject(); // Return as is for unexpected cases
+    //     }
+    //   }),
+    // );
 
-    return resolvedStaffList;
+    return staffList;
   } catch (error) {
     throw new Error('Unable to fetch staff information.');
   }
 };
+
+const getSingleStaff = async(staffId:string)=>{
+  const staff = await Staff.findById(staffId);
+  if(!staff){
+    throw new AppError(httpStatus.NOT_FOUND,"Staff not found");
+  }
+
+  if (staff.services === 'all-services') {
+    // Return 'all-services' as is
+    return {
+      ...staff.toObject(),
+      services: 'all-services',
+    };
+  } else if (Array.isArray(staff.services)) {
+    // Populate specific services
+    const specificServices = await Service.find({
+      _id: { $in: staff.services },
+    }).select('serviceName');
+    return {
+      ...staff.toObject(),
+      services: specificServices,
+    };
+  } else {
+    return staff.toObject(); // Return as is for unexpected cases
+  }
+
+}
 
 // get available staff
 const getAvailableStaff = async (payload: {
@@ -162,6 +189,7 @@ const StaffServices = {
   getAllStaff,
   getMyStaff,
   getAvailableStaff,
+  getSingleStaff
 };
 
 export default StaffServices;
