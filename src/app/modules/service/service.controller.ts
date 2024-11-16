@@ -40,6 +40,15 @@ const deleteService = catchAsync(async (req, res) => {
       data: result,
     });
   })
+  const getMyServices = catchAsync(async(req,res)=>{
+    const result = await ServiceService.getMyServices(req.user.profileId);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Service retrieved successfully',
+      data: result,
+    });
+  })
 
 
 
@@ -47,7 +56,8 @@ const ServiceController = {
     createService,
     updateService,
     deleteService,
-    getAllService
+    getAllService,
+    getMyServices
 }
 
 export default ServiceController;

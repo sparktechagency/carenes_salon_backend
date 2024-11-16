@@ -53,7 +53,7 @@ const getAllStaff = catchAsync(async (req, res) => {
 });
 // get my staff
 const getMyStaff = catchAsync(async (req, res) => {
-  const result = await StaffServices.getAllStaff(req.user?.profileId);
+  const result = await StaffServices.getMyStaff(req.user?.profileId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
