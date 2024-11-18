@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Types } from 'mongoose';
 
 export interface IStaff {
+  _id: any;
+  toObject(): any;
   shop:Types.ObjectId;
   name: string;
   specialty: string;

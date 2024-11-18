@@ -7,6 +7,7 @@ import AppError from '../../error/appError';
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import Service from '../service/service.model';
+import Booking from '../booking/booking.model';
 
 const createStaffIntoDB = async (profileId: string, payload: IStaff) => {
   const session = await mongoose.startSession();
@@ -89,26 +90,71 @@ const deleteStaffFromDB = async (id: string) => {
 };
 
 // get all staff
-const getAllStaff = async (query: Record<string, any>) => {
-  const staffQuery = new QueryBuilder(Staff.find(), query)
-    .search(['name', 'email'])
-    .filter()
-    .sort()
-    .paginate()
-    .fields();
-  const meta = await staffQuery.countTotal();
-  const result = await staffQuery.modelQuery;
+// const getAllStaff = async (query: Record<string, any>) => {
+//   const staffQuery = new QueryBuilder(Staff.find(), query)
+//     .search(['name', 'email'])
+//     .filter()
+//     .sort()
+//     .paginate()
+//     .fields();
+//   const meta = await staffQuery.countTotal();
+//   const result = await staffQuery.modelQuery;
 
+//   return {
+//     meta,
+//     result,
+//   };
+// };
+const getAllStaff = async (query: Record<string, any>) => {
+  const totalSales = await Booking.aggregate([
+    { $match: { status: 'completed' } }, // Only consider completed bookings
+    {
+      $group: {
+        _id: '$staffId', // Group by shopId
+        totalSales: { $sum: '$totalPrice' }, // Sum the totalPrice for each shop
+      },
+    },
+  ]);
+
+  const salesMap = totalSales.reduce(
+    (acc, sale) => {
+      acc[sale._id.toString()] = sale.totalSales;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+  const StaffQuery = new QueryBuilder(Staff.find(), query)
+    .search(['name'])
+    .fields()
+    .filter()
+    .paginate()
+    .sort();
+
+  const meta = await StaffQuery.countTotal();
+  const staffs = await StaffQuery.modelQuery;
+
+  const staffWithSales = staffs.map((staff) => {
+    const staffId = staff._id.toString();
+    return {
+      ...staff.toObject(),
+      totalSales: salesMap[staffId] || 0, // Add totalSales, defaulting to 0 if not found
+    };
+  });
+  if (query.sort === 'topSelling') {
+    staffWithSales.sort((a, b) => b.totalSales - a.totalSales); // Sort descending by totalSales
+  }
   return {
     meta,
-    result,
+    result: staffWithSales,
   };
 };
 
 const getMyStaff = async (shopId: string) => {
   try {
     // Fetch staff for the given shop
-    const staffList = await Staff.find({ shop: shopId }).select("name specialty profile_image totalRating totalRatingCount");
+    const staffList = await Staff.find({ shop: shopId }).select(
+      'name specialty profile_image totalRating totalRatingCount',
+    );
 
     // Resolve services for each staff member
     // const resolvedStaffList = await Promise.all(
@@ -140,10 +186,10 @@ const getMyStaff = async (shopId: string) => {
   }
 };
 
-const getSingleStaff = async(staffId:string)=>{
+const getSingleStaff = async (staffId: string) => {
   const staff = await Staff.findById(staffId);
-  if(!staff){
-    throw new AppError(httpStatus.NOT_FOUND,"Staff not found");
+  if (!staff) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Staff not found');
   }
 
   if (staff.services === 'all-services') {
@@ -164,8 +210,7 @@ const getSingleStaff = async(staffId:string)=>{
   } else {
     return staff.toObject(); // Return as is for unexpected cases
   }
-
-}
+};
 
 // get available staff
 const getAvailableStaff = async (payload: {
@@ -189,7 +234,7 @@ const StaffServices = {
   getAllStaff,
   getMyStaff,
   getAvailableStaff,
-  getSingleStaff
+  getSingleStaff,
 };
 
 export default StaffServices;
