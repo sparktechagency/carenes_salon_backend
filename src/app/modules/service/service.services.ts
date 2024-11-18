@@ -23,18 +23,52 @@ const createService = async (shopId: string, payload: IService) => {
 };
 
 // const getAllService = async (query: Record<string, any>) => {
-//   const serviceQuery = new QueryBuilder(Service.find(), query)
+//   // Step 1: Aggregate total sales for each service
+//   const totalSales = await Booking.aggregate([
+//     { $unwind: '$services' }, // Unwind services array in each booking
+//     {
+//       $group: {
+//         _id: '$services.serviceId',
+//         totalSales: { $sum: '$services.price' },
+//       },
+//     },
+//   ]);
+
+//   // Step 2: Create a mapping for quick lookup of total sales by serviceId
+//   const salesMap = totalSales.reduce(
+//     (acc, sale) => {
+//       acc[sale._id.toString()] = sale.totalSales;
+//       return acc;
+//     },
+//     {} as Record<string, number>,
+//   );
+
+//   // Step 3: Build the service query with pagination, search, etc.
+//   const serviceQuery = new QueryBuilder(
+//     Service.find().populate({ path: 'shop', select: 'shopName' }),
+//     query,
+//   )
 //     .search(['serviceName'])
 //     .filter()
 //     .sort()
 //     .paginate()
 //     .fields();
+
 //   const meta = await serviceQuery.countTotal();
 //   const result = await serviceQuery.modelQuery;
 
+//   // Step 4: Add totalSales to each service in the result
+//   const resultWithSales = result.map((service) => {
+//     const serviceId = service._id.toString();
+//     return {
+//       ...service.toObject(),
+//       totalSales: salesMap[serviceId] || 0, // Add totalSales, defaulting to 0 if not found
+//     };
+//   });
+
 //   return {
 //     meta,
-//     result,
+//     result: resultWithSales,
 //   };
 // };
 const getAllService = async (query: Record<string, any>) => {
@@ -80,6 +114,11 @@ const getAllService = async (query: Record<string, any>) => {
       totalSales: salesMap[serviceId] || 0, // Add totalSales, defaulting to 0 if not found
     };
   });
+
+  // Step 5: Sort by totalSales if requested
+  if (query.sort === 'topSelling') {
+    resultWithSales.sort((a, b) => b.totalSales - a.totalSales); // Sort descending by totalSales
+  }
 
   return {
     meta,

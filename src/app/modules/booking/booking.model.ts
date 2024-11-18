@@ -43,7 +43,8 @@ const BookingSchema = new Schema<IBooking>({
       required: true,
     },
     bookingPaymentType: {type:String,enum:Object.values(ENUM_BOOKING_PAYMENT),required:true},
-    paymentStatus: {type:String,enum:Object.values(ENUM_PAYMENT_STATUS),required:true}
+    paymentStatus: {type:String,enum:Object.values(ENUM_PAYMENT_STATUS),required:true},
+    shopCategoryId:{type:Schema.Types.ObjectId,required:true},
   }, {
     timestamps: true,
   });

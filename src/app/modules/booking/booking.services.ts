@@ -208,7 +208,10 @@ import QueryBuilder from '../../builder/QueryBuilder';
 // };
 const createPayOnShopBooking = async (customerId: string, payload: any) => {
   const { serviceIds, date, startTime, shopId } = payload;
-
+  const shop = await Client.findById(shopId);
+  if (!shop) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Shop not found');
+  }
   // Fetch current date for discount comparison
   const now = new Date();
 
@@ -321,6 +324,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
   // Create the booking with total price and service details
   const result = await Booking.create({
     ...payload,
+    shopCategoryId:shop.shopCategoryId,
     startTime: startDate,
     endTime: endDate,
     customerId,
@@ -347,25 +351,28 @@ const createBooking = async (customerId: string, payload: any) => {
   return result;
 };
 
-const getCustomerBookings = async(customerId:string,query:Record<string,unknown>)=>{
+const getCustomerBookings = async (
+  customerId: string,
+  query: Record<string, unknown>,
+) => {
   const bookingQuery = new QueryBuilder(Booking.find(), query)
-   .search(['customerId'])
-   .filter()
-   .sort()
-   .paginate()
-   .fields();
+    .search(['customerId'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
   const meta = await bookingQuery.countTotal();
   const result = await bookingQuery.modelQuery;
 
   return {
-    meta,result
-  }
-
-}
+    meta,
+    result,
+  };
+};
 
 const BookingService = {
   createBooking,
-  getCustomerBookings
+  getCustomerBookings,
 };
 
 export default BookingService;
