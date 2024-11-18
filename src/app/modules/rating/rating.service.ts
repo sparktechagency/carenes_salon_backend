@@ -29,6 +29,7 @@ const createRating = async (customerId: string, payload: IRating) => {
   return result;
 };
 
+// get sob rating
 const getSobRating = async (shopId: string, query: Record<string, any>) => {
   const sobRatingQuery = new QueryBuilder(Rating.find(), query)
     .search(['name'])
