@@ -190,6 +190,7 @@ const registerAdmin = async (password: string, adminData: IAdmin) => {
       password: password,
       role: USER_ROLE.admin,
       isActive: true,
+      isVerified:true
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

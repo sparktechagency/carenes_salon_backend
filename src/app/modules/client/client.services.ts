@@ -352,7 +352,7 @@ const getSingleShop = async (id: string) => {
   });
 
   const isAllServicesDiscounted = discount?.services === 'all-services';
-// console.log("is all service discount",isAllServicesDiscounted);
+  // console.log("is all service discount",isAllServicesDiscounted);
   // For each category, fetch associated services and apply discount if applicable
   const categoriesWithServices = await Promise.all(
     categories.map(async (category) => {
@@ -370,7 +370,7 @@ const getSingleShop = async (id: string) => {
           const discountAmount =
             service.price * (discount.discountPercentage / 100);
           const discountPrice = service.price - discountAmount;
-          console.log("discount price",discountPrice);
+          console.log('discount price', discountPrice);
           return {
             ...service.toObject(),
             discountPrice: discountPrice,
@@ -395,6 +395,15 @@ const getSingleShop = async (id: string) => {
   };
 };
 
+const getShopDetails = async (id: string) => {
+  const shop = await Client.findById(id);
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+
+  return shop;
+};
+
 const ClientServices = {
   updateClientProfile,
   getAllClientFromDB,
@@ -403,6 +412,7 @@ const ClientServices = {
   getSingleShop,
   addShopDetails,
   addBankDetails,
+  getShopDetails
 };
 
 export default ClientServices;

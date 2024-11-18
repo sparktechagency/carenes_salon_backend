@@ -96,6 +96,15 @@ const addBankDetails = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getShopDetails = catchAsync(async (req, res) => {
+  const result =await ClientServices.getShopDetails(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Shop details added successfully',
+    data: result,
+  });
+});
 
 const ClientController = {
   updateClientProfile,
@@ -104,7 +113,8 @@ const ClientController = {
   getNearbyShop,
   getSingleShop,
   addShopDetails,
-  addBankDetails
+  addBankDetails,
+  getShopDetails
 };
 
 export default ClientController;
