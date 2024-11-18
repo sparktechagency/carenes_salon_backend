@@ -14,6 +14,7 @@ import getCurrentDay from '../../helper/getCurrentDay';
 import BusinessHour from '../bussinessHour/businessHour.model';
 import Discount from '../discount/discount.model';
 import ShopCategory from '../shopCategory/shopCategory.model';
+import Booking from '../booking/booking.model';
 const updateClientProfile = async (
   userId: string,
   payload: Partial<IClient>,
@@ -65,21 +66,73 @@ const addBankDetails = async (id: string, payload: Partial<IClient>) => {
   return result;
 };
 
+// const getAllClientFromDB = async (query: Record<string, any>) => {
+//   const ClientQuery = new QueryBuilder(Client.find(), query)
+//     .search(['name'])
+//     .fields()
+//     .filter()
+//     .paginate()
+//     .sort();
+//   const meta = await ClientQuery.countTotal();
+//   const result = await ClientQuery.modelQuery;
+
+//   return {
+//     meta,
+//     result,
+//   };
+// };
 const getAllClientFromDB = async (query: Record<string, any>) => {
+  // Step 1: Aggregate total sales for each shop
+  const totalSales = await Booking.aggregate([
+    { $match: { status: 'completed' } }, // Only consider completed bookings
+    {
+      $group: {
+        _id: '$shopId', // Group by shopId
+        totalSales: { $sum: '$totalPrice' }, // Sum the totalPrice for each shop
+      },
+    },
+  ]);
+
+  // Step 2: Create a mapping for quick lookup of total sales by shopId
+  const salesMap = totalSales.reduce(
+    (acc, sale) => {
+      acc[sale._id.toString()] = sale.totalSales;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  // Step 3: Build the client query with pagination, search, etc.
   const ClientQuery = new QueryBuilder(Client.find(), query)
     .search(['name'])
     .fields()
     .filter()
     .paginate()
     .sort();
+
   const meta = await ClientQuery.countTotal();
-  const result = await ClientQuery.modelQuery;
+  const clients = await ClientQuery.modelQuery;
+
+  // Step 4: Add totalSales to each client in the result
+  const clientsWithSales = clients.map((client) => {
+    const clientId = client._id.toString();
+    return {
+      ...client.toObject(),
+      totalSales: salesMap[clientId] || 0, // Add totalSales, defaulting to 0 if not found
+    };
+  });
+
+  // Step 5: Sort by totalSales if requested
+  if (query.sort === 'topSelling') {
+    clientsWithSales.sort((a, b) => b.totalSales - a.totalSales); // Sort descending by totalSales
+  }
 
   return {
     meta,
-    result,
+    result: clientsWithSales,
   };
 };
+
 
 const updateClientStatus = async (id: string, status: string) => {
   const client = await Client.findById(id);
@@ -352,7 +405,7 @@ const getSingleShop = async (id: string) => {
   });
 
   const isAllServicesDiscounted = discount?.services === 'all-services';
-// console.log("is all service discount",isAllServicesDiscounted);
+  // console.log("is all service discount",isAllServicesDiscounted);
   // For each category, fetch associated services and apply discount if applicable
   const categoriesWithServices = await Promise.all(
     categories.map(async (category) => {
@@ -370,7 +423,7 @@ const getSingleShop = async (id: string) => {
           const discountAmount =
             service.price * (discount.discountPercentage / 100);
           const discountPrice = service.price - discountAmount;
-          console.log("discount price",discountPrice);
+          console.log('discount price', discountPrice);
           return {
             ...service.toObject(),
             discountPrice: discountPrice,
@@ -395,6 +448,15 @@ const getSingleShop = async (id: string) => {
   };
 };
 
+const getShopDetails = async (id: string) => {
+  const shop = await Client.findById(id);
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+
+  return shop;
+};
+
 const ClientServices = {
   updateClientProfile,
   getAllClientFromDB,
@@ -403,6 +465,7 @@ const ClientServices = {
   getSingleShop,
   addShopDetails,
   addBankDetails,
+  getShopDetails
 };
 
 export default ClientServices;

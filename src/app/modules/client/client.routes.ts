@@ -64,7 +64,7 @@ router.get(
   validateRequest(ClientValidations.getNearbyShopValidationSchema),
   ClientController.getNearbyShop,
 );
-
+router.get("/get-shop-details/:id",auth(USER_ROLE.superAdmin,USER_ROLE.admin),ClientController.getShopDetails);
 router.get('/single-shop/:id', ClientController.getSingleShop);
 
 export const clientRoutes = router;

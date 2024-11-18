@@ -9,5 +9,5 @@ const router  = express.Router();
 
 
 router.post("/create-booking",auth(USER_ROLE.customer),BookingController.createBooking);
-
+router.get("/get-customer-bookings",auth(USER_ROLE.customer),BookingController.getCustomerBookings);
 export const bookingRoutes = router;

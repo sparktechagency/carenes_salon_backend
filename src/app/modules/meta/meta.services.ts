@@ -1,21 +1,153 @@
+import Client from '../client/client.model';
 import Customer from '../customer/customer.model';
 import Order from '../order/order.model';
 import Service from '../service/service.model';
 
 // get dashboard meta data
+// const getDashboardMetaData = async () => {
+//   const totalSales = 1000;
+//   const profitOnSales = 400;
+//   const totalService = await Service.countDocuments();
+//   const totalProduct = 1000;
+//   const totalCustomer = await Customer.countDocuments();
+
+//   return {
+//     totalSales,
+//     profitOnSales,
+//     totalService,
+//     totalProduct,
+//     totalCustomer,
+//   };
+// };
+
 const getDashboardMetaData = async () => {
   const totalSales = 1000;
   const profitOnSales = 400;
   const totalService = await Service.countDocuments();
-  const totalProduct = 1000;
   const totalCustomer = await Customer.countDocuments();
+  const totalClient = await Client.countDocuments();
 
+  const currentMonthStart = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1,
+  );
+  const lastMonthStart = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() - 1,
+    1,
+  );
+
+  // Customer -----------
+  const currentMonthCustomerCount = await Customer.countDocuments({
+    createdAt: {
+      $gte: currentMonthStart,
+      $lt: new Date(),
+    },
+  });
+  const lastMonthCustomerCount = await Customer.countDocuments({
+    createdAt: {
+      $gte: lastMonthStart,
+      $lt: currentMonthStart,
+    },
+  });
+
+  const customerChangeType =
+    currentMonthCustomerCount > lastMonthCustomerCount
+      ? 'increase'
+      : 'decrease';
+  const customerChangePercentage =
+    lastMonthCustomerCount > 0
+      ? lastMonthCustomerCount < currentMonthCustomerCount
+        ? Math.abs(
+            ((currentMonthCustomerCount - lastMonthCustomerCount) /
+              lastMonthCustomerCount) *
+              100,
+          )
+        : Math.abs(
+            ((lastMonthCustomerCount - currentMonthCustomerCount) /
+              currentMonthCustomerCount) *
+              100,
+          )
+      : 0;
+
+  // client --------------------
+  const currentMonthClientCount = await Client.countDocuments({
+    createdAt: {
+      $gte: currentMonthStart,
+      $lt: new Date(),
+    },
+  });
+  const lastMonthClientCount = await Client.countDocuments({
+    createdAt: {
+      $gte: lastMonthStart,
+      $lt: currentMonthStart,
+    },
+  });
+
+  // console.log("last mon client",lastMonthCustomerCount);
+  // console.log("current mon client",currentMonthCustomerCount);
+
+  const clientChangeType =
+    currentMonthClientCount > lastMonthClientCount ? 'increase' : 'decrease';
+  const clientChangePercentage =
+    lastMonthClientCount > 0
+      ? lastMonthClientCount < currentMonthClientCount
+        ? Math.abs(
+            ((currentMonthClientCount - lastMonthClientCount) /
+              lastMonthClientCount) *
+              100,
+          )
+        : Math.abs(
+            ((lastMonthClientCount - currentMonthClientCount) /
+              currentMonthClientCount) *
+              100,
+          )
+      : 0;
+
+  // service -------------
+
+  const currentMonthServiceCount = await Service.countDocuments({
+    createdAt: {
+      $gte: currentMonthStart,
+      $lt: new Date(),
+    },
+  });
+  const lastMonthServiceCount = await Service.countDocuments({
+    createdAt: {
+      $gte: lastMonthStart,
+      $lt: currentMonthStart,
+    },
+  });
+
+  const serviceChangeType =
+    currentMonthServiceCount > lastMonthServiceCount ? 'increase' : 'decrease';
+  const serviceChangePercentage =
+    lastMonthServiceCount > 0
+      ? lastMonthServiceCount < currentMonthServiceCount
+        ? Math.abs(
+            ((currentMonthServiceCount - lastMonthServiceCount) /
+              lastMonthServiceCount) *
+              100,
+          )
+        : Math.abs(
+            ((lastMonthServiceCount - currentMonthServiceCount) /
+              currentMonthServiceCount) *
+              100,
+          )
+      : 0;
   return {
     totalSales,
     profitOnSales,
     totalService,
-    totalProduct,
     totalCustomer,
+    totalClient,
+    customerChangeType,
+    customerChangePercentage: customerChangePercentage.toFixed(2),
+    clientChangeType,
+    clientChangePercentage: clientChangePercentage.toFixed(2),
+    serviceChangeType,
+    serviceChangePercentage: serviceChangePercentage.toFixed(2),
   };
 };
 

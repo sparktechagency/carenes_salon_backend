@@ -13,6 +13,8 @@ const ServiceSchema: Schema<IService> = new Schema({
   },
   durationMinutes: { type: Number, required: true },
   price: { type: Number, required: true },
+},{
+  timestamps:true,
 });
 
 const Service = model<IService>('Service', ServiceSchema);

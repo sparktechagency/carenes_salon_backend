@@ -21,10 +21,6 @@ const CustomerSchema = new Schema<ICustomer>(
       required: true,
       unique: true,
     },
-    email: {
-      type: String,
-      unique: true,
-    },
     city: {
       type: String,
     },

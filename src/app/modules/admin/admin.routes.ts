@@ -35,12 +35,7 @@ router.patch(
   AdminController.updateShopStatus,
 );
 
-router.get(
-  '/get-nearby-shop',
-  auth(USER_ROLE.customer),
-  validateRequest(AdminValidations.getNearbyShopValidationSchema),
-  AdminController.getNearbyShop,
-);
+
 
 router.get(
   '/all-Admins',
