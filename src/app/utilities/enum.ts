@@ -47,3 +47,8 @@ export const ENUM_BOOKING_PAYMENT = {
   PAY_ON_SHOP:"pay-on-shop"
 }
 
+export const ENUM_PAYMENT_STATUS = {
+  PENDING:"pending",
+  SUCCESS:"success",
+  PAY_ON_SHOP:"pay-on-shop",
+}
