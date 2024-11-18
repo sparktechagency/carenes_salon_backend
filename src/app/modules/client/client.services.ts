@@ -14,6 +14,7 @@ import getCurrentDay from '../../helper/getCurrentDay';
 import BusinessHour from '../bussinessHour/businessHour.model';
 import Discount from '../discount/discount.model';
 import ShopCategory from '../shopCategory/shopCategory.model';
+import Booking from '../booking/booking.model';
 const updateClientProfile = async (
   userId: string,
   payload: Partial<IClient>,
@@ -65,21 +66,73 @@ const addBankDetails = async (id: string, payload: Partial<IClient>) => {
   return result;
 };
 
+// const getAllClientFromDB = async (query: Record<string, any>) => {
+//   const ClientQuery = new QueryBuilder(Client.find(), query)
+//     .search(['name'])
+//     .fields()
+//     .filter()
+//     .paginate()
+//     .sort();
+//   const meta = await ClientQuery.countTotal();
+//   const result = await ClientQuery.modelQuery;
+
+//   return {
+//     meta,
+//     result,
+//   };
+// };
 const getAllClientFromDB = async (query: Record<string, any>) => {
+  // Step 1: Aggregate total sales for each shop
+  const totalSales = await Booking.aggregate([
+    { $match: { status: 'completed' } }, // Only consider completed bookings
+    {
+      $group: {
+        _id: '$shopId', // Group by shopId
+        totalSales: { $sum: '$totalPrice' }, // Sum the totalPrice for each shop
+      },
+    },
+  ]);
+
+  // Step 2: Create a mapping for quick lookup of total sales by shopId
+  const salesMap = totalSales.reduce(
+    (acc, sale) => {
+      acc[sale._id.toString()] = sale.totalSales;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  // Step 3: Build the client query with pagination, search, etc.
   const ClientQuery = new QueryBuilder(Client.find(), query)
     .search(['name'])
     .fields()
     .filter()
     .paginate()
     .sort();
+
   const meta = await ClientQuery.countTotal();
-  const result = await ClientQuery.modelQuery;
+  const clients = await ClientQuery.modelQuery;
+
+  // Step 4: Add totalSales to each client in the result
+  const clientsWithSales = clients.map((client) => {
+    const clientId = client._id.toString();
+    return {
+      ...client.toObject(),
+      totalSales: salesMap[clientId] || 0, // Add totalSales, defaulting to 0 if not found
+    };
+  });
+
+  // Step 5: Sort by totalSales if requested
+  if (query.sort === 'topSelling') {
+    clientsWithSales.sort((a, b) => b.totalSales - a.totalSales); // Sort descending by totalSales
+  }
 
   return {
     meta,
-    result,
+    result: clientsWithSales,
   };
 };
+
 
 const updateClientStatus = async (id: string, status: string) => {
   const client = await Client.findById(id);
