@@ -280,6 +280,7 @@ const blockUnblockUser = async (id: string, status: string) => {
 };
 
 
+// crone jobs -------------
 cron.schedule('*/2 * * * *', async () => {
   try {
     const now = new Date();
