@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { IBooking } from "./booking.interface";
+import { ENUM_BOOKING_PAYMENT } from "../../utilities/enum";
 
 
 
@@ -36,7 +37,12 @@ const BookingSchema = new Schema<IBooking>({
     // products:[productsSchema],
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
-    status: { type: String, enum: ['booked', 'completed', 'canceled'], default: 'booked' }
+    status: { type: String, enum: ['booked', 'completed', 'canceled'], default: 'booked' },
+    totalPrice:{
+      type:Number,
+      required: true,
+    },
+    bookingPaymentType: {type:String,enum:Object.values(ENUM_BOOKING_PAYMENT),required:true},
   }, {
     timestamps: true,
   });

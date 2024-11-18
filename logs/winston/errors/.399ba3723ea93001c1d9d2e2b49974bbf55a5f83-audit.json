@@ -69,6 +69,41 @@
             "date": 1731754811088,
             "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-16-17-error.log",
             "hash": "a3bab95b2b05cb3d65e37a03ef6affe7f92e14b4617b48b7bb3642edc856490f"
+        },
+        {
+            "date": 1731814808005,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-17-09-error.log",
+            "hash": "c7c0755f55451f3ec44ae6dcc1fef8de55aa70cd0155cf61f2c49c8a82a91e09"
+        },
+        {
+            "date": 1731817183745,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-17-10-error.log",
+            "hash": "05121071477089b855f6ad1ecc26c313e92b602c7a79ced744be10c17d4764d9"
+        },
+        {
+            "date": 1731820888293,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-17-11-error.log",
+            "hash": "3a71028740932f5b435242f266a275011ed876c90dc4dd4ce1d5fd729d3b61f3"
+        },
+        {
+            "date": 1731844129054,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-17-17-error.log",
+            "hash": "d850820565bfab961b5d964690c88018e09ef02193af26254baf552800f98f06"
+        },
+        {
+            "date": 1731844922858,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-17-18-error.log",
+            "hash": "9036a1140ed33a729bebe007e1cd77510c8ae14fdf827727fff01c32f9892abe"
+        },
+        {
+            "date": 1731899896722,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-18-09-error.log",
+            "hash": "a31edcbd0149095741ed6f793a7980de013e5546884e3490fdbc1937e33cb26e"
+        },
+        {
+            "date": 1731902933173,
+            "name": "D:\\Solution Squed Project\\carenes_salon_backend\\logs\\winston\\errors\\um-2024-11-18-10-error.log",
+            "hash": "940899a8597ce479c42492c7ec80c20369434123d9f40c23662c3c6d64263b02"
         }
     ],
     "hashType": "sha256"

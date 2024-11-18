@@ -26,6 +26,7 @@ export interface IClient {
   branchCode: string;
   bankCity: string;
   paymentPreferences: (typeof ENUM_PAYMENT_PREFERENCES)[keyof typeof ENUM_PAYMENT_PREFERENCES];
+  payOnShopChargeDueAmount : number;
   status: 'active' | 'inactive';
   totalRating: number;
   totalRatingCount: number;

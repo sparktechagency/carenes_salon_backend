@@ -60,6 +60,7 @@ const clientSchema = new Schema<IClient>({
   bankAccountNumber: { type: String, },
   branchCode: { type: String, },
   bankCity: { type: String, },
+  payOnShopChargeDueAmount : {type:Number,default:0},
   status: {
     type: String,
     enum: ['active', 'inactive'],
