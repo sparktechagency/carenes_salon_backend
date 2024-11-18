@@ -11,41 +11,51 @@ import router from './app/routes';
 import notFound from './app/middlewares/notFound';
 import createConnectedAccountAndOnboardingLink from './app/helper/connectStripe';
 const app: Application = express();
-// for stripe 
-import Stripe from 'stripe';  // Import Stripe using ES module syntax
+// for stripe
+import Stripe from 'stripe'; // Import Stripe using ES module syntax
 import config from './app/config';
-const endpointSecret = 'whsec_f05875eb42dd8051fbc20bcdb538e22c499ecd114bde7eea65bb0602b1730562';
-const stripe = new Stripe(config.stripe.stripe_secret_key as string); 
+const endpointSecret =
+  'whsec_f05875eb42dd8051fbc20bcdb538e22c499ecd114bde7eea65bb0602b1730562';
+const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 // parser
-app.post('/webhook',express.raw({type:"application/json"}), (req, res) => {
-  console.log("kdfjkdjf")
+app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
   const sig = req.headers['stripe-signature'];
+  if (!sig || typeof sig !== 'string') {
+    console.error('Missing or invalid Stripe signature');
+    return res
+      .status(400)
+      .send('Webhook Error: Missing or invalid Stripe signature');
+  }
+
   let event;
 
   try {
     // Verify webhook signature
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    console.log("try")
   } catch (err) {
-    console.log("catch")
-    console.error('Webhook signature verification failed:', err);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    if (err instanceof Error) {
+      console.error('Webhook signature verification failed:', err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    } else {
+      console.error('An unknown error occurred during webhook verification');
+      return res.status(400).send('Webhook Error: Unknown error');
+    }
   }
 
   // Handle the different event types
   switch (event.type) {
-    case "payment_intent.created":
-      console.log("Payment intent");
+    case 'payment_intent.created':
+      console.log('Payment intent');
       break;
     case 'payment_intent.succeeded':
       // handlePaymentSuccess(event);
-      console.log("Payment sucess");
+      console.log('Payment sucess');
       break;
     case 'account.updated':
-     console.log("Account updated")
+      console.log('Account updated');
       break;
     case 'refund.created':
-     console.log("refund created")
+      console.log('refund created');
       break;
     default:
       console.log(`Unhandled event type: ${event.type}`);
@@ -60,9 +70,7 @@ app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));
 app.use(express.static('uploads'));
 // application routers ----------------
 app.use('/', router);
-app.post("/connect-stipe",createConnectedAccountAndOnboardingLink);
-
-
+app.post('/connect-stipe', createConnectedAccountAndOnboardingLink);
 
 app.post('/create-payment-intent', async (req: Request, res: Response) => {
   try {
