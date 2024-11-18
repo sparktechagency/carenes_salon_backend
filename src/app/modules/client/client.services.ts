@@ -117,7 +117,6 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
   };
 };
 
-
 const updateClientStatus = async (id: string, status: string) => {
   const client = await Client.findById(id);
   if (!client) {
@@ -441,6 +440,19 @@ const getShopDetails = async (id: string) => {
   return shop;
 };
 
+const getPayOnShopData = async(query:Record<string,unknown>)=>{
+  const shopQuery = new QueryBuilder(Client.find().select("shopName payOnShopChargeDueAmount shopImages "),query).search(['name'])
+  .fields()
+  .filter()
+  .paginate()
+  .sort();
+
+  const meta = await shopQuery.countTotal();
+  const result = await shopQuery.modelQuery;
+
+  return { meta, result };
+}
+
 const ClientServices = {
   updateClientProfile,
   getAllClientFromDB,
@@ -449,7 +461,8 @@ const ClientServices = {
   getSingleShop,
   addShopDetails,
   addBankDetails,
-  getShopDetails
+  getShopDetails,
+  getPayOnShopData
 };
 
 export default ClientServices;

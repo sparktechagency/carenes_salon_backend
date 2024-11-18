@@ -105,6 +105,15 @@ const getShopDetails = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getPayOnShopData = catchAsync(async (req, res) => {
+  const result =await ClientServices.getPayOnShopData(req.query);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Pay on shop data retrieved successfully',
+    data: result,
+  });
+});
 
 const ClientController = {
   updateClientProfile,
@@ -114,7 +123,8 @@ const ClientController = {
   getSingleShop,
   addShopDetails,
   addBankDetails,
-  getShopDetails
+  getShopDetails,
+  getPayOnShopData
 };
 
 export default ClientController;

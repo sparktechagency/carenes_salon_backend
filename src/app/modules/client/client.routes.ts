@@ -66,5 +66,5 @@ router.get(
 );
 router.get("/get-shop-details/:id",auth(USER_ROLE.superAdmin,USER_ROLE.admin),ClientController.getShopDetails);
 router.get('/single-shop/:id', ClientController.getSingleShop);
-
+router.get("/pay-on-shop-data",auth(USER_ROLE.admin,USER_ROLE.superAdmin),ClientController.getPayOnShopData);
 export const clientRoutes = router;
