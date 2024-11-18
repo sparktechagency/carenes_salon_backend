@@ -65,22 +65,6 @@ const addBankDetails = async (id: string, payload: Partial<IClient>) => {
   );
   return result;
 };
-
-// const getAllClientFromDB = async (query: Record<string, any>) => {
-//   const ClientQuery = new QueryBuilder(Client.find(), query)
-//     .search(['name'])
-//     .fields()
-//     .filter()
-//     .paginate()
-//     .sort();
-//   const meta = await ClientQuery.countTotal();
-//   const result = await ClientQuery.modelQuery;
-
-//   return {
-//     meta,
-//     result,
-//   };
-// };
 const getAllClientFromDB = async (query: Record<string, any>) => {
   // Step 1: Aggregate total sales for each shop
   const totalSales = await Booking.aggregate([
