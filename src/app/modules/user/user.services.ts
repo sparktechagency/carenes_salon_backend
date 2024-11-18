@@ -12,7 +12,10 @@ import { IClient } from '../client/client.interface';
 import Client from '../client/client.model';
 import { IAdmin } from '../admin/admin.interface';
 import Admin from '../admin/admin.model';
-
+import BusinessHour from '../bussinessHour/businessHour.model';
+import sendEmail from '../../utilities/sendEmail';
+import registrationSuccessEmailBody from '../../mailTemplete/registerSuccessEmail';
+import cron from 'node-cron';
 const generateVerifyCode = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
 };
@@ -28,7 +31,7 @@ const registerCustomer = async (
       "Password and confirm password doesn't match",
     );
   }
-  const user = await User.isUserExists(customerData?.phoneNumber);
+  const user = await User.isUserExists(customerData.email);
   if (user) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
   }
@@ -39,7 +42,6 @@ const registerCustomer = async (
     const verifyCode = generateVerifyCode();
     const userData: Partial<TUser> = {
       email: customerData?.email,
-      phoneNumber: customerData?.phoneNumber,
       password: password,
       role: USER_ROLE.customer,
       verifyCode,
@@ -49,14 +51,20 @@ const registerCustomer = async (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
 
-    const smsMessage = `Your verification code is: ${verifyCode}`;
-    await sendSMS(customerData?.phoneNumber, smsMessage);
-
     const customerPayload = {
       ...customerData,
       user: user[0]._id,
     };
     const customer = await Customer.create([customerPayload], { session });
+
+    sendEmail({
+      email: user[0].email,
+      subject: 'Activate Your Account',
+      html: registrationSuccessEmailBody(
+        customer[0].firstName,
+        user[0].verifyCode,
+      ),
+    });
 
     await session.commitTransaction();
     session.endSession();
@@ -69,12 +77,23 @@ const registerCustomer = async (
   }
 };
 
-// register Client
-const registerClient = async (password: string, clientData: IClient) => {
-  const client = await User.isUserExists(clientData?.email);
-  if (client) {
+const registerClient = async (
+  password: string,
+  confirmPassword: string,
+  clientData: IClient,
+) => {
+  if (password !== confirmPassword) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Password and confirm password doesn't match",
+    );
+  }
+
+  const clientExists = await User.isUserExists(clientData?.email);
+  if (clientExists) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This user already exists');
   }
+
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -82,7 +101,6 @@ const registerClient = async (password: string, clientData: IClient) => {
     const verifyCode = generateVerifyCode();
     const userData: Partial<TUser> = {
       email: clientData?.email,
-      phoneNumber: clientData?.phoneNumber,
       password: password,
       role: USER_ROLE.client,
       isActive: false,
@@ -90,16 +108,60 @@ const registerClient = async (password: string, clientData: IClient) => {
       codeExpireIn: new Date(Date.now() + 5 * 60000),
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await User.create([userData], { session });
 
-    const smsMessage = `Your verification code is: ${verifyCode}`;
-    await sendSMS(clientData?.phoneNumber, smsMessage);
     const clientPayload = {
       ...clientData,
       user: user[0]._id,
     };
     const client = await Client.create([clientPayload], { session });
+
+    // Define default business hours (Sunday closed, other days 9:00 AM - 6:00 PM)
+    const defaultBusinessHours = [
+      { day: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      {
+        day: 'Tuesday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      {
+        day: 'Wednesday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      {
+        day: 'Thursday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      { day: 'Friday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      {
+        day: 'Saturday',
+        openTime: '09:00',
+        closeTime: '18:00',
+        isClosed: false,
+      },
+      { day: 'Sunday', openTime: '09:00', closeTime: '18:00', isClosed: true },
+    ].map((hour) => ({
+      ...hour,
+      entityId: client[0]._id, // Associate business hours with the created client
+      entityType: 'Shop', // Assuming client is a Shop entity
+    }));
+
+    // Create default business hours for the client
+    await BusinessHour.create(defaultBusinessHours, { session });
+
+    sendEmail({
+      email: user[0].email,
+      subject: 'Activate Your Account',
+      html: registrationSuccessEmailBody(
+        client[0].firstName,
+        user[0].verifyCode,
+      ),
+    });
 
     await session.commitTransaction();
     session.endSession();
@@ -128,6 +190,7 @@ const registerAdmin = async (password: string, adminData: IAdmin) => {
       password: password,
       role: USER_ROLE.admin,
       isActive: true,
+      isVerified:true
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -150,32 +213,35 @@ const registerAdmin = async (password: string, adminData: IAdmin) => {
   }
 };
 
-const getMyProfile = async (phoneNumber: string, role: string) => {
+const getMyProfile = async (email: string, role: string) => {
   let result = null;
   if (role === USER_ROLE.customer) {
-    result = await Customer.findOne({ phoneNumber });
+    result = await Customer.findOne({ email: email });
   }
   if (role === USER_ROLE.client) {
-    result = await Client.findOne({ phoneNumber });
+    result = await Client.findOne({ email: email });
   }
   if (role === USER_ROLE.admin) {
-    result = await Admin.findOne({ phoneNumber });
+    result = await Admin.findOne({ email: email });
   }
   return result;
 };
 
-const verifyCode = async (phoneNumber: string, verifyCode: number) => {
-  const user = await User.findOne({ phoneNumber: phoneNumber });
+const verifyCode = async (email: string, verifyCode: number) => {
+  const user = await User.findOne({ email: email });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
   if (user.codeExpireIn < new Date(Date.now())) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Verify code is expired');
   }
+  if (verifyCode !== user.verifyCode) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Code doesn't match");
+  }
   let result;
   if (user.verifyCode === verifyCode) {
     result = await User.findOneAndUpdate(
-      { phoneNumber: phoneNumber },
+      { email: email },
       { isVerified: true },
       { new: true, runValidators: true },
     );
@@ -197,6 +263,66 @@ const resendVerifyCode = async (phoneNumber: string) => {
   await sendSMS(user?.phoneNumber, smsMessage);
 };
 
+// block , unblock user
+const blockUnblockUser = async (id: string, status: string) => {
+  const user = await User.findById(id);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  const result = await User.findByIdAndUpdate(
+    id,
+    { status: status },
+    { new: true, runValidators: true },
+  );
+
+  return result;
+};
+
+
+cron.schedule('*/2 * * * *', async () => {
+  try {
+    const now = new Date();
+
+    // Find unverified users whose expiration time has passed
+    const expiredUsers = await User.find({
+      isVerified: false,
+      codeExpireIn: { $lte: now },
+    });
+
+    if (expiredUsers.length > 0) {
+      const expiredUserIds = expiredUsers.map((user) => user._id);
+
+      // Delete corresponding NormalUser documents
+      const customerDeleteResult = await Customer.deleteMany({
+        user: { $in: expiredUserIds },
+      });
+      const clientDeleteResult = await Client.deleteMany({
+        user: { $in: expiredUserIds },
+      });
+
+      
+
+      // Delete the expired User documents
+      const userDeleteResult = await User.deleteMany({
+        _id: { $in: expiredUserIds },
+      });
+
+      console.log(
+        `Deleted ${userDeleteResult.deletedCount} expired inactive users`,
+      );
+      console.log(
+        `Deleted ${customerDeleteResult.deletedCount} associated customer documents`,
+      );
+      console.log(
+        `Deleted ${clientDeleteResult.deletedCount} associated client documents`,
+      );
+    }
+  } catch (error) {
+    console.log('Error deleting expired users and associated data:', error);
+  }
+});
+
 const userServices = {
   registerCustomer,
   registerClient,
@@ -204,6 +330,7 @@ const userServices = {
   getMyProfile,
   verifyCode,
   resendVerifyCode,
+  blockUnblockUser,
 };
 
 export default userServices;

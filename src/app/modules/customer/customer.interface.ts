@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { ENUM_GENDER } from '../../utilities/enum';
 
 export interface ILocation {
   type: 'Point';
@@ -6,11 +7,23 @@ export interface ILocation {
 }
 export interface ICustomer {
   user: Types.ObjectId;
-  name: string;
+  firstName: string;
+  lastName:string;
   email: string;
-  phoneNumber: string;
-  location: ILocation;
+  city:string;
+  country:string;
+  gender:"male"|"female";
+  age:number;
+  // location: ILocation;
   profile_image: string;
-  walletAmount: number;
+  isProfileComplete:boolean;
   isDeleted: boolean;
+}
+
+
+export interface ICompleteCustomer {
+  phoneNumber:string;
+  gender:(typeof ENUM_GENDER)[keyof typeof ENUM_GENDER],
+  city:string,
+  country:string;
 }

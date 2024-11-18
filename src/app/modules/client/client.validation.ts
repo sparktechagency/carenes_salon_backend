@@ -1,5 +1,5 @@
-import { Types } from 'mongoose';
 import { z } from 'zod';
+import { ENUM_PAYMENT_PREFERENCES } from '../../utilities/enum';
 const locationSchema = z
   .object({
     type: z.literal('Point'),
@@ -11,70 +11,91 @@ const registerClientValidationSchema = z.object({
     password: z
       .string({ required_error: 'Password is required' })
       .min(6, { message: 'Password must be 6 character' }),
-    // confirmPassword: z
-    //   .string({ required_error: 'Confirm password is required' })
-    //   .min(6, { message: 'Password must be 6 character' }),
+    confirmPassword: z
+      .string({ required_error: 'Confirm password is required' })
+      .min(6, { message: 'Password must be 6 character' }),
     client: z.object({
-      user: z.instanceof(Types.ObjectId),
-      name: z
-        .string({
-          required_error: 'Name is required',
-          invalid_type_error: 'Name must be a string',
-        })
-        .nonempty(),
+      firstName: z.string({
+        required_error: 'First name is required',
+        invalid_type_error: 'First name must be a string',
+      }),
+      lastName: z.string({
+        required_error: 'Last name is required',
+        invalid_type_error: 'Last name must be a string',
+      }),
       email: z
         .string({ required_error: 'Email is required' })
         .email({ message: 'Please provide a valid email' }),
-      shopCategory: z
-        .string({ required_error: 'Shop category is required' })
-        .nonempty(),
-      shopGenderCategory: z.enum(['male', 'female']),
-      shopImages: z.array(z.string()).optional(),
-      phoneNumber: z
-        .string({ required_error: 'Phone number is required' })
-        .nonempty(),
-      location: locationSchema,
-      profile_image: z.string().nonempty(),
-      bankName: z
-        .string({ required_error: 'Bank name is required' })
-        .nonempty(),
-      bankAccountName: z
-        .string({ required_error: 'Bank account name is required' })
-        .nonempty(),
-      bankAccountNumber: z
-        .string({ required_error: 'Bank account number is required' })
-        .nonempty(),
-      branchCode: z
-        .string({ required_error: 'Branch code is required' })
-        .nonempty(),
-      bankCity: z
-        .string({ required_error: 'Bank city is required' })
-        .nonempty(),
+
+      profile_image: z.string().optional(),
     }),
   }),
 });
+
+const addShopDetailsValidationSchema = z.object({
+  body: z.object({
+    phoneNumber: z.string({ required_error: 'Phone number is required' }),
+    dateOfBirth: z.string({ required_error: 'Date of birth is required' }),
+    shopName: z.string({ required_error: 'Shop name is required' }),
+    shopCategory: z.string({ required_error: 'Shop category is required' }),
+    shopCategoryId: z.string({
+      required_error: 'Shop category id is required',
+    }),
+    shopGenderCategory: z.enum(['male', 'female']),
+    shopImages: z.array(z.string()).optional(),
+    paymentPreferences: z.enum(
+      Object.values(ENUM_PAYMENT_PREFERENCES) as [string, ...string[]],
+    ),
+    location: locationSchema,
+  }),
+});
+
+const addBankDetailsValidationSchema = z.object({
+  body: z.object({
+    bankName: z.string({ required_error: 'Bank name is required' }),
+    bankAccountName: z.string({
+      required_error: 'Bank account name is required',
+    }),
+    bankAccountNumber: z.string({
+      required_error: 'Bank account number is required',
+    }),
+    branchCode: z.string({ required_error: 'Branch code is required' }),
+    bankCity: z.string({ required_error: 'Bank city is required' }),
+  }),
+});
+
 const updateClientProfileValidationSchema = z.object({
   body: z.object({
-    name: z
+    firstName: z
       .string({
-        required_error: 'Name is required',
-        invalid_type_error: 'Name must be a string',
+        required_error: 'First name is required',
+        invalid_type_error: 'First name must be a string',
       })
-      .nonempty()
+      .optional(),
+    lastName: z
+      .string({
+        required_error: 'Last name is required',
+        invalid_type_error: 'Last name must be a string',
+      })
       .optional(),
     // email: z
     //   .string({ required_error: 'Email is required' })
     //   .email({ message: 'Please provide a valid email' }).optional(),
+    gender: z.enum(['male', 'female']).optional(),
+    dateOfBirth: z
+      .string({ required_error: 'Date of birth is required' })
+      .optional(),
+    shopName: z.string({ required_error: 'Shop name is required' }).optional(),
     shopCategory: z
       .string({ required_error: 'Shop category is required' })
       .nonempty()
       .optional(),
     shopGenderCategory: z.enum(['male', 'female']).optional(),
     shopImages: z.array(z.string()).optional(),
-    phoneNumber: z
-      .string({ required_error: 'Phone number is required' })
-      .nonempty()
-      .optional(),
+    // phoneNumber: z
+    //   .string({ required_error: 'Phone number is required' })
+    //   .nonempty()
+    //   .optional(),
     location: locationSchema,
     profile_image: z.string().nonempty().optional(),
     bankName: z
@@ -99,9 +120,19 @@ const updateClientProfileValidationSchema = z.object({
       .optional(),
   }),
 });
+
+const getNearbyShopValidationSchema = z.object({
+  body: z.object({
+    latitude: z.number({ required_error: 'Latitude is required' }),
+    longitude: z.number({ required_error: 'Longitude is required' }),
+  }),
+});
 const ClientValidations = {
   registerClientValidationSchema,
   updateClientProfileValidationSchema,
+  getNearbyShopValidationSchema,
+  addShopDetailsValidationSchema,
+  addBankDetailsValidationSchema,
 };
 
 export default ClientValidations;

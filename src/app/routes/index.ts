@@ -16,6 +16,13 @@ import { paymentRoutes } from '../modules/payment/payment.routes';
 import { AdminRoutes } from '../modules/admin/admin.routes';
 import { clientRoutes } from '../modules/client/client.routes';
 import { shopCategoryRoutes } from '../modules/shopCategory/shopCategory.routes';
+import { staffRoutes } from '../modules/staff/staff.routes';
+import { serviceRoutes } from '../modules/service/service.routes';
+import { businessHourRoutes } from '../modules/bussinessHour/businessHour.routes';
+import { bookingRoutes } from '../modules/booking/booking.routes';
+import { blockHourRoutes } from '../modules/blockHour/blockHour.routes';
+import { discountRoutes } from '../modules/discount/discount.routes';
+import { ratingRoutes } from '../modules/rating/rating.routes';
 
 const router = Router();
 
@@ -39,6 +46,10 @@ const moduleRoutes = [
   {
     path: '/client',
     router: clientRoutes,
+  },
+  {
+    path: '/staff',
+    router: staffRoutes,
   },
   {
     path: '/product',
@@ -87,6 +98,30 @@ const moduleRoutes = [
   {
     path: '/shop-category',
     router: shopCategoryRoutes,
+  },
+  {
+    path: '/service',
+    router: serviceRoutes,
+  },
+  {
+    path: '/business-hour',
+    router: businessHourRoutes,
+  },
+  {
+    path: '/block-hour',
+    router: blockHourRoutes,
+  },
+  {
+    path: '/booking',
+    router: bookingRoutes,
+  },
+  {
+    path: '/discount',
+    router: discountRoutes,
+  },
+  {
+    path: '/rating',
+    router: ratingRoutes,
   },
 ];
 

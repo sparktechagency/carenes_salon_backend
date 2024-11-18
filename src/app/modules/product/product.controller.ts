@@ -7,11 +7,11 @@ const createProduct = catchAsync(async (req, res) => {
   const { files } = req;
   // Check if files and store_image exist, and process multiple images
   if (files && typeof files === 'object' && 'product_image' in files) {
-    req.body.images = files['product_image'].map((file) => file.path);
+    req.body.product_image = files['product_image'][0].path;
   }
 
   const result = await productServices.createProductIntoDB(
-    req?.user?.id,
+    req?.user?.profileId,
     req?.body,
   );
   sendResponse(res, {
@@ -23,10 +23,7 @@ const createProduct = catchAsync(async (req, res) => {
 });
 
 const getAllProduct = catchAsync(async (req, res) => {
-  const result = await productServices.getAllProduct(
-    req?.user?.profileId,
-    req?.query,
-  );
+  const result = await productServices.getAllProduct(req?.query);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -45,9 +42,9 @@ const getSingleProduct = catchAsync(async (req, res) => {
   });
 });
 
-const getMyProducts = catchAsync(async (req, res) => {
-  const result = await productServices.getMyProducts(
-    req?.user?.profileId,
+const getShopProducts = catchAsync(async (req, res) => {
+  const result = await productServices.getShopProducts(
+    req.params.id,
     req?.query,
   );
   sendResponse(res, {
@@ -58,10 +55,9 @@ const getMyProducts = catchAsync(async (req, res) => {
   });
 });
 
-const getSpecificShopProducts = catchAsync(async (req, res) => {
-  const result = await productServices.getSpecificShopProducts(
-    req?.user?.profileId,
-    req?.body?.shopId,
+const getMyProducts = catchAsync(async (req, res) => {
+  const result = await productServices.getMyProducts(
+    req?.user.profileId,
     req?.query,
   );
   sendResponse(res, {
@@ -74,14 +70,13 @@ const getSpecificShopProducts = catchAsync(async (req, res) => {
 
 const updateProduct = catchAsync(async (req, res) => {
   const { files } = req;
-  // Check if files and store_image exist, and process multiple images
   if (files && typeof files === 'object' && 'product_image' in files) {
-    const newImages = files['product_image'].map((file) => file.path);
-    req.body.images.push(...newImages);
+    req.body.product_image = files['product_image'][0].path;
   }
 
   const result = await productServices.updateProduct(
     req?.params?.id,
+    req.user.profileId,
     req?.body,
   );
   sendResponse(res, {
@@ -120,12 +115,12 @@ const changeProductStatus = catchAsync(async (req, res) => {
 const productController = {
   createProduct,
   getAllProduct,
-  getSpecificShopProducts,
+  getMyProducts,
   getSingleProduct,
   updateProduct,
   deleteProduct,
   changeProductStatus,
-  getMyProducts,
+  getShopProducts,
 };
 
 export default productController;

@@ -30,10 +30,23 @@ const updateCustomerProfile = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const completeCustomerProfile = catchAsync(async (req, res) => {
+  const result = await customerServices.completeCustomerProfile(
+    req.user.profileId,
+    req.body,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Your profile complete successfully',
+    data: result,
+  });
+});
 
 const customerController = {
   getAllCustomer,
   updateCustomerProfile,
+  completeCustomerProfile,
 };
 
 export default customerController;

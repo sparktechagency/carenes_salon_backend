@@ -59,7 +59,7 @@ const resetPasswordValidationSchema = z.object({
 
 const verifyCodeValidationSchema = z.object({
   body: z.object({
-    phoneNumber: z.string({ required_error: 'Phone number is required' }),
+    email: z.string({ required_error: 'Email is required' }),
     verifyCode: z.number({ required_error: 'Phone number is required' }),
   }),
 });
@@ -70,6 +70,12 @@ const resendVerifyCodeSchema = z.object({
   }),
 });
 
+const blockUnblockUserValidationSchema = z.object({
+  body:z.object({
+    status:z.enum(["blocked","in-progress"])
+  })
+})
+
 const userValidations = {
   registerUserValidationSchema,
   loginValidationSchema,
@@ -79,6 +85,7 @@ const userValidations = {
   resetPasswordValidationSchema,
   verifyCodeValidationSchema,
   resendVerifyCodeSchema,
+  blockUnblockUserValidationSchema
 };
 
 export default userValidations;

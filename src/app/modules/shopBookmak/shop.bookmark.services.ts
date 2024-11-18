@@ -1,6 +1,7 @@
 import httpStatus from 'http-status';
 import AppError from '../../error/appError';
 import ShopBookmark from './shop.bookmark.model';
+import Client from '../client/client.model';
 
 const createBookmarkIntoDB = async (shopId: string, customerId: string) => {
   const isExists = await ShopBookmark.findOne({
@@ -12,6 +13,10 @@ const createBookmarkIntoDB = async (shopId: string, customerId: string) => {
       httpStatus.BAD_REQUEST,
       'You already add this shop in bookmark',
     );
+  }
+  const shop = await Client.findById(shopId);
+  if(!shop){
+    throw new AppError(httpStatus.NOT_FOUND,"Shop not found")
   }
   const result = await ShopBookmark.create({
     shop: shopId,

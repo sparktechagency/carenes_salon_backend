@@ -39,7 +39,7 @@ const updateAdminStatus = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Shop status updated successfully',
+    message: 'Admin status updated successfully',
     data: result,
   });
 });
@@ -53,19 +53,6 @@ const getAllAdmin = catchAsync(async (req, res) => {
   });
 });
 
-const getNearbyShop = catchAsync(async (req, res) => {
-  const result = await AdminServices.getNearbyShopWithTime(
-    req?.user?.profileId,
-    req?.body,
-    req.query,
-  );
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Admin retrieved successfully',
-    data: result,
-  });
-});
 const addRating = catchAsync(async (req, res) => {
   const result = await AdminServices.addRating(
     req?.params?.shopId,
@@ -83,7 +70,6 @@ const AdminController = {
   updateAdminProfile,
   updateShopStatus: updateAdminStatus,
   getAllAdmin,
-  getNearbyShop,
   addRating,
   deleteAdmin,
 };

@@ -1,249 +1,155 @@
-import { ENUM_ORDER_STATUS, ENUM_SHOP_TYPE } from '../../utilities/enum';
 import Client from '../client/client.model';
+import Customer from '../customer/customer.model';
 import Order from '../order/order.model';
+import Service from '../service/service.model';
 
-const getAdminDashboardMetaDataFromDB = async () => {
-  //   const income = await Transaction.aggregate([
-  //     {
-  //       $match: { paymentStatus: ENUM_PAYMENT_STATUS.PAID },
-  //     },
-  //     {
-  //       $group: {
-  //         _id: null,
-  //         totalIncome: { $sum: '$paidAmount' },
-  //       },
-  //     },
-  //   ]);
-  //   const totalIncome = income?.length > 0 ? income[0].totalIncome : 0;
+// get dashboard meta data
+// const getDashboardMetaData = async () => {
+//   const totalSales = 1000;
+//   const profitOnSales = 400;
+//   const totalService = await Service.countDocuments();
+//   const totalProduct = 1000;
+//   const totalCustomer = await Customer.countDocuments();
 
-  const totalGrocery = await Client.countDocuments({
-    shopType: ENUM_SHOP_TYPE.GROCERY,
-    status: 'activate',
+//   return {
+//     totalSales,
+//     profitOnSales,
+//     totalService,
+//     totalProduct,
+//     totalCustomer,
+//   };
+// };
+
+const getDashboardMetaData = async () => {
+  const totalSales = 1000;
+  const profitOnSales = 400;
+  const totalService = await Service.countDocuments();
+  const totalCustomer = await Customer.countDocuments();
+  const totalClient = await Client.countDocuments();
+
+  const currentMonthStart = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1,
+  );
+  const lastMonthStart = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() - 1,
+    1,
+  );
+
+  // Customer -----------
+  const currentMonthCustomerCount = await Customer.countDocuments({
+    createdAt: {
+      $gte: currentMonthStart,
+      $lt: new Date(),
+    },
   });
-  const totalRestaurant = await Client.countDocuments({
-    shopType: ENUM_SHOP_TYPE.RESTAURANT,
-    status: 'activate',
+  const lastMonthCustomerCount = await Customer.countDocuments({
+    createdAt: {
+      $gte: lastMonthStart,
+      $lt: currentMonthStart,
+    },
   });
-  const totalOrder = await Order.countDocuments();
-  const totalCompletedOrder = await Order.countDocuments({
-    status: ENUM_ORDER_STATUS.COMPLETED,
+
+  const customerChangeType =
+    currentMonthCustomerCount > lastMonthCustomerCount
+      ? 'increase'
+      : 'decrease';
+  const customerChangePercentage =
+    lastMonthCustomerCount > 0
+      ? lastMonthCustomerCount < currentMonthCustomerCount
+        ? Math.abs(
+            ((currentMonthCustomerCount - lastMonthCustomerCount) /
+              lastMonthCustomerCount) *
+              100,
+          )
+        : Math.abs(
+            ((lastMonthCustomerCount - currentMonthCustomerCount) /
+              currentMonthCustomerCount) *
+              100,
+          )
+      : 0;
+
+  // client --------------------
+  const currentMonthClientCount = await Client.countDocuments({
+    createdAt: {
+      $gte: currentMonthStart,
+      $lt: new Date(),
+    },
   });
+  const lastMonthClientCount = await Client.countDocuments({
+    createdAt: {
+      $gte: lastMonthStart,
+      $lt: currentMonthStart,
+    },
+  });
+
+  // console.log("last mon client",lastMonthCustomerCount);
+  // console.log("current mon client",currentMonthCustomerCount);
+
+  const clientChangeType =
+    currentMonthClientCount > lastMonthClientCount ? 'increase' : 'decrease';
+  const clientChangePercentage =
+    lastMonthClientCount > 0
+      ? lastMonthClientCount < currentMonthClientCount
+        ? Math.abs(
+            ((currentMonthClientCount - lastMonthClientCount) /
+              lastMonthClientCount) *
+              100,
+          )
+        : Math.abs(
+            ((lastMonthClientCount - currentMonthClientCount) /
+              currentMonthClientCount) *
+              100,
+          )
+      : 0;
+
+  // service -------------
+
+  const currentMonthServiceCount = await Service.countDocuments({
+    createdAt: {
+      $gte: currentMonthStart,
+      $lt: new Date(),
+    },
+  });
+  const lastMonthServiceCount = await Service.countDocuments({
+    createdAt: {
+      $gte: lastMonthStart,
+      $lt: currentMonthStart,
+    },
+  });
+
+  const serviceChangeType =
+    currentMonthServiceCount > lastMonthServiceCount ? 'increase' : 'decrease';
+  const serviceChangePercentage =
+    lastMonthServiceCount > 0
+      ? lastMonthServiceCount < currentMonthServiceCount
+        ? Math.abs(
+            ((currentMonthServiceCount - lastMonthServiceCount) /
+              lastMonthServiceCount) *
+              100,
+          )
+        : Math.abs(
+            ((lastMonthServiceCount - currentMonthServiceCount) /
+              currentMonthServiceCount) *
+              100,
+          )
+      : 0;
   return {
-    // totalIncome,
-    totalOrder,
-    totalGrocery,
-    totalRestaurant,
-    totalCompletedOrder,
+    totalSales,
+    profitOnSales,
+    totalService,
+    totalCustomer,
+    totalClient,
+    customerChangeType,
+    customerChangePercentage: customerChangePercentage.toFixed(2),
+    clientChangeType,
+    clientChangePercentage: clientChangePercentage.toFixed(2),
+    serviceChangeType,
+    serviceChangePercentage: serviceChangePercentage.toFixed(2),
   };
 };
-const getAdminDashboardMetaData = async (profileId: string) => {
-  //   const income = await Transaction.aggregate([
-  //     {
-  //       $match: { paymentStatus: ENUM_PAYMENT_STATUS.PAID },
-  //     },
-  //     {
-  //       $group: {
-  //         _id: null,
-  //         totalIncome: { $sum: '$paidAmount' },
-  //       },
-  //     },
-  //   ]);
-  //   const totalIncome = income?.length > 0 ? income[0].totalIncome : 0;
-  const totalOrder = await Order.countDocuments({ shop: profileId });
-  const totalPendingOrder = await Order.countDocuments({
-    status: ENUM_ORDER_STATUS.PENDING,
-    shop: profileId,
-  });
-  const totalCompletedOrder = await Order.countDocuments({
-    status: ENUM_ORDER_STATUS.COMPLETED,
-    shop: profileId,
-  });
-  return {
-    // totalIncome,
-    totalOrder,
-    totalPendingOrder,
-    totalCompletedOrder,
-  };
-};
-
-const getShopChartDataFromDB = async (year: number) => {
-  const startDate = new Date(`${year}-01-01T00:00:00.000Z`);
-  const endDate = new Date(`${year + 1}-01-01T00:00:00.000Z`);
-  const prevStartDate = new Date(`${year - 1}-01-01T00:00:00.000Z`);
-  const prevEndDate = new Date(`${year}-01-01T00:00:00.000Z`);
-
-  // Aggregation for Restaurant and Grocery per month for the current year
-  const shopData = await Client.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lt: endDate,
-        },
-      },
-    },
-    {
-      $group: {
-        _id: {
-          month: { $month: '$createdAt' }, // Group by month
-          shopType: '$shopType', // Group by shop type
-        },
-        totalShops: { $sum: 1 }, // Count shops
-      },
-    },
-    {
-      $sort: { '_id.month': 1 }, // Sort by month
-    },
-  ]);
-
-  // Prepare the month array with default values
-  const months = Array.from({ length: 12 }, (_, i) => ({
-    month: new Date(0, i).toLocaleString('default', { month: 'short' }),
-    totalRestaurant: 0,
-    totalGrocery: 0,
-  }));
-
-  // Assign the shop counts to the respective month and shop type
-  shopData.forEach((data) => {
-    const monthIndex = data._id.month - 1;
-    if (data._id.shopType === 'Restaurant') {
-      months[monthIndex].totalRestaurant = data.totalShops;
-    } else if (data._id.shopType === 'Grocery') {
-      months[monthIndex].totalGrocery = data.totalShops;
-    }
-  });
-
-  // Calculate Monthly Growth (combined for both shop types)
-  const currentMonthIndex = new Date().getMonth(); // Current month index
-  const previousMonthIndex =
-    currentMonthIndex === 0 ? 11 : currentMonthIndex - 1;
-
-  const previousMonthTotal =
-    months[previousMonthIndex].totalRestaurant +
-    months[previousMonthIndex].totalGrocery;
-  const currentMonthTotal =
-    months[currentMonthIndex].totalRestaurant +
-    months[currentMonthIndex].totalGrocery;
-
-  const monthlyGrowth =
-    previousMonthTotal > 0
-      ? ((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100
-      : currentMonthTotal > 0
-        ? 100
-        : 0;
-
-  // Daily Growth
-  const today = new Date();
-  const todayStart = new Date(today.setHours(0, 0, 0, 0));
-  const yesterdayStart = new Date(today.setDate(today.getDate() - 1));
-
-  const todayAdminsData = await Client.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: todayStart,
-          $lt: new Date(todayStart.setHours(24)),
-        },
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        totalAdmins: { $sum: 1 },
-      },
-    },
-  ]);
-
-  const yesterdayAdminsData = await Client.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: yesterdayStart,
-          $lt: new Date(yesterdayStart.setHours(24)),
-        },
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        totalAdmins: { $sum: 1 },
-      },
-    },
-  ]);
-
-  const todayAdmins = todayAdminsData[0] ? todayAdminsData[0].totalAdmins : 0;
-  const yesterdayAdmins = yesterdayAdminsData[0]
-    ? yesterdayAdminsData[0].totalAdmins
-    : 0;
-
-  const dailyGrowth =
-    yesterdayAdmins > 0
-      ? ((todayAdmins - yesterdayAdmins) / yesterdayAdmins) * 100
-      : todayAdmins > 0
-        ? 100
-        : 0;
-
-  // Yearly Aggregation (combined for both shop types)
-  const prevYearData = await Client.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: prevStartDate,
-          $lt: prevEndDate,
-        },
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        totalAdmins: { $sum: 1 },
-      },
-    },
-  ]);
-
-  const currentYearData = await Client.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lt: endDate,
-        },
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        totalAdmins: { $sum: 1 },
-      },
-    },
-  ]);
-
-  const prevYearAdmins = prevYearData[0] ? prevYearData[0].totalAdmins : 0;
-  const currentYearAdmins = currentYearData[0]
-    ? currentYearData[0].totalAdmins
-    : 0;
-
-  const yearlyGrowth =
-    prevYearAdmins > 0
-      ? ((currentYearAdmins - prevYearAdmins) / prevYearAdmins) * 100
-      : currentYearAdmins > 0
-        ? 100
-        : 0;
-
-  // Return aggregated data
-  return {
-    success: true,
-    message: 'Shop chart data retrieved successfully',
-    data: {
-      chartData: months,
-      monthlyGrowth: monthlyGrowth.toFixed(2) + '%',
-      dailyGrowth: dailyGrowth.toFixed(2) + '%',
-      yearlyGrowth: yearlyGrowth.toFixed(2) + '%',
-    },
-  };
-};
-
-// get chart data income for super admin
 
 const getAreaChartDataForIncomeFromDB = async (year: number) => {
   // Create date objects for the start and end of the year
@@ -556,9 +462,7 @@ const getAreaChartDataForSalesFromDB = async (
 };
 
 const metaServices = {
-  getAdminDashboardMetaDataFromDB,
-  getAdminDashboardMetaData,
-  getShopChartDataFromDB,
+  getDashboardMetaData,
   getAreaChartDataForIncomeFromDB,
   getAreaChartDataForSalesFromDB,
 };

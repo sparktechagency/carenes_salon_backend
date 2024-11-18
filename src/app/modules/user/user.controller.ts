@@ -36,7 +36,8 @@ const registerClient = catchAsync(async (req, res) => {
 
   const result = await userServices.registerClient(
     req?.body?.password,
-    req?.body?.Client,
+    req.body.confirmPassword,
+    req?.body?.client,
   );
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -62,8 +63,8 @@ const registerAdmin = catchAsync(async (req, res) => {
 
 // get me
 const getMyProfile = catchAsync(async (req, res) => {
-  const { phoneNumber, role } = req.user;
-  const result = await userServices.getMyProfile(phoneNumber, role);
+  const { email, role } = req.user;
+  const result = await userServices.getMyProfile(email, role);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -75,7 +76,7 @@ const getMyProfile = catchAsync(async (req, res) => {
 
 const verifyCode = catchAsync(async (req, res) => {
   const result = await userServices.verifyCode(
-    req?.body?.phoneNumber,
+    req?.body?.email,
     req?.body?.verifyCode,
   );
   sendResponse(res, {
@@ -95,6 +96,16 @@ const resendVerifyCode = catchAsync(async (req, res) => {
   });
 });
 
+const blockUnblockUser = catchAsync(async(req,res)=>{
+  const result = await userServices.blockUnblockUser(req.params.id,req.body.status);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message:`User successfully ${result?.status === "blocked" ? "blocked" : "unblocked"}`,
+    data: result,
+  });
+})
+
 const userController = {
   registerCustomer,
   registerClient,
@@ -102,5 +113,6 @@ const userController = {
   getMyProfile,
   verifyCode,
   resendVerifyCode,
+  blockUnblockUser
 };
 export default userController;

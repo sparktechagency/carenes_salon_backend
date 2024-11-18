@@ -10,6 +10,7 @@ import { Router } from 'express';
 import userValidations from './user.validation';
 import ClientValidations from '../client/client.validation';
 import AdminValidations from '../admin/admin.validation';
+import authWithoutActive from '../../middlewares/authWithoutActive';
 
 const router = Router();
 
@@ -33,7 +34,7 @@ router.post(
 router.post('/register-Admin');
 router.get(
   '/get-my-profile',
-  auth(
+  authWithoutActive(
     USER_ROLE.superAdmin,
     USER_ROLE.customer,
     USER_ROLE.client,
@@ -58,6 +59,13 @@ router.post(
   ),
   validateRequest(userValidations.resendVerifyCodeSchema),
   userControllers.resendVerifyCode,
+);
+
+router.patch(
+  '/block-unblock/:id',
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  validateRequest(userValidations.blockUnblockUserValidationSchema),
+  userControllers.blockUnblockUser,
 );
 
 export const userRoutes = router;

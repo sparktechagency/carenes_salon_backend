@@ -12,6 +12,7 @@ const loginUser = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 const changePassword = catchAsync(async (req, res) => {
   const { ...passwordData } = req.body;
   const result = await authServices.changePasswordIntoDB(
@@ -38,8 +39,8 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 const forgetPassword = catchAsync(async (req, res) => {
-  const phoneNumber = req.body.phoneNumber;
-  const result = await authServices.forgetPassword(phoneNumber);
+  const email = req.body.email;
+  const result = await authServices.forgetPassword(email);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -49,11 +50,6 @@ const forgetPassword = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  // const token = req?.headers?.authorization;
-
-  // if (!token) {
-  //   throw new AppError(httpStatus.BAD_REQUEST, 'Your token is invalid');
-  // }
   const result = await authServices.resetPassword(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -64,7 +60,7 @@ const resetPassword = catchAsync(async (req, res) => {
 });
 const verifyResetOtp = catchAsync(async (req, res) => {
   const result = await authServices.verifyResetOtp(
-    req.body.phoneNumber,
+    req.body.email,
     req.body.resetCode,
   );
   sendResponse(res, {

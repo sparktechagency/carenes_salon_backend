@@ -20,3 +20,35 @@ export const ENUM_ORDER_STATUS = {
   DELIVERED: 'delivered',
   COMPLETED: 'completed',
 };
+
+export const ENUM_GENDER = {
+  MALE: 'Male',
+  FEMALE: 'Female',
+};
+
+export const ENUM_PAYMENT_PREFERENCES = {
+  ONLINE_ONLY: 'online-only',
+  CASH_ONLY: 'cash-only',
+  BOTH: 'both',
+};
+
+
+export const ENUM_NOTIFICATION_TYPE={
+  BOOKING: 'booking',
+  CANCEL_BOOKING: 'cancel-booking',
+  RESCHEDULE_BOOKING: 'reschedule-booking',
+  START_BOOKING:"start-booking",
+  REGISTER_CLIENT:"register-client"
+}
+
+
+export const ENUM_BOOKING_PAYMENT = {
+  ONLINE: 'online',
+  PAY_ON_SHOP:"pay-on-shop"
+}
+
+export const ENUM_PAYMENT_STATUS = {
+  PENDING:"pending",
+  SUCCESS:"success",
+  PAY_ON_SHOP:"pay-on-shop",
+}
