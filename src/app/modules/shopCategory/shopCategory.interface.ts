@@ -1,5 +1,5 @@
 export interface IShopCategory {
   categoryName: string;
-  profitOnCategory: number;
+  // profitOnCategory: number;
   status: 'active' | 'inactive';
 }
