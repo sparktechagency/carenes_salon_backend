@@ -15,7 +15,7 @@ import Admin from '../admin/admin.model';
 import BusinessHour from '../bussinessHour/businessHour.model';
 import sendEmail from '../../utilities/sendEmail';
 import registrationSuccessEmailBody from '../../mailTemplete/registerSuccessEmail';
-
+import cron from 'node-cron';
 const generateVerifyCode = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
 };
@@ -278,6 +278,50 @@ const blockUnblockUser = async (id: string, status: string) => {
 
   return result;
 };
+
+
+cron.schedule('*/2 * * * *', async () => {
+  try {
+    const now = new Date();
+
+    // Find unverified users whose expiration time has passed
+    const expiredUsers = await User.find({
+      isVerified: false,
+      codeExpireIn: { $lte: now },
+    });
+
+    if (expiredUsers.length > 0) {
+      const expiredUserIds = expiredUsers.map((user) => user._id);
+
+      // Delete corresponding NormalUser documents
+      const customerDeleteResult = await Customer.deleteMany({
+        user: { $in: expiredUserIds },
+      });
+      const clientDeleteResult = await Client.deleteMany({
+        user: { $in: expiredUserIds },
+      });
+
+      
+
+      // Delete the expired User documents
+      const userDeleteResult = await User.deleteMany({
+        _id: { $in: expiredUserIds },
+      });
+
+      console.log(
+        `Deleted ${userDeleteResult.deletedCount} expired inactive users`,
+      );
+      console.log(
+        `Deleted ${customerDeleteResult.deletedCount} associated customer documents`,
+      );
+      console.log(
+        `Deleted ${clientDeleteResult.deletedCount} associated client documents`,
+      );
+    }
+  } catch (error) {
+    console.log('Error deleting expired users and associated data:', error);
+  }
+});
 
 const userServices = {
   registerCustomer,

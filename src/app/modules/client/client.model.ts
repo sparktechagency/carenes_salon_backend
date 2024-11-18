@@ -78,6 +78,9 @@ const clientSchema = new Schema<IClient>({
   isShopInfoProvided:{type:Boolean,default:false} ,
   isProfileCompleted:{type:Boolean,default:false},
   isDeleted: { type: Boolean, default: false },
+},{
+  timestamps: true,
+  toJSON: { virtuals: true },
 });
 
 const Client = models.Client || model('Client', clientSchema);
