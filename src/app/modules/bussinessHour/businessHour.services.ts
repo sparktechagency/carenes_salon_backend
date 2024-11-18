@@ -196,11 +196,7 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
 
   // for testing------------------
     const openTime = new Date(`${date}T${staffHours.openTime}`);
-    const closeTime = new Date(`${date}T${staffHours.closeTime}`);
-
-  console.log('opentime', openTime);
-  console.log('closetime', closeTime);
-  console.log("day => ",day);
+    const closeTime = new Date(`${date}T${staffHours.closeTime}`)
 
   // Fetch blocked hours and existing bookings
   const blockHours = await BlockHour.find({
@@ -213,8 +209,6 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
     entityType: 'Shop',
     day,
   });
-
-  console.log("block hours",blockHours)
 
   const existingBookings = await Booking.find({
     staffId,
