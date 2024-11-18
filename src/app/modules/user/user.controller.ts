@@ -36,6 +36,7 @@ const registerClient = catchAsync(async (req, res) => {
 
   const result = await userServices.registerClient(
     req?.body?.password,
+    req.body.confirmPassword,
     req?.body?.client,
   );
   sendResponse(res, {
@@ -62,8 +63,8 @@ const registerAdmin = catchAsync(async (req, res) => {
 
 // get me
 const getMyProfile = catchAsync(async (req, res) => {
-  const { phoneNumber, role } = req.user;
-  const result = await userServices.getMyProfile(phoneNumber, role);
+  const { email, role } = req.user;
+  const result = await userServices.getMyProfile(email, role);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

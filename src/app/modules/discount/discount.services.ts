@@ -21,16 +21,7 @@ const createDiscount = async (shopId: string, payload: IDiscount) => {
   return result;
 };
 
-// const getDiscount = async (shopId: string) => {
-//   const discount = await Discount.findOne({ shop: shopId })
-
-//   if (!discount) {
-//     throw new AppError(httpStatus.BAD_REQUEST, "You don't add any discount");
-//   }
   
-  
-//   return discount;
-// };
 const getDiscount = async (shopId: string) => {
     const discount = await Discount.findOne({ shop: shopId }).exec();
   
@@ -70,8 +61,7 @@ const updateDiscount = async (
       "You don't have any discount schedule",
     );
   }
-  console.log("discont update payload",payload)
-  const result = await Discount.findOne({ _id: id, shop: shopId }, payload, {
+  const result = await Discount.findOneAndUpdate({ _id: id, shop: shopId }, payload, {
     new: true,
     runValidators: true,
   });

@@ -33,11 +33,21 @@ const deleteShopCategory = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getAllShopCategory = catchAsync(async (req, res) => {
+  const result = await ShopCategoryServices.getAllShopCategory(req.query);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Shop category retrieved successfully',
+    data: result,
+  });
+});
 
 const ShopCategoryController = {
   createShopCategory,
   updateShopCategory,
   deleteShopCategory,
+  getAllShopCategory
 };
 
 export default ShopCategoryController;

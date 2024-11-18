@@ -30,6 +30,8 @@ const staffSchema = new Schema<IStaff>(
       },
     },
     profile_image: { type: String, default: '' },
+    totalRating:{type:Number,default:0},
+    totalRatingCount:{type:Number,default:0}
   },
   { timestamps: true },
 );

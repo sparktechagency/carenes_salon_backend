@@ -1,0 +1,2 @@
+Sun Nov 17 2024 10:19 46 [Food Delivery] error: Uncaught Exception: listen EADDRINUSE: address already in use 192.168.10.11:9000
+Sun Nov 17 2024 10:31 13 [Food Delivery] error: Unhandled Rejection: You can only create new accounts if you've signed up for Connect, which you can learn how to do at https://stripe.com/docs/connect.

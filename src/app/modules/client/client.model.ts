@@ -1,6 +1,7 @@
 import { model, Schema, models } from 'mongoose';
 import { IClient } from './client.interface';
 import { ILocation } from '../customer/customer.interface';
+import { ENUM_PAYMENT_PREFERENCES } from '../../utilities/enum';
 
 const locationSchema = new Schema<ILocation>({
   type: {
@@ -22,30 +23,27 @@ const clientSchema = new Schema<IClient>({
   },
   shopCategoryId:{
     type:Schema.Types.ObjectId,
-    required:true,
+    // required:true,
     ref:"ShopCategory"
   },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  phoneNumber: { type: String, required: true },
+  phoneNumber: { type: String,},
   gender:{
     type:String,
-    required:true
+
   },
   dateOfBirth:{
     type:Date,
-    required:true
   },
   shopName:{
     type:String,
-    required:true
   },
-  shopCategory: { type: String, required: true },
+  shopCategory: { type: String},
   shopGenderCategory: {
     type: String,
     enum: ['male', 'female'],
-    required: true,
   },
   shopImages: {
     type: [String],
@@ -53,15 +51,16 @@ const clientSchema = new Schema<IClient>({
 
   location: {
     type: locationSchema,
-    required: true,
+    // required: true,
     index: '2dsphere',
   },
   profile_image: { type: String, default: '' },
-  bankName: { type: String, required: true },
-  bankAccountName: { type: String, required: true },
-  bankAccountNumber: { type: String, required: true },
-  branchCode: { type: String, required: true },
-  bankCity: { type: String, required: true },
+  bankName: { type: String, },
+  bankAccountName: { type: String, },
+  bankAccountNumber: { type: String, },
+  branchCode: { type: String, },
+  bankCity: { type: String, },
+  payOnShopChargeDueAmount : {type:Number,default:0},
   status: {
     type: String,
     enum: ['active', 'inactive'],
@@ -73,8 +72,11 @@ const clientSchema = new Schema<IClient>({
   },
   totalRatingCount: {
     type: Number,
-    default: 0,
+    default: 0, 
   },
+  paymentPreferences:{type:String,enum:Object.values(ENUM_PAYMENT_PREFERENCES)},
+  isShopInfoProvided:{type:Boolean,default:false} ,
+  isProfileCompleted:{type:Boolean,default:false},
   isDeleted: { type: Boolean, default: false },
 });
 

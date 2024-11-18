@@ -50,11 +50,6 @@ const forgetPassword = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  // const token = req?.headers?.authorization;
-
-  // if (!token) {
-  //   throw new AppError(httpStatus.BAD_REQUEST, 'Your token is invalid');
-  // }
   const result = await authServices.resetPassword(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,

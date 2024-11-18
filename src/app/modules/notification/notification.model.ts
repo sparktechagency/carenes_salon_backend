@@ -1,15 +1,14 @@
 import { model, Schema } from 'mongoose';
 import { INotification } from './notification.interface';
+import { ENUM_NOTIFICATION_TYPE } from '../../utilities/enum';
 
 const notificationSchema = new Schema<INotification>(
   {
     title: {
       type: String,
-      required: true,
     },
     message: {
       type: String,
-      required: true,
     },
     seen: {
       type: Boolean,
@@ -19,6 +18,11 @@ const notificationSchema = new Schema<INotification>(
       type: String,
       required: true,
     },
+    type:{
+      type:String,
+      enum:Object.values(ENUM_NOTIFICATION_TYPE),
+      required:true,
+    }
   },
 
   {

@@ -6,6 +6,7 @@ import BusinessHour from '../bussinessHour/businessHour.model';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
+import Service from '../service/service.model';
 
 const createStaffIntoDB = async (profileId: string, payload: IStaff) => {
   const session = await mongoose.startSession();
@@ -104,14 +105,69 @@ const getAllStaff = async (query: Record<string, any>) => {
   };
 };
 
-// get my staff
 const getMyStaff = async (shopId: string) => {
-  const result = await Staff.find({ shop: shopId });
-  return result;
+  try {
+    // Fetch staff for the given shop
+    const staffList = await Staff.find({ shop: shopId }).select("name specialty profile_image totalRating totalRatingCount");
+
+    // Resolve services for each staff member
+    // const resolvedStaffList = await Promise.all(
+    //   staffList.map(async (staff) => {
+    //     if (staff.services === 'all-services') {
+    //       // Return 'all-services' as is
+    //       return {
+    //         ...staff.toObject(),
+    //         services: 'all-services',
+    //       };
+    //     } else if (Array.isArray(staff.services)) {
+    //       // Populate specific services
+    //       const specificServices = await Service.find({
+    //         _id: { $in: staff.services },
+    //       }).select('serviceName');
+    //       return {
+    //         ...staff.toObject(),
+    //         services: specificServices,
+    //       };
+    //     } else {
+    //       return staff.toObject(); // Return as is for unexpected cases
+    //     }
+    //   }),
+    // );
+
+    return staffList;
+  } catch (error) {
+    throw new Error('Unable to fetch staff information.');
+  }
 };
 
-// get available staff
+const getSingleStaff = async(staffId:string)=>{
+  const staff = await Staff.findById(staffId);
+  if(!staff){
+    throw new AppError(httpStatus.NOT_FOUND,"Staff not found");
+  }
 
+  if (staff.services === 'all-services') {
+    // Return 'all-services' as is
+    return {
+      ...staff.toObject(),
+      services: 'all-services',
+    };
+  } else if (Array.isArray(staff.services)) {
+    // Populate specific services
+    const specificServices = await Service.find({
+      _id: { $in: staff.services },
+    }).select('serviceName');
+    return {
+      ...staff.toObject(),
+      services: specificServices,
+    };
+  } else {
+    return staff.toObject(); // Return as is for unexpected cases
+  }
+
+}
+
+// get available staff
 const getAvailableStaff = async (payload: {
   shopId: string;
   services: string[];
@@ -120,10 +176,7 @@ const getAvailableStaff = async (payload: {
   // Find staff with matching shopId and whose services array includes all specified service IDs
   const result = await Staff.find({
     shop: shopId,
-    $or: [
-      { services: { $all: services } },  
-      { services: "all-services" }     
-    ]
+    $or: [{ services: { $all: services } }, { services: 'all-services' }],
   });
 
   return result;
@@ -136,6 +189,7 @@ const StaffServices = {
   getAllStaff,
   getMyStaff,
   getAvailableStaff,
+  getSingleStaff
 };
 
 export default StaffServices;

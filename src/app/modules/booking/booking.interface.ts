@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { ENUM_BOOKING_PAYMENT } from "../../utilities/enum";
 
 interface IServices {
   serviceId:Types.ObjectId;
@@ -19,4 +20,6 @@ export interface IBooking {
     startTime: Date;
     endTime: Date;
     status: 'booked' | 'completed' | 'canceled';
+    totalPrice: number;
+    bookingPaymentType:(typeof ENUM_BOOKING_PAYMENT)[keyof typeof ENUM_BOOKING_PAYMENT];
   }

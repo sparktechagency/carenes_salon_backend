@@ -1,6 +1,9 @@
+import { ENUM_NOTIFICATION_TYPE } from "../../utilities/enum";
+
 export interface INotification {
   title: string;
   message: string;
   seen: boolean;
   receiver: string;
+  type: keyof typeof ENUM_NOTIFICATION_TYPE
 }

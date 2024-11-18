@@ -61,9 +61,7 @@ const getNearbyShop = catchAsync(async (req, res) => {
   });
 });
 const getSingleShop = catchAsync(async (req, res) => {
-  const result = await ClientServices.getSingleShop(
-    req.params.id
-  );
+  const result = await ClientServices.getSingleShop(req.params.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -71,14 +69,42 @@ const getSingleShop = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const addShopDetails = catchAsync(async (req, res) => {
+  const { files } = req;
+  if (files && typeof files === 'object' && 'shop_image' in files) {
+    req.body.shopImages = files['shop_image'].map((file) => file.path);
+  }
 
+  const result = await ClientServices.addShopDetails(
+    req.user.profileId,
+    req.body,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Shop details added successfully',
+    data: result,
+  });
+});
+
+const addBankDetails = catchAsync(async (req, res) => {
+  const result =await ClientServices.addBankDetails(req.user.profileId, req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Bank details added successfully',
+    data: result,
+  });
+});
 
 const ClientController = {
   updateClientProfile,
   getAllClient,
   updateClientStatus,
   getNearbyShop,
-  getSingleShop
+  getSingleShop,
+  addShopDetails,
+  addBankDetails
 };
 
 export default ClientController;

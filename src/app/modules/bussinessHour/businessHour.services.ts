@@ -173,7 +173,11 @@ const getAvailableDates = async (staffId: string) => {
 
 const getAvailableTimeSlots = async (staffId: string, date: string) => {
   const staff = await Staff.findById(staffId);
-  const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+  // const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+  const day = new Date(date).toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    timeZone: 'UTC' // Ensures it interprets the date as UTC
+  });
   const staffHours = await BusinessHour.findOne({
     entityId: staffId,
     entityType: 'Staff',
@@ -196,6 +200,7 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
 
   console.log('opentime', openTime);
   console.log('closetime', closeTime);
+  console.log("day => ",day);
 
   // Fetch blocked hours and existing bookings
   const blockHours = await BlockHour.find({
@@ -221,7 +226,7 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
   // Generate available time slots in 30-minute intervals
   while (slotStart < closeTime) {
     const slotEnd = new Date(slotStart);
-    slotEnd.setMinutes(slotStart.getMinutes() + 30);
+    slotEnd.setMinutes(slotStart.getMinutes() + 15);
 
     // const isBlocked = blockHours.some(
     //   (bh) =>

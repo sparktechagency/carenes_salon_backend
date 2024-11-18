@@ -13,7 +13,6 @@ import Client from '../client/client.model';
 import { IAdmin } from '../admin/admin.interface';
 import Admin from '../admin/admin.model';
 import BusinessHour from '../bussinessHour/businessHour.model';
-import ShopCategory from '../shopCategory/shopCategory.model';
 import sendEmail from '../../utilities/sendEmail';
 import registrationSuccessEmailBody from '../../mailTemplete/registerSuccessEmail';
 
@@ -61,7 +60,10 @@ const registerCustomer = async (
     sendEmail({
       email: user[0].email,
       subject: 'Activate Your Account',
-      html: registrationSuccessEmailBody(customer[0].firstName, user[0].verifyCode),
+      html: registrationSuccessEmailBody(
+        customer[0].firstName,
+        user[0].verifyCode,
+      ),
     });
 
     await session.commitTransaction();
@@ -75,12 +77,16 @@ const registerCustomer = async (
   }
 };
 
-const registerClient = async (password: string, clientData: IClient) => {
-  const isCategoryExist = await ShopCategory.findOne({
-    categoryName: clientData.shopCategory,
-  });
-  if (!isCategoryExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Shop category not found');
+const registerClient = async (
+  password: string,
+  confirmPassword: string,
+  clientData: IClient,
+) => {
+  if (password !== confirmPassword) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Password and confirm password doesn't match",
+    );
   }
 
   const clientExists = await User.isUserExists(clientData?.email);
@@ -95,7 +101,6 @@ const registerClient = async (password: string, clientData: IClient) => {
     const verifyCode = generateVerifyCode();
     const userData: Partial<TUser> = {
       email: clientData?.email,
-      phoneNumber: clientData?.phoneNumber,
       password: password,
       role: USER_ROLE.client,
       isActive: false,
@@ -104,9 +109,6 @@ const registerClient = async (password: string, clientData: IClient) => {
     };
 
     const user = await User.create([userData], { session });
-
-    // const smsMessage = `Your verification code is: ${verifyCode}`;
-    // await sendSMS(clientData?.phoneNumber, smsMessage);
 
     const clientPayload = {
       ...clientData,
@@ -151,6 +153,15 @@ const registerClient = async (password: string, clientData: IClient) => {
 
     // Create default business hours for the client
     await BusinessHour.create(defaultBusinessHours, { session });
+
+    sendEmail({
+      email: user[0].email,
+      subject: 'Activate Your Account',
+      html: registrationSuccessEmailBody(
+        client[0].firstName,
+        user[0].verifyCode,
+      ),
+    });
 
     await session.commitTransaction();
     session.endSession();
@@ -201,22 +212,22 @@ const registerAdmin = async (password: string, adminData: IAdmin) => {
   }
 };
 
-const getMyProfile = async (phoneNumber: string, role: string) => {
+const getMyProfile = async (email: string, role: string) => {
   let result = null;
   if (role === USER_ROLE.customer) {
-    result = await Customer.findOne({ phoneNumber });
+    result = await Customer.findOne({ email: email });
   }
   if (role === USER_ROLE.client) {
-    result = await Client.findOne({ phoneNumber });
+    result = await Client.findOne({ email: email });
   }
   if (role === USER_ROLE.admin) {
-    result = await Admin.findOne({ phoneNumber });
+    result = await Admin.findOne({ email: email });
   }
   return result;
 };
 
 const verifyCode = async (email: string, verifyCode: number) => {
-  const user = await User.findOne({ email:email });
+  const user = await User.findOne({ email: email });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
