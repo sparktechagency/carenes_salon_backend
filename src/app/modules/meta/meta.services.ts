@@ -1,3 +1,4 @@
+import Booking from '../booking/booking.model';
 import Client from '../client/client.model';
 import Customer from '../customer/customer.model';
 import Order from '../order/order.model';
@@ -21,8 +22,8 @@ import Service from '../service/service.model';
 // };
 
 const getDashboardMetaData = async () => {
-  const totalSales = 1000;
-  const profitOnSales = 400;
+  // const totalSales = 1000;
+  // const profitOnSales = 400;
   const totalService = await Service.countDocuments();
   const totalCustomer = await Customer.countDocuments();
   const totalClient = await Client.countDocuments();
@@ -136,9 +137,11 @@ const getDashboardMetaData = async () => {
               100,
           )
       : 0;
+
+  const {totalSales,totalProfit} = await calculateSalesAndProfit();
   return {
     totalSales,
-    profitOnSales,
+    totalProfit,
     totalService,
     totalCustomer,
     totalClient,
@@ -148,6 +151,51 @@ const getDashboardMetaData = async () => {
     clientChangePercentage: clientChangePercentage.toFixed(2),
     serviceChangeType,
     serviceChangePercentage: serviceChangePercentage.toFixed(2),
+  };
+};
+
+const calculateSalesAndProfit = async () => {
+  const bookings = await Booking.aggregate([
+    {
+      $match: {
+        paymentStatus: { $in: ["success", "pay-on-shop"] }, // Include both "success" and "pay-on-shop"
+      },
+    },
+    {
+      $project: {
+        totalPrice: 1,
+        bookingPaymentType: 1,
+        profit: {
+          $cond: [
+            { $eq: ["$bookingPaymentType", "online"] },
+            { $multiply: ["$totalPrice", 0.05] }, // 5% profit for online
+            // { $multiply: ["$totalPrice", 0.1] }, // 0.1 profit for pay-on-shop
+            0.10,
+          ],
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalSales: { $sum: "$totalPrice" }, // Total sales from all bookings
+        totalProfit: { $sum: "$profit" }, // Total profit from calculated profits
+      },
+    },
+  ]);
+
+  // If no bookings found, return default values
+  if (!bookings.length) {
+    return {
+      totalSales: 0,
+      totalProfit: 0,
+    };
+  }
+
+  const { totalSales, totalProfit } = bookings[0];
+  return {
+    totalSales,
+    totalProfit,
   };
 };
 

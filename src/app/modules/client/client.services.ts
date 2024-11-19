@@ -87,7 +87,7 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
   );
 
   // Step 3: Build the client query with pagination, search, etc.
-  const ClientQuery = new QueryBuilder(Client.find(), query)
+  const ClientQuery = new QueryBuilder(Client.find().select("shopName shopImages totalRating totalRatingCount phoneNumber email location status "), query)
     .search(['name'])
     .fields()
     .filter()

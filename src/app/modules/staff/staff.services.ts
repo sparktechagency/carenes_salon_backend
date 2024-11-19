@@ -123,7 +123,7 @@ const getAllStaff = async (query: Record<string, any>) => {
     },
     {} as Record<string, number>,
   );
-  const StaffQuery = new QueryBuilder(Staff.find(), query)
+  const StaffQuery = new QueryBuilder(Staff.find().select("name specialty phoneNumber profile_image totalRating totalRatingCount").populate({path:"shop",select:"shopName"}), query)
     .search(['name'])
     .fields()
     .filter()
