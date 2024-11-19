@@ -59,17 +59,11 @@ const getDashboardMetaData = async () => {
       : 'decrease';
   const customerChangePercentage =
     lastMonthCustomerCount > 0
-      ? lastMonthCustomerCount < currentMonthCustomerCount
-        ? Math.abs(
-            ((currentMonthCustomerCount - lastMonthCustomerCount) /
-              lastMonthCustomerCount) *
-              100,
-          )
-        : Math.abs(
-            ((lastMonthCustomerCount - currentMonthCustomerCount) /
-              currentMonthCustomerCount) *
-              100,
-          )
+      ? Math.abs(
+          ((currentMonthCustomerCount - lastMonthCustomerCount) /
+            lastMonthCustomerCount) *
+            100,
+        )
       : 0;
 
   // client --------------------
@@ -93,17 +87,11 @@ const getDashboardMetaData = async () => {
     currentMonthClientCount > lastMonthClientCount ? 'increase' : 'decrease';
   const clientChangePercentage =
     lastMonthClientCount > 0
-      ? lastMonthClientCount < currentMonthClientCount
-        ? Math.abs(
-            ((currentMonthClientCount - lastMonthClientCount) /
-              lastMonthClientCount) *
-              100,
-          )
-        : Math.abs(
-            ((lastMonthClientCount - currentMonthClientCount) /
-              currentMonthClientCount) *
-              100,
-          )
+      ? Math.abs(
+          ((currentMonthClientCount - lastMonthClientCount) /
+            lastMonthClientCount) *
+            100,
+        )
       : 0;
 
   // service -------------
@@ -125,23 +113,43 @@ const getDashboardMetaData = async () => {
     currentMonthServiceCount > lastMonthServiceCount ? 'increase' : 'decrease';
   const serviceChangePercentage =
     lastMonthServiceCount > 0
-      ? lastMonthServiceCount < currentMonthServiceCount
-        ? Math.abs(
-            ((currentMonthServiceCount - lastMonthServiceCount) /
-              lastMonthServiceCount) *
-              100,
-          )
-        : Math.abs(
-            ((lastMonthServiceCount - currentMonthServiceCount) /
-              currentMonthServiceCount) *
-              100,
-          )
+      ? Math.abs(
+          ((currentMonthServiceCount - lastMonthServiceCount) /
+            lastMonthServiceCount) *
+            100,
+        )
       : 0;
 
-  const {totalSales,totalProfit} = await calculateSalesAndProfit();
+  const result = await calculateSalesAndProfit();
+  console.log("result: " + result.overall.totalProfit);
+  const totalSalesChangeType =
+  result.currentMonth.totalSales > result.previousMonth.totalSales
+    ? 'increase'
+    : 'decrease';
+    const totalSalesChangePercentage =
+    result.previousMonth.totalSales > 0
+      ? Math.abs(
+          ((result.currentMonth.totalSales - result.previousMonth.totalSales) /
+            result.previousMonth.totalSales) *
+            100,
+        )
+      : 0;
+  const totalProfitChangeType =
+  result.currentMonth.totalSales > result.previousMonth.totalSales
+    ? 'increase'
+    : 'decrease';
+    const totalProfitChangePercentage =
+    result.previousMonth.totalSales > 0
+      ? Math.abs(
+          ((result.currentMonth.totalProfit - result.previousMonth.totalProfit) /
+            result.previousMonth.totalProfit) *
+            100,
+        )
+      : 0;
+
   return {
-    totalSales,
-    totalProfit,
+    totalSales : result.overall.totalSales,
+    totalProfit : result.overall.totalProfit,
     totalService,
     totalCustomer,
     totalClient,
@@ -151,51 +159,148 @@ const getDashboardMetaData = async () => {
     clientChangePercentage: clientChangePercentage.toFixed(2),
     serviceChangeType,
     serviceChangePercentage: serviceChangePercentage.toFixed(2),
+    totalSalesChangeType,
+    totalSalesChangePercentage: totalSalesChangePercentage.toFixed(2),
+    totalProfitChangeType,
+    totalProfitChangePercentage: totalProfitChangePercentage.toFixed(2),
   };
 };
 
+// const calculateSalesAndProfit = async () => {
+//   const bookings = await Booking.aggregate([
+//     {
+//       $match: {
+//         paymentStatus: { $in: ['success', 'pay-on-shop'] },
+//       },
+//     },
+//     {
+//       $project: {
+//         totalPrice: 1,
+//         bookingPaymentType: 1,
+//         profit: {
+//           $cond: [
+//             { $eq: ['$bookingPaymentType', 'online'] },
+//             { $multiply: ['$totalPrice', 0.05] }, // 5% profit for online
+//             // { $multiply: ["$totalPrice", 0.1] }, // 0.1 profit for pay-on-shop
+//             0.1,
+//           ],
+//         },
+//       },
+//     },
+//     {
+//       $group: {
+//         _id: null,
+//         totalSales: { $sum: '$totalPrice' }, // Total sales from all bookings
+//         totalProfit: { $sum: '$profit' }, // Total profit from calculated profits
+//       },
+//     },
+//   ]);
+
+//   if (!bookings.length) {
+//     return {
+//       totalSales: 0,
+//       totalProfit: 0,
+//     };
+//   }
+
+//   const { totalSales, totalProfit } = bookings[0];
+//   return {
+//     totalSales,
+//     totalProfit,
+//   };
+// };
 const calculateSalesAndProfit = async () => {
+  const currentMonthStart = new Date();
+  currentMonthStart.setDate(1);
+  currentMonthStart.setHours(0, 0, 0, 0);
+
+  const previousMonthStart = new Date(currentMonthStart);
+  previousMonthStart.setMonth(previousMonthStart.getMonth() - 1);
+
+  const previousMonthEnd = new Date(currentMonthStart);
+  previousMonthEnd.setSeconds(-1);
+
   const bookings = await Booking.aggregate([
     {
       $match: {
-        paymentStatus: { $in: ["success", "pay-on-shop"] }, // Include both "success" and "pay-on-shop"
+        paymentStatus: { $in: ['success', 'pay-on-shop'] },
       },
     },
     {
       $project: {
         totalPrice: 1,
         bookingPaymentType: 1,
+        createdAt: 1,
         profit: {
           $cond: [
-            { $eq: ["$bookingPaymentType", "online"] },
-            { $multiply: ["$totalPrice", 0.05] }, // 5% profit for online
-            // { $multiply: ["$totalPrice", 0.1] }, // 0.1 profit for pay-on-shop
-            0.10,
+            { $eq: ['$bookingPaymentType', 'online'] },
+            { $multiply: ['$totalPrice', 0.05] }, // 5% profit for online
+            // { $multiply: ['$totalPrice', 0.1] }, // 10% profit for pay-on-shop
+            0.1
           ],
         },
       },
     },
     {
-      $group: {
-        _id: null,
-        totalSales: { $sum: "$totalPrice" }, // Total sales from all bookings
-        totalProfit: { $sum: "$profit" }, // Total profit from calculated profits
+      $facet: {
+        overall: [
+          {
+            $group: {
+              _id: null,
+              totalSales: { $sum: '$totalPrice' }, // Overall total sales
+              totalProfit: { $sum: '$profit' }, // Overall total profit
+            },
+          },
+        ],
+        currentMonth: [
+          {
+            $match: {
+              createdAt: { $gte: currentMonthStart },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              totalSales: { $sum: '$totalPrice' }, // Current month total sales
+              totalProfit: { $sum: '$profit' }, // Current month total profit
+            },
+          },
+        ],
+        previousMonth: [
+          {
+            $match: {
+              createdAt: { $gte: previousMonthStart, $lte: previousMonthEnd },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              totalSales: { $sum: '$totalPrice' }, // Previous month total sales
+              totalProfit: { $sum: '$profit' }, // Previous month total profit
+            },
+          },
+        ],
       },
     },
   ]);
 
-  // If no bookings found, return default values
-  if (!bookings.length) {
-    return {
-      totalSales: 0,
-      totalProfit: 0,
-    };
-  }
+  const overall = bookings[0].overall[0] || { totalSales: 0, totalProfit: 0 };
+  const currentMonth = bookings[0].currentMonth[0] || { totalSales: 0, totalProfit: 0 };
+  const previousMonth = bookings[0].previousMonth[0] || { totalSales: 0, totalProfit: 0 };
 
-  const { totalSales, totalProfit } = bookings[0];
   return {
-    totalSales,
-    totalProfit,
+    overall: {
+      totalSales: overall.totalSales,
+      totalProfit: overall.totalProfit,
+    },
+    currentMonth: {
+      totalSales: currentMonth.totalSales,
+      totalProfit: currentMonth.totalProfit,
+    },
+    previousMonth: {
+      totalSales: previousMonth.totalSales,
+      totalProfit: previousMonth.totalProfit,
+    },
   };
 };
 
