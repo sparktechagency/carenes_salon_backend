@@ -6,8 +6,6 @@ import server from './app';
 import { errorLogger, logger } from './app/shared/logger';
 import config from './app/config';
 import seedSuperAdmin from './app/DB';
-import { Server } from 'socket.io';
-import socket from './app/socket/socket';
 import { initializeSocket } from './app/socket/socketManager';
 // import socket from './app/socket/socket';
 // some changes--------

@@ -18,9 +18,11 @@ const initializeSocket = (server: HTTPServer) => {
 
       // Example: Save user's socket connection for later use
       const userId = socket.handshake.query.id as string;
+      console.log('User connected:', userId);
       socket.join(userId);
 
       socket.on('nice', (data: any) => {
+        console.log("okey i received event")
         console.log('Data received on "nice" event:', data);
       });
 
