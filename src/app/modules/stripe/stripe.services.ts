@@ -3,23 +3,28 @@ import httpStatus from 'http-status';
 import config from '../../config';
 import AppError from '../../error/appError';
 import Client from '../client/client.model';
+import Booking from '../booking/booking.model';
+import { ENUM_PAYMENT_STATUS } from '../../utilities/enum';
 
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 const createConnectedAccountAndOnboardingLink = async (
   salonEmail: string,
   profileId: string,
 ) => {
+  const isClientConnected = await Client.findOne({ isStripeConnected: true,email: salonEmail,_id: profileId});
 
-    const isClientConnected = await Client.findOne({isStripeConnected:true});
-
-    if(isClientConnected){
-        throw new AppError(httpStatus.BAD_REQUEST,"Stripe is already connected")
-    }
+  if (isClientConnected) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Stripe is already connected');
+  }
   // Step 1: Create a connected account
   const account = await stripe.accounts.create({
     type: 'express', // or 'express' based on your need
     email: salonEmail,
     country: 'DE', // Example country
+    capabilities: {
+      card_payments: { requested: true }, // Enable card payments (includes Apple Pay / Google Pay)
+      transfers: { requested: true }, // Enable transfers to the account
+    },
   });
 
   console.log('Connected Account Created:', account.id);
@@ -49,7 +54,6 @@ const createConnectedAccountAndOnboardingLink = async (
 };
 
 const updateClientStripeConnectionStatus = async (accountId: string) => {
-
   // Validate the input parameters
   if (!accountId) {
     throw new AppError(
@@ -88,9 +92,31 @@ const updateClientStripeConnectionStatus = async (accountId: string) => {
   }
 };
 
+const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
+  console.log('ldfjdkfjkdljflkdfljdlfjd');
+  const bookingId = paymentIntent.metadata.bookingId;
+
+  // Retrieve the client profile by profileId
+  const booking = await Booking.findById(bookingId);
+
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+
+  // Assuming the payment is successful, we can handle your logic here
+  console.log('Payment Intent succeeded:', paymentIntent.id);
+
+  // Example: You might want to mark the payment as complete
+  booking.paymentStatus = ENUM_PAYMENT_STATUS.SUCCESS;
+  await booking.save();
+
+  // Here, you could also handle the admin fee transfer, but Stripe handles that automatically.
+};
+
 const stripeServices = {
   createConnectedAccountAndOnboardingLink,
   updateClientStripeConnectionStatus,
+  handlePaymentSuccess,
 };
 
 export default stripeServices;

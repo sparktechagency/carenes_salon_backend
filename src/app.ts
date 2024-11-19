@@ -55,7 +55,11 @@ app.post(
         break;
       case 'payment_intent.succeeded':
         // handlePaymentSuccess(event);
-        console.log('Payment sucess');
+        {
+          console.log('Payment sucess');
+          const paymentIntent = event.data.object;
+          await stripeServices.handlePaymentSuccess(paymentIntent);
+        }
         break;
       case 'account.updated':
         {
@@ -117,6 +121,13 @@ app.post('/create-payment-intent', async (req: Request, res: Response) => {
     console.error('Error creating payment intent:', error);
     res.status(500).json({ error: 'Failed to create payment intent' });
   }
+});
+
+app.get('/get-account', async(req, res) => {
+  const account = await stripe.accounts.retrieve("acct_1QMp4bClOJ3gSuLf");
+
+  console.log('Connected Account Details:', account);
+  return 0;
 });
 
 const test = (req: Request, res: Response) => {
