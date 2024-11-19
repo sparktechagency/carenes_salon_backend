@@ -621,7 +621,7 @@ const getAreaChartDataForSalesFromDB = async (
   };
 };
 
-const getMonthlySalesAndProfitByYear = async (year:number) => {
+const getMonthlySalesAndProfitByYear = async (year: number) => {
   // Calculate start and end dates for the given year
   const startDate = new Date(year, 0, 1); // January 1st of the given year
   const endDate = new Date(year, 11, 31, 23, 59, 59); // December 31st of the given year
@@ -641,8 +641,7 @@ const getMonthlySalesAndProfitByYear = async (year:number) => {
           $cond: [
             { $eq: ['$bookingPaymentType', 'online'] },
             { $multiply: ['$totalPrice', 0.05] }, // 5% profit for online
-            // { $multiply: ['$totalPrice', 0.1] }, // 10% profit for pay-on-shop
-            0.1
+            { $multiply: ['$totalPrice', 0.1] }, // 10% profit for pay-on-shop
           ],
         },
       },
@@ -676,12 +675,17 @@ const getMonthlySalesAndProfitByYear = async (year:number) => {
     };
   });
 
+  // Calculate total sales for the entire year
+  const totalYearlySales = fullYearData.reduce((sum, monthData) => sum + monthData.totalSales, 0);
+
   return {
     success: true,
     message: `Sales chart data retrieved successfully for ${year}`,
     data: fullYearData,
+    totalSales: totalYearlySales, // Include total sales for the year
   };
 };
+
 
 const metaServices = {
   getDashboardMetaData,
