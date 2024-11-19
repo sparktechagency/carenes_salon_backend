@@ -7,7 +7,7 @@ import stripeController from "./stripe.controller";
 const router = express.Router();
 
 
-router.post("/create-onboarding-link",auth(USER_ROLE.client),stripeController.createOnboardingLink);
+router.post("/connect-stripe",auth(USER_ROLE.client),stripeController.createOnboardingLink);
 
 
 export const stripeRoutes = router;
