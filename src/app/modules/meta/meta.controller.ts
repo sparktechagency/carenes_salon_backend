@@ -14,31 +14,8 @@ const getDashboardMetaData = catchAsync(async(req,res)=>{
 })
 
 
-const getAreaChartDataForIncome = catchAsync(async (req, res) => {
-  const result = await metaServices.getAreaChartDataForIncomeFromDB(
-    Number(req?.query?.year),
-  );
 
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: 'Income chart data retrieved successfully',
-    data: result,
-  });
-});
-const getAreaChartDataForSales = catchAsync(async (req, res) => {
-  const result = await metaServices.getAreaChartDataForSalesFromDB(
-    req?.user?.profileId,
-    Number(req?.query?.year),
-  );
 
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: 'Sales chart data retrieved successfully',
-    data: result,
-  });
-});
 const getMonthlySalesAndProfitChartData = catchAsync(async (req, res) => {
   const result = await metaServices.getMonthlySalesAndProfitByYear(
     Number(req.query?.year)
@@ -54,8 +31,6 @@ const getMonthlySalesAndProfitChartData = catchAsync(async (req, res) => {
 
 const metaController = {
   getDashboardMetaData,
-  getAreaChartDataForIncome,
-  getAreaChartDataForSales,
   getMonthlySalesAndProfitChartData
 };
 

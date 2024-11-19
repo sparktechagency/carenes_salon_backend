@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Server, Socket } from 'socket.io';
-import updateClientLocation from './updateRiderLocation';
 
 const socket = (io: Server) => {
   io.on('connection', async (socket: Socket) => {
@@ -10,9 +9,6 @@ const socket = (io: Server) => {
     socket.on('nice', async (data: any) => {
       console.log('data', data);
     });
-
-    // update Client location
-    updateClientLocation(io, socket);
     // Disconnect user
     socket.on('disconnect', () => {
       console.log('A user disconnected');
