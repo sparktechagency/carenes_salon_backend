@@ -9,6 +9,12 @@ const createConnectedAccountAndOnboardingLink = async (
   salonEmail: string,
   profileId: string,
 ) => {
+
+    const isClientConnected = await Client.findOne({isStripeConnected:true});
+
+    if(isClientConnected){
+        throw new AppError(httpStatus.BAD_REQUEST,"Stripe is already connected")
+    }
   // Step 1: Create a connected account
   const account = await stripe.accounts.create({
     type: 'express', // or 'express' based on your need
@@ -43,6 +49,8 @@ const createConnectedAccountAndOnboardingLink = async (
 };
 
 const updateClientStripeConnectionStatus = async (accountId: string) => {
+
+  // Validate the input parameters
   if (!accountId) {
     throw new AppError(
       httpStatus.BAD_REQUEST,

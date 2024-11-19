@@ -15,6 +15,8 @@ import BusinessHour from '../bussinessHour/businessHour.model';
 import Discount from '../discount/discount.model';
 import ShopCategory from '../shopCategory/shopCategory.model';
 import Booking from '../booking/booking.model';
+import { getIO } from '../../socket/socketManager';
+
 const updateClientProfile = async (
   userId: string,
   payload: Partial<IClient>,
@@ -432,6 +434,8 @@ const getSingleShop = async (id: string) => {
 };
 
 const getShopDetails = async (id: string) => {
+  const io = getIO();
+  io.emit("getShopDetails","nice");
   const shop = await Client.findById(id);
   if (!shop) {
     throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');

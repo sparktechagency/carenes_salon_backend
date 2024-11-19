@@ -14,6 +14,10 @@ const notificationSchema = new Schema<INotification>(
       type: Boolean,
       default: false,
     },
+    image:{
+      type: String,
+      required: false,
+    },
     receiver: {
       type: String,
       required: true,
