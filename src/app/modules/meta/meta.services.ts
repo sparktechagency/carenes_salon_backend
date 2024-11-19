@@ -80,9 +80,6 @@ const getDashboardMetaData = async () => {
     },
   });
 
-  // console.log("last mon client",lastMonthCustomerCount);
-  // console.log("current mon client",currentMonthCustomerCount);
-
   const clientChangeType =
     currentMonthClientCount > lastMonthClientCount ? 'increase' : 'decrease';
   const clientChangePercentage =
@@ -121,12 +118,13 @@ const getDashboardMetaData = async () => {
       : 0;
 
   const result = await calculateSalesAndProfit();
-  console.log("result: " + result.overall.totalProfit);
+
+  // total sales -------------
   const totalSalesChangeType =
-  result.currentMonth.totalSales > result.previousMonth.totalSales
-    ? 'increase'
-    : 'decrease';
-    const totalSalesChangePercentage =
+    result.currentMonth.totalSales > result.previousMonth.totalSales
+      ? 'increase'
+      : 'decrease';
+  const totalSalesChangePercentage =
     result.previousMonth.totalSales > 0
       ? Math.abs(
           ((result.currentMonth.totalSales - result.previousMonth.totalSales) /
@@ -134,22 +132,25 @@ const getDashboardMetaData = async () => {
             100,
         )
       : 0;
+
+  // total profit-----------------------
   const totalProfitChangeType =
-  result.currentMonth.totalSales > result.previousMonth.totalSales
-    ? 'increase'
-    : 'decrease';
-    const totalProfitChangePercentage =
+    result.currentMonth.totalSales > result.previousMonth.totalSales
+      ? 'increase'
+      : 'decrease';
+  const totalProfitChangePercentage =
     result.previousMonth.totalSales > 0
       ? Math.abs(
-          ((result.currentMonth.totalProfit - result.previousMonth.totalProfit) /
+          ((result.currentMonth.totalProfit -
+            result.previousMonth.totalProfit) /
             result.previousMonth.totalProfit) *
             100,
         )
       : 0;
 
   return {
-    totalSales : result.overall.totalSales,
-    totalProfit : result.overall.totalProfit,
+    totalSales: result.overall.totalSales,
+    totalProfit: result.overall.totalProfit,
     totalService,
     totalCustomer,
     totalClient,
@@ -236,7 +237,7 @@ const calculateSalesAndProfit = async () => {
             { $eq: ['$bookingPaymentType', 'online'] },
             { $multiply: ['$totalPrice', 0.05] }, // 5% profit for online
             // { $multiply: ['$totalPrice', 0.1] }, // 10% profit for pay-on-shop
-            0.1
+            0.1,
           ],
         },
       },
@@ -285,8 +286,14 @@ const calculateSalesAndProfit = async () => {
   ]);
 
   const overall = bookings[0].overall[0] || { totalSales: 0, totalProfit: 0 };
-  const currentMonth = bookings[0].currentMonth[0] || { totalSales: 0, totalProfit: 0 };
-  const previousMonth = bookings[0].previousMonth[0] || { totalSales: 0, totalProfit: 0 };
+  const currentMonth = bookings[0].currentMonth[0] || {
+    totalSales: 0,
+    totalProfit: 0,
+  };
+  const previousMonth = bookings[0].previousMonth[0] || {
+    totalSales: 0,
+    totalProfit: 0,
+  };
 
   return {
     overall: {
@@ -614,10 +621,73 @@ const getAreaChartDataForSalesFromDB = async (
   };
 };
 
+const getMonthlySalesAndProfitByYear = async (year:number) => {
+  // Calculate start and end dates for the given year
+  const startDate = new Date(year, 0, 1); // January 1st of the given year
+  const endDate = new Date(year, 11, 31, 23, 59, 59); // December 31st of the given year
+
+  const data = await Booking.aggregate([
+    {
+      $match: {
+        paymentStatus: { $in: ['success', 'pay-on-shop'] },
+        createdAt: { $gte: startDate, $lte: endDate },
+      },
+    },
+    {
+      $project: {
+        month: { $month: '$createdAt' },
+        totalPrice: 1,
+        profit: {
+          $cond: [
+            { $eq: ['$bookingPaymentType', 'online'] },
+            { $multiply: ['$totalPrice', 0.05] }, // 5% profit for online
+            // { $multiply: ['$totalPrice', 0.1] }, // 10% profit for pay-on-shop
+            0.1
+          ],
+        },
+      },
+    },
+    {
+      $group: {
+        _id: { month: '$month' },
+        totalSales: { $sum: '$totalPrice' },
+        totalProfit: { $sum: '$profit' },
+      },
+    },
+    {
+      $sort: { '_id.month': 1 }, // Sort by month
+    },
+  ]);
+
+  // Map month numbers to names
+  const monthNames = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+
+  // Fill in missing months with default values
+  const fullYearData = Array.from({ length: 12 }, (_, i) => {
+    const monthIndex = i + 1; // Months are 1-based in MongoDB
+    const monthData = data.find(d => d._id.month === monthIndex) || { totalSales: 0, totalProfit: 0 };
+    return {
+      month: monthNames[i],
+      totalSales: monthData.totalSales,
+      totalProfit: monthData.totalProfit,
+    };
+  });
+
+  return {
+    success: true,
+    message: `Sales chart data retrieved successfully for ${year}`,
+    data: fullYearData,
+  };
+};
+
 const metaServices = {
   getDashboardMetaData,
   getAreaChartDataForIncomeFromDB,
   getAreaChartDataForSalesFromDB,
+  getMonthlySalesAndProfitByYear
 };
 
 export default metaServices;

@@ -15,5 +15,5 @@ router.get(
   auth(USER_ROLE.admin),
   metaController.getAreaChartDataForSales,
 );
-
+router.get("/sales-profit-chart-data",auth(USER_ROLE.admin,USER_ROLE.superAdmin), metaController.getMonthlySalesAndProfitChartData)
 export const metaRoutes = router;

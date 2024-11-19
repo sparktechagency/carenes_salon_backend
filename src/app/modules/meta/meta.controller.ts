@@ -39,11 +39,24 @@ const getAreaChartDataForSales = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getMonthlySalesAndProfitChartData = catchAsync(async (req, res) => {
+  const result = await metaServices.getMonthlySalesAndProfitByYear(
+    Number(req.query?.year)
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Sales chart data retrieved successfully',
+    data: result,
+  });
+});
 
 const metaController = {
   getDashboardMetaData,
   getAreaChartDataForIncome,
   getAreaChartDataForSales,
+  getMonthlySalesAndProfitChartData
 };
 
 export default metaController;
