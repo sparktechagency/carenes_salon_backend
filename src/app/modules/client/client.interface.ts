@@ -33,4 +33,6 @@ export interface IClient {
   isDeleted: boolean;
   isShopInfoProvided: boolean;
   isProfileCompleted: boolean;
+  stripAccountId:string;
+  isStripeConnected: boolean;
 }

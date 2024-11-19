@@ -23,6 +23,7 @@ import { bookingRoutes } from '../modules/booking/booking.routes';
 import { blockHourRoutes } from '../modules/blockHour/blockHour.routes';
 import { discountRoutes } from '../modules/discount/discount.routes';
 import { ratingRoutes } from '../modules/rating/rating.routes';
+import { stripeRoutes } from '../modules/stripe/stripe.routes';
 
 const router = Router();
 
@@ -122,6 +123,10 @@ const moduleRoutes = [
   {
     path: '/rating',
     router: ratingRoutes,
+  },
+  {
+    path: '/stripe',
+    router: stripeRoutes,
   },
 ];
 

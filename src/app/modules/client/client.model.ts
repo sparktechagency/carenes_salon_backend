@@ -78,6 +78,8 @@ const clientSchema = new Schema<IClient>({
   isShopInfoProvided:{type:Boolean,default:false} ,
   isProfileCompleted:{type:Boolean,default:false},
   isDeleted: { type: Boolean, default: false },
+  stripAccountId: { type: String, },
+  isStripeConnected: { type: Boolean, default: false },
 },{
   timestamps: true,
   toJSON: { virtuals: true },
