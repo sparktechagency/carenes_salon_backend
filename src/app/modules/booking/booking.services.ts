@@ -261,7 +261,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
   // Check for conflicting bookings
   const existingBookings = await Booking.find({
     staffId: payload.staffId,
-    $or: [
+    $and: [
       { startTime: { $lt: endDate }, endTime: { $gt: startDate } }, // Overlapping existing booking
     ],
   });
@@ -333,6 +333,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
     services: servicesWithPrices,
     paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP,
     totalPrice, // Store the total price in the booking
+    totalDuration
   });
 
   await Client.findByIdAndUpdate(
@@ -401,7 +402,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       { startTime: { $lt: endDate }, endTime: { $gt: startDate } }, // Overlapping existing booking
     ],
   });
-  //!TODO: need to check operation
+  //check operation
   if (existingBookings.length > 0) {
     throw new AppError(
       httpStatus.CONFLICT,
@@ -469,6 +470,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     services: servicesWithPrices,
     paymentStatus: ENUM_PAYMENT_STATUS.PENDING,
     totalPrice, // Store the total price in the booking
+    totalDuration
   });
 
   //=============================
