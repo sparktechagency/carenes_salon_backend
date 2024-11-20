@@ -338,7 +338,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
     services: servicesWithPrices,
     paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP,
     totalPrice, // Store the total price in the booking
-    totalDuration
+    totalDuration,
   });
 
   await Client.findByIdAndUpdate(
@@ -475,7 +475,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     services: servicesWithPrices,
     paymentStatus: ENUM_PAYMENT_STATUS.PENDING,
     totalPrice, // Store the total price in the booking
-    totalDuration
+    totalDuration,
   });
 
   //=============================
@@ -501,12 +501,11 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       destination: shop.stripAccountId as string,
     },
     metadata: {
-      bookingId:result._id.toString(),
+      bookingId: result._id.toString(),
       shopId: shop._id.toString(), // Use your custom data here
     },
     // on_behalf_of: shop.stripAccountId as string,
   });
-
 
   // -------------------------------------
 
@@ -544,9 +543,7 @@ const getCustomerBookings = async (
   };
 };
 
-
-
-// cancel reschedule request 
+// cancel reschedule request
 const createCancelBookingRequest = async (
   userData: JwtPayload,
   bookingId: string,
@@ -588,14 +585,12 @@ const createCancelBookingRequest = async (
   };
 
   await Notification.create(notificationData);
-
-  
 };
 
 const BookingService = {
   createBooking,
   getCustomerBookings,
-  createCancelBookingRequest
+  createCancelBookingRequest,
 };
 
 export default BookingService;
