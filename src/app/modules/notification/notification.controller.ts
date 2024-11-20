@@ -7,7 +7,6 @@ const getAllNotification = catchAsync(async (req, res) => {
     req?.query,
     req?.user,
   );
-
   sendResponse(res, {
     statusCode: 200,
     success: true,
