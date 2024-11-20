@@ -10,9 +10,11 @@ const BookingRescheduleSchema = new Schema<IBookingReschedule>({
     },
     rescheduleDate: {
         type: Date,
+        required:true
     },
     rescheduleTime: {
         type: String,
+        required: true,
     },
     shopId: {
         type: Schema.Types.ObjectId,
