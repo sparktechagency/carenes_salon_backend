@@ -27,4 +27,4 @@ const BookingRescheduleSchema = new Schema({
     timestamps: true, // Optional: Adds createdAt and updatedAt fields
 });
 
-export const BookingReschedule = model("BookingReschedule", BookingRescheduleSchema);
+export const RescheduleRequest = model("RescheduleRequest", BookingRescheduleSchema);
