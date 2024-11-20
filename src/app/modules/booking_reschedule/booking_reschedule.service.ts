@@ -1,12 +1,15 @@
 import { JwtPayload } from 'jsonwebtoken';
 import { IBookingReschedule } from './booking_reschedule.interface';
 import Booking from '../booking/booking.model';
-import { ENUM_NOTIFICATION_TYPE, ENUM_RESCHEDULE_TYPE } from '../../utilities/enum';
+import {
+  ENUM_NOTIFICATION_TYPE,
+} from '../../utilities/enum';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
 import { USER_ROLE } from '../user/user.constant';
 import Client from '../client/client.model';
 import Customer from '../customer/customer.model';
+import Notification from '../notification/notification.model';
 
 const createRescheduleRequest = async (
   userData: JwtPayload,
@@ -47,25 +50,25 @@ const handleCancelBookingRequest = async (
   const notificationMessage =
     userData.role === USER_ROLE.client
       ? `${shop.shopName} requesting to cancel the booking`
-      : `${customer?.firstName + ' ' + customer?.lastName} requesting to cancel the booking`;
-const notificationImage = USER_ROLE.client ? `${shop?.shopImages[0]}`: `${customer?.profile_image}`;
+      : `${
+          customer?.firstName + ' ' + customer?.lastName
+        } requesting to cancel the booking`;
+  const notificationImage = USER_ROLE.client
+    ? `${shop?.shopImages[0]}`
+    : `${customer?.profile_image}`;
 
-const notificationData = {
-    title:"Cancel Request",
+  const notificationData = {
+    title: 'Cancel Request',
     message: notificationMessage,
     image: notificationImage,
-    receiver:requestReceiver,
-    rescheduleId: booking._id,
-    type: ENUM_NOTIFICATION_TYPE.CANCEL_BOOKING,   
-}
+    receiver: requestReceiver,
+    type: ENUM_NOTIFICATION_TYPE.CANCEL_BOOKING,
+  };
 
-
-
+  await Notification.create(notificationData);
 
 
 };
-
-
 
 const handleRescheduleBookingRequest = async (
   userData: JwtPayload,

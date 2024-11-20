@@ -15,4 +15,6 @@ router.get(
   auth(USER_ROLE.customer),
   BookingController.getCustomerBookings,
 );
+
+// router.post("/create-cancel-booking-request", auth(USER_ROLE.customer,USER_ROLE.client),BookingController.createCancelBookingRequest);
 export const bookingRoutes = router;

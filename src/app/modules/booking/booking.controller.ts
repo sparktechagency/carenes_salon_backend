@@ -23,10 +23,20 @@ const createBooking = catchAsync(async (req, res) => {
       data: result,
     });
    })
+   const createCancelBookingRequest = catchAsync(async(req,res)=>{
+    const result = await BookingService.createCancelBookingRequest(req.user,req.body.bookingId);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Bookings retrieved successfully',
+      data: result,
+    });
+   })
 
 const BookingController = {
     createBooking,
-    getCustomerBookings
+    getCustomerBookings,
+    createCancelBookingRequest
 }
 
 export default BookingController;

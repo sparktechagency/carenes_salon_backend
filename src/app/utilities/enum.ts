@@ -57,4 +57,5 @@ export const ENUM_PAYMENT_STATUS = {
 export const ENUM_RESCHEDULE_STATUS={
   REJECTED: 'rejected',
   ACCEPTED: 'reschedule',
+  PENDING: 'pending',
 }

@@ -25,6 +25,11 @@ const notificationSchema = new Schema<INotification>(
       type: Schema.Types.ObjectId,
       ref: 'Reschedule',
       required: false,
+    },
+    bookingId:{
+      type: Schema.Types.ObjectId,
+      ref: 'Booking',
+      required: false,
     }
   },
 

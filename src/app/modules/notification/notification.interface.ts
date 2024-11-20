@@ -7,6 +7,7 @@ export interface INotification {
   image:string;
   seen: boolean;
   receiver: string;
-  status: keyof typeof ENUM_NOTIFICATION_TYPE,
+  type: keyof typeof ENUM_NOTIFICATION_TYPE,
   rescheduleId:Types.ObjectId;
+  bookingId: Types.ObjectId;
 }

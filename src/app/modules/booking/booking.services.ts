@@ -9,12 +9,17 @@ import Service from '../service/service.model';
 import Booking from './booking.model';
 import {
   ENUM_BOOKING_PAYMENT,
+  ENUM_NOTIFICATION_TYPE,
   ENUM_PAYMENT_STATUS,
 } from '../../utilities/enum';
 import Client from '../client/client.model';
 import QueryBuilder from '../../builder/QueryBuilder';
 import Stripe from 'stripe';
 import config from '../../config';
+import { JwtPayload } from 'jsonwebtoken';
+import Customer from '../customer/customer.model';
+import { USER_ROLE } from '../user/user.constant';
+import Notification from '../notification/notification.model';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 // const createBooking = async (customerId: string, payload: any) => {
 //   const { serviceIds, date, startTime, shopId } = payload;
@@ -539,9 +544,58 @@ const getCustomerBookings = async (
   };
 };
 
+
+
+// cancel reschedule request 
+const createCancelBookingRequest = async (
+  userData: JwtPayload,
+  bookingId: string,
+) => {
+  const booking = await Booking.findById(bookingId);
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  const shop = await Client.findById(booking.shopId).select(
+    'shopName shopImages',
+  );
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+
+  const customer = await Customer.findById(booking.customerId).select(
+    'firstName lastName profile_image',
+  );
+
+  const requestReceiver =
+    userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
+
+  const notificationMessage =
+    userData.role === USER_ROLE.client
+      ? `${shop.shopName} requesting to cancel the booking`
+      : `${
+          customer?.firstName + ' ' + customer?.lastName
+        } requesting to cancel the booking`;
+  const notificationImage = USER_ROLE.client
+    ? `${shop?.shopImages[0]}`
+    : `${customer?.profile_image}`;
+
+  const notificationData = {
+    title: 'Cancel Request',
+    message: notificationMessage,
+    image: notificationImage,
+    receiver: requestReceiver,
+    type: ENUM_NOTIFICATION_TYPE.CANCEL_BOOKING,
+  };
+
+  await Notification.create(notificationData);
+
+  
+};
+
 const BookingService = {
   createBooking,
   getCustomerBookings,
+  createCancelBookingRequest
 };
 
 export default BookingService;
