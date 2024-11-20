@@ -1,9 +1,9 @@
-import { Schema, model, Types } from "mongoose";
-import { ENUM_RESCHEDULE_TYPE } from "../../utilities/enum";
+import { Schema, model } from "mongoose";
+import { IBookingReschedule } from "./booking_reschedule.interface";
 
-const BookingRescheduleSchema = new Schema({
+const BookingRescheduleSchema = new Schema<IBookingReschedule>({
     bookingId: {
-        type: Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true,
         ref: "Booking",
     },
@@ -13,16 +13,12 @@ const BookingRescheduleSchema = new Schema({
     rescheduleTime: {
         type: String,
     },
-    type: {
-        type: String,
-        enum: Object.values(ENUM_RESCHEDULE_TYPE),
-        required: true,
-    },
     shopId: {
-        type: Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true,
         ref: "Shop",
     },
+    
 }, {
     timestamps: true, // Optional: Adds createdAt and updatedAt fields
 });

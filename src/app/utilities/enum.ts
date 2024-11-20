@@ -38,7 +38,7 @@ export const ENUM_NOTIFICATION_TYPE={
   CANCEL_BOOKING: 'cancel-booking',
   RESCHEDULE_BOOKING: 'reschedule-booking',
   START_BOOKING:"start-booking",
-  REGISTER_CLIENT:"register-client"
+  REGISTER_CLIENT:"register-client",
 }
 
 
@@ -54,7 +54,7 @@ export const ENUM_PAYMENT_STATUS = {
 }
 
 
-export const ENUM_RESCHEDULE_TYPE={
-  CANCEL: 'cancel',
-  RESCHEDULE: 'reschedule',
+export const ENUM_RESCHEDULE_STATUS={
+  REJECTED: 'rejected',
+  ACCEPTED: 'reschedule',
 }

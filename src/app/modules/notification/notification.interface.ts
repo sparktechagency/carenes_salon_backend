@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { ENUM_NOTIFICATION_TYPE } from "../../utilities/enum";
 
 export interface INotification {
@@ -6,5 +7,6 @@ export interface INotification {
   image:string;
   seen: boolean;
   receiver: string;
-  type: keyof typeof ENUM_NOTIFICATION_TYPE
+  status: keyof typeof ENUM_NOTIFICATION_TYPE,
+  rescheduleId:Types.ObjectId;
 }
