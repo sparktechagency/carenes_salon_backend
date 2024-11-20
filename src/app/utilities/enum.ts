@@ -52,3 +52,9 @@ export const ENUM_PAYMENT_STATUS = {
   SUCCESS:"success",
   PAY_ON_SHOP:"pay-on-shop",
 }
+
+
+export const ENUM_RESCHEDULE_TYPE={
+  CANCEL: 'cancel',
+  RESCHEDULE: 'reschedule',
+}
