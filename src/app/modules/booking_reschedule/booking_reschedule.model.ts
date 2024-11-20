@@ -9,11 +9,9 @@ const BookingRescheduleSchema = new Schema({
     },
     rescheduleDate: {
         type: Date,
-        required: false,
     },
     rescheduleTime: {
         type: String,
-        required: false,
     },
     type: {
         type: String,
