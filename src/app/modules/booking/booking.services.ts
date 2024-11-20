@@ -353,7 +353,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   // Fetch current date for discount comparison
   const now = new Date();
 
-  // Fetch services with their applicable prices
+  // Fetch services with their applicable prices-----------------------
   const servicesWithPrices = await Promise.all(
     serviceIds.map(async (serviceId: string) => {
       const service = await Service.findById(serviceId).select('price');
@@ -376,7 +376,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     }),
   );
 
-  // Calculate the total price of the selected services
+  // Calculate the total price of the selected services-----------
   const totalPrice = servicesWithPrices.reduce(
     (total, service) => total + service.price,
     0,
@@ -397,12 +397,12 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   // Check for conflicting bookings
   const existingBookings = await Booking.find({
     staffId: payload.staffId,
-    $or: [
+    $and: [
       { startTime: { $lt: endDate }, endTime: { $gt: startDate } }, // Overlapping existing booking
     ],
   });
   //!TODO: need to check operation
-  if (existingBookings.length < 0) {
+  if (existingBookings.length > 0) {
     throw new AppError(
       httpStatus.CONFLICT,
       'The selected time slot is conflict with other booking. Please choose a different time.3333',

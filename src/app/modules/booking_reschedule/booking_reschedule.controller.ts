@@ -4,7 +4,8 @@ import RescheduleRequestServices from "./booking_reschedule.service";
 import catchAsync from "../../utilities/catchasync";
 
 const createRescheduleRequest = catchAsync(async (req, res) => {
-    const result = await RescheduleRequestServices.createRescheduleRequest(req.user);
+    // console.log(req.body);
+    const result = await RescheduleRequestServices.createRescheduleRequest(req.user,req.body);
      sendResponse(res, {
        statusCode: httpStatus.OK,
        success: true,

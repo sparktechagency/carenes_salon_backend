@@ -24,6 +24,7 @@ import { blockHourRoutes } from '../modules/blockHour/blockHour.routes';
 import { discountRoutes } from '../modules/discount/discount.routes';
 import { ratingRoutes } from '../modules/rating/rating.routes';
 import { stripeRoutes } from '../modules/stripe/stripe.routes';
+import { rescheduleRequestRoutes } from '../modules/booking_reschedule/booking_reschedule.routes';
 
 const router = Router();
 
@@ -127,6 +128,10 @@ const moduleRoutes = [
   {
     path: '/stripe',
     router: stripeRoutes,
+  },
+  {
+    path: '/reschedule-request',
+    router: rescheduleRequestRoutes,
   },
 ];
 

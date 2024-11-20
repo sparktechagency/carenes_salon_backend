@@ -7,7 +7,7 @@ import RescheduleRequestController from './booking_reschedule.controller';
 const router = express.Router();
 
 
-router.post("/create-reschedule-request",auth(USER_ROLE.client,USER_ROLE.customer),RescheduleRequestController.createRescheduleRequest);
+router.post("/create",auth(USER_ROLE.client,USER_ROLE.customer),RescheduleRequestController.createRescheduleRequest);
 
 
 
