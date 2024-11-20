@@ -12,5 +12,4 @@ const router = express.Router();
 router.post("/create",auth(USER_ROLE.client,USER_ROLE.customer),validateRequest(BookingRescheduleValidations.bookingRescheduleSchema), RescheduleRequestController.createRescheduleRequest);
 
 
-
 export const rescheduleRequestRoutes = router;
