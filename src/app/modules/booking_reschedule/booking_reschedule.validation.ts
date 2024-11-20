@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ENUM_RESCHEDULE_TYPE } from "../../utilities/enum";
 
-export const BookingRescheduleSchema = z.object({
+const bookingRescheduleSchema = z.object({
     bookingId: z.string({required_error:"Booking id is required"}),
     rescheduleDate: z
         .string(),
@@ -15,5 +15,9 @@ export const BookingRescheduleSchema = z.object({
     shopId: z.string({required_error:"Shop ID is required"})
 });
 
-// Usage
-export type BookingRescheduleType = z.infer<typeof BookingRescheduleSchema>;
+
+const BookingRescheduleValidations = {
+    bookingRescheduleSchema
+}
+
+export default BookingRescheduleValidations;
