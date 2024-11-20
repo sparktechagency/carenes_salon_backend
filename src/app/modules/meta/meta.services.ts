@@ -37,6 +37,7 @@ const getDashboardMetaData = async () => {
     new Date().getMonth() - 1,
     1,
   );
+  
 
   // Customer -----------
   const currentMonthCustomerCount = await Customer.countDocuments({

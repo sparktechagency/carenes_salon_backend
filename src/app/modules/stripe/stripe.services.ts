@@ -49,7 +49,6 @@ const createConnectedAccountAndOnboardingLink = async (
     return_url: 'https://yourapp.com/success', // URL to go after successful setup
     type: 'account_onboarding',
   });
-
   return onboardingLink.url;
 };
 
@@ -93,7 +92,6 @@ const updateClientStripeConnectionStatus = async (accountId: string) => {
 };
 
 const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
-  console.log('ldfjdkfjkdljflkdfljdlfjd');
   const bookingId = paymentIntent.metadata.bookingId;
 
   // Retrieve the client profile by profileId

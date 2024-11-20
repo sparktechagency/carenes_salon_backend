@@ -347,7 +347,6 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
 const createOnlineBooking = async (customerId: string, payload: any) => {
   const { serviceIds, date, startTime, shopId } = payload;
   const shop = await Client.findById(shopId);
-  console.log(shop);
   if (!shop) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Shop not found');
   }
@@ -472,44 +471,12 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     totalPrice, // Store the total price in the booking
   });
 
-  // Step 2: Calculate the admin fee (5%)
-  //   const amount = totalPrice;
-  //   const adminFee = Math.round(totalPrice * 0.05); // 5% of the amount
-  //   const connectedAccountAmount = totalPrice - adminFee; // 95% for the connected account
-  //   if (adminFee >= amount) {
-  //     throw new Error("Admin fee cannot be greater than or equal to the total amount.");
-  // }
-
-  // Step 3: Create a Payment Intent with destination (connected account) and application fee (admin)
-  // const paymentIntent = await stripe.paymentIntents.create({
-  //   amount, // Total amount (in cents)
-  //   currency: 'eur', // EUR currency
-  //   application_fee_amount: adminFee, // Admin's 5% fee
-  //   // payment_method_types: ['card', 'google_pay', 'apple_pay'], // Supported payment methods
-  //   payment_method_types: ['card'], // Supported payment methods
-  //   transfer_data: {
-  //     destination: shop.stripeAccountId, // The connected account to receive the payment
-  //   },
-  //   // confirm: true, // Automatically confirm the payment
-  //   metadata: {
-  //     shopId: payload.shopId, // Pass the profile id in metadata for reference
-  //     bookingId: result._id.toString(),
-  //   },
-  // });
-
-
-
-
-
-
-
   //=============================
 
   console.log('client accoutid', shop.stripAccountId);
   const amount = totalPrice;
   const amountInCents = totalPrice * 100;
   const adminFee = Math.round(totalPrice * 0.05); // 5% of the amount
-  const connectedAccountAmount = totalPrice - adminFee; // 95% for the connected account
   if (adminFee >= amount) {
     throw new Error(
       'Admin fee cannot be greater than or equal to the total amount.',
@@ -526,7 +493,11 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     transfer_data: {
       destination: shop.stripAccountId as string,
     },
-    on_behalf_of: shop.stripAccountId as string,
+    metadata: {
+      bookingId:result._id.toString(),
+      shopId: shop._id.toString(), // Use your custom data here
+    },
+    // on_behalf_of: shop.stripAccountId as string,
   });
 
 
