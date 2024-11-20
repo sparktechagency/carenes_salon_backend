@@ -1,6 +1,8 @@
+import { JwtPayload } from "jsonwebtoken";
+import { IBookingReschedule } from "./booking_reschedule.interface";
 
-const createRescheduleRequest = async()=>{
-    console.log("reschedule request created");
+const createRescheduleRequest = async(userData:JwtPayload,payload:IBookingReschedule)=>{
+    console.log("reschedule request created",userData,payload);
 
 }
 
