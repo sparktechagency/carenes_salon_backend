@@ -93,7 +93,7 @@ const createRescheduleRequest = async (
     receiver: requestReceiver,
     type: ENUM_NOTIFICATION_TYPE.RESCHEDULE_BOOKING,
     bookingId: booking._id,
-    rescheduleDateTime:startDate
+    rescheduleDateTime: startDate,
     // rescheduleId: rescheduleRequest._id,
   };
 
@@ -119,58 +119,106 @@ const changeRescheduleRequestStatus = async (
 const acceptRescheduleRequest = async (
   userData: JwtPayload,
   notificationId: string,
-) => {};
+) => {
+  const notification = await Notification.findById(notificationId);
+  if (!notification) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Notification not found');
+  }
+  const booking = await Booking.findById(notification.bookingId);
+
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  const shop = await Client.findById(booking.shopId).select(
+    'shopName shopImages',
+  );
+
+  const customer = await Customer.findById(booking.customerId).select(
+    'firstName lastName profile_image',
+  );
+
+  const endDate = new Date(notification.rescheduleDateTime);
+  endDate.setMinutes(
+    notification.rescheduleDateTime.getMinutes() + booking.totalDuration,
+  );
+
+  await Booking.findByIdAndUpdate(booking._id, {
+    startTime: notification.rescheduleDateTime,
+    endTime: endDate,
+  });
+
+  await Notification.findByIdAndDelete(notificationId);
+  const requestReceiver =
+    userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
+  const notificationMessage =
+    userData.role === USER_ROLE.client
+      ? `${shop.shopName} accept your reschedule request`
+      : `${
+          customer?.firstName + ' ' + customer?.lastName
+        } accept your reschedule request`;
+  const notificationImage = USER_ROLE.client
+    ? `${shop?.shopImages[0]}`
+    : `${customer?.profile_image}`;
+  const notificationData = {
+    title: 'Accept Reschedule Request',
+    message: notificationMessage,
+    image: notificationImage,
+    receiver: requestReceiver,
+    bookingId: booking._id,
+    type: ENUM_NOTIFICATION_TYPE.ACCEPT_REQUEST,
+  };
+
+  await Notification.create(notificationData);
+};
 
 const rejectRescheduleRequest = async (
   userData: JwtPayload,
   notificationId: string,
 ) => {
+  const notification = await Notification.findById(notificationId);
+  if (!notification) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Notification not found');
+  }
+  const booking = await Booking.findById(notification.bookingId);
 
-    const notification = await Notification.findById(notificationId);
-    if (!notification) {
-      throw new AppError(httpStatus.NOT_FOUND, 'Notification not found');
-    }
-    const booking = await Booking.findById(notification.bookingId);
-  
-    if (!booking) {
-      throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
-    }
-    const shop = await Client.findById(booking.shopId).select(
-      'shopName shopImages',
-    );
-  
-    const customer = await Customer.findById(booking.customerId).select(
-      'firstName lastName profile_image',
-    );
-  
-    await Notification.findByIdAndDelete(notificationId);
-    const requestReceiver =
-      userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
-    const notificationMessage =
-      userData.role === USER_ROLE.client
-        ? `${shop.shopName} reject your reschedule request`
-        : `${
-            customer?.firstName + ' ' + customer?.lastName
-          } reject your reschedule request`;
-    const notificationImage = USER_ROLE.client
-      ? `${shop?.shopImages[0]}`
-      : `${customer?.profile_image}`;
-    const notificationData = {
-      title: 'Reject Reschedule Request',
-      message: notificationMessage,
-      image: notificationImage,
-      receiver: requestReceiver,
-      bookingId: booking._id,
-      type: ENUM_NOTIFICATION_TYPE.REJECT_REQUEST,
-    };
-  
-    await Notification.create(notificationData);
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  const shop = await Client.findById(booking.shopId).select(
+    'shopName shopImages',
+  );
 
+  const customer = await Customer.findById(booking.customerId).select(
+    'firstName lastName profile_image',
+  );
+
+  await Notification.findByIdAndDelete(notificationId);
+  const requestReceiver =
+    userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
+  const notificationMessage =
+    userData.role === USER_ROLE.client
+      ? `${shop.shopName} reject your reschedule request`
+      : `${
+          customer?.firstName + ' ' + customer?.lastName
+        } reject your reschedule request`;
+  const notificationImage = USER_ROLE.client
+    ? `${shop?.shopImages[0]}`
+    : `${customer?.profile_image}`;
+  const notificationData = {
+    title: 'Reject Reschedule Request',
+    message: notificationMessage,
+    image: notificationImage,
+    receiver: requestReceiver,
+    bookingId: booking._id,
+    type: ENUM_NOTIFICATION_TYPE.REJECT_REQUEST,
+  };
+
+  await Notification.create(notificationData);
 };
 
 const RescheduleRequestServices = {
   createRescheduleRequest,
-  changeRescheduleRequestStatus
+  changeRescheduleRequestStatus,
 };
 
 export default RescheduleRequestServices;
