@@ -4,7 +4,7 @@ import { IBookingReschedule } from './booking_reschedule.interface';
 import Booking from '../booking/booking.model';
 import {
   ENUM_NOTIFICATION_TYPE,
-  ENUM_RESCHEDULE_STATUS,
+  //   ENUM_RESCHEDULE_STATUS,
 } from '../../utilities/enum';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
@@ -12,7 +12,7 @@ import Client from '../client/client.model';
 import Customer from '../customer/customer.model';
 import { USER_ROLE } from '../user/user.constant';
 import Notification from '../notification/notification.model';
-import { RescheduleRequest } from './booking_reschedule.model';
+// import { RescheduleRequest } from './booking_reschedule.model';
 
 const createRescheduleRequest = async (
   userData: JwtPayload,
@@ -81,11 +81,11 @@ const createRescheduleRequest = async (
   const notificationImage = USER_ROLE.client
     ? `${shop?.shopImages[0]}`
     : `${customer?.profile_image}`;
-  const rescheduleRequest = await RescheduleRequest.create({
-    bookingId: booking._id,
-    rescheduleDate: startDate,
-    status: ENUM_RESCHEDULE_STATUS.PENDING,
-  });
+  //   const rescheduleRequest = await RescheduleRequest.create({
+  //     bookingId: booking._id,
+  //     rescheduleDate: startDate,
+  //     status: ENUM_RESCHEDULE_STATUS.PENDING,
+  //   });
   const notificationData = {
     title: 'Reschedule Request',
     message: notificationMessage,
@@ -93,15 +93,84 @@ const createRescheduleRequest = async (
     receiver: requestReceiver,
     type: ENUM_NOTIFICATION_TYPE.RESCHEDULE_BOOKING,
     bookingId: booking._id,
-    rescheduleId: rescheduleRequest._id,
+    rescheduleDateTime:startDate
+    // rescheduleId: rescheduleRequest._id,
   };
 
   // Create notification for the receiver
   await Notification.create(notificationData);
 };
 
+const changeRescheduleRequestStatus = async (
+  userData: JwtPayload,
+  notificationId: string,
+  status: string,
+) => {
+  let result;
+  if (status === 'accept') {
+    result = await acceptRescheduleRequest(userData, notificationId);
+  } else {
+    result = await rejectRescheduleRequest(userData, notificationId);
+  }
+
+  return result;
+};
+
+const acceptRescheduleRequest = async (
+  userData: JwtPayload,
+  notificationId: string,
+) => {};
+
+const rejectRescheduleRequest = async (
+  userData: JwtPayload,
+  notificationId: string,
+) => {
+
+    const notification = await Notification.findById(notificationId);
+    if (!notification) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Notification not found');
+    }
+    const booking = await Booking.findById(notification.bookingId);
+  
+    if (!booking) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+    }
+    const shop = await Client.findById(booking.shopId).select(
+      'shopName shopImages',
+    );
+  
+    const customer = await Customer.findById(booking.customerId).select(
+      'firstName lastName profile_image',
+    );
+  
+    await Notification.findByIdAndDelete(notificationId);
+    const requestReceiver =
+      userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
+    const notificationMessage =
+      userData.role === USER_ROLE.client
+        ? `${shop.shopName} reject your reschedule request`
+        : `${
+            customer?.firstName + ' ' + customer?.lastName
+          } reject your reschedule request`;
+    const notificationImage = USER_ROLE.client
+      ? `${shop?.shopImages[0]}`
+      : `${customer?.profile_image}`;
+    const notificationData = {
+      title: 'Reject Reschedule Request',
+      message: notificationMessage,
+      image: notificationImage,
+      receiver: requestReceiver,
+      bookingId: booking._id,
+      type: ENUM_NOTIFICATION_TYPE.REJECT_REQUEST,
+    };
+  
+    await Notification.create(notificationData);
+
+};
+
 const RescheduleRequestServices = {
   createRescheduleRequest,
+  changeRescheduleRequestStatus
 };
 
 export default RescheduleRequestServices;

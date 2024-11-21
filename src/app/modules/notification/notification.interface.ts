@@ -9,5 +9,6 @@ export interface INotification {
   receiver: string;
   type: keyof typeof ENUM_NOTIFICATION_TYPE,
   rescheduleId:Types.ObjectId;
+  rescheduleDateTime:Date;
   bookingId: Types.ObjectId;
 }

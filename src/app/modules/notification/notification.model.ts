@@ -13,24 +13,28 @@ const notificationSchema = new Schema<INotification>(
       type: Boolean,
       default: false,
     },
-    image:{
+    image: {
       type: String,
-      required: false, 
+      required: false,
     },
     receiver: {
       type: String,
       required: true,
     },
-    rescheduleId:{
+    rescheduleId: {
       type: Schema.Types.ObjectId,
       ref: 'Reschedule',
       required: false,
     },
-    bookingId:{
+    rescheduleDateTime: {
+      type: Date,
+    },
+
+    bookingId: {
       type: Schema.Types.ObjectId,
       ref: 'Booking',
       required: false,
-    }
+    },
   },
 
   {

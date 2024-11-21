@@ -10,6 +10,6 @@ const router = express.Router();
 
 
 router.post("/create",auth(USER_ROLE.client,USER_ROLE.customer),validateRequest(BookingRescheduleValidations.bookingRescheduleSchema), RescheduleRequestController.createRescheduleRequest);
-
+router.patch("/change-reschedule-request-status/:id",auth(USER_ROLE.client,USER_ROLE.customer),validateRequest(BookingRescheduleValidations.changeRescheduleRequestStatusSchema), RescheduleRequestController.changeRescheduleRequestStatus)
 
 export const rescheduleRequestRoutes = router;

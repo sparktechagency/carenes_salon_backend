@@ -15,10 +15,24 @@ const createRescheduleRequest = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const changeRescheduleRequestStatus = catchAsync(async (req, res) => {
+  const result = await RescheduleRequestServices.changeRescheduleRequestStatus(
+    req.user,
+    req.params.id,
+    req.body.status,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Reschedule request status changed successfully',
+    data: result,
+  });
+});
 
 
 const RescheduleRequestController = {
   createRescheduleRequest,
+  changeRescheduleRequestStatus
 };
 
 export default RescheduleRequestController;
