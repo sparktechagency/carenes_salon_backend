@@ -15,16 +15,8 @@ const initializeSocket = (server: HTTPServer) => {
 
     io.on('connection', (socket: Socket) => {
       console.log('A user connected:', socket.id);
-
-      // Example: Save user's socket connection for later use
       const userId = socket.handshake.query.id as string;
-      console.log('User connected:', userId);
-      socket.join(userId);
-
-      socket.on('nice', (data: any) => {
-        console.log("okey i received event")
-        console.log('Data received on "nice" event:', data);
-      });
+      console.log('userId', userId);
 
       socket.on('disconnect', () => {
         console.log('A user disconnected:', socket.id);
@@ -36,7 +28,9 @@ const initializeSocket = (server: HTTPServer) => {
 
 const getIO = () => {
   if (!io) {
-    throw new Error('Socket.io is not initialized. Call initializeSocket first.');
+    throw new Error(
+      'Socket.io is not initialized. Call initializeSocket first.',
+    );
   }
   return io;
 };
