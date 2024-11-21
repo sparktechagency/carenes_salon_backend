@@ -33,10 +33,20 @@ const createBooking = catchAsync(async (req, res) => {
     });
    })
 
+   const changeCancelBookingRequestStatus = catchAsync(async(req,res)=>{
+    const result = await BookingService.changeCancelBookingRequestStatus(req.user,req.params.bookingId,req.body.status);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Bookings cancel request status changed successfully',
+      data: result,
+    });
+   })
 const BookingController = {
     createBooking,
     getCustomerBookings,
-    createCancelBookingRequest
+    createCancelBookingRequest,
+    changeCancelBookingRequestStatus
 }
 
 export default BookingController;

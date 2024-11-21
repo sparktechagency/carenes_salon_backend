@@ -582,6 +582,72 @@ const createCancelBookingRequest = async (
     image: notificationImage,
     receiver: requestReceiver,
     type: ENUM_NOTIFICATION_TYPE.CANCEL_BOOKING,
+    bookingId: booking._id,
+  };
+
+  await Notification.create(notificationData);
+};
+
+const changeCancelBookingRequestStatus = async (
+  userData: JwtPayload,
+  notificationId: string,
+  status: string,
+) => {
+  let result;
+  if (status === 'accept') {
+    result = await acceptCancelBookingRequest(userData, notificationId);
+  } else {
+    result = await rejectCancelBookingRequest(userData, notificationId);
+  }
+
+  return result;
+};
+
+const acceptCancelBookingRequest = async (
+  userData: JwtPayload,
+  notificationId: string,
+) => {};
+
+const rejectCancelBookingRequest = async (
+  userData: JwtPayload,
+  notificationId: string,
+) => {
+  const notification = await Notification.findById(notificationId);
+  if (!notification) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Notification not found');
+  }
+  const booking = await Booking.findById(notification.bookingId);
+
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  const shop = await Client.findById(booking.shopId).select(
+    'shopName shopImages',
+  );
+
+  const customer = await Customer.findById(booking.customerId).select(
+    'firstName lastName profile_image',
+  );
+
+  await Notification.findByIdAndDelete(notificationId);
+  const requestReceiver =
+    userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
+  const notificationMessage =
+    userData.role === USER_ROLE.client
+      ? `${shop.shopName} reject your cancel request`
+      : `${
+          customer?.firstName + ' ' + customer?.lastName
+        } reject your cancel request`;
+  const notificationImage = USER_ROLE.client
+    ? `${shop?.shopImages[0]}`
+    : `${customer?.profile_image}`;
+  const notificationData = {
+    title: 'Reject Cancel Request',
+    message: notificationMessage,
+    image: notificationImage,
+    receiver: requestReceiver,
+    bookingId: booking._id,
+    type: ENUM_NOTIFICATION_TYPE.REJECT_REQUEST,
   };
 
   await Notification.create(notificationData);
@@ -591,6 +657,7 @@ const BookingService = {
   createBooking,
   getCustomerBookings,
   createCancelBookingRequest,
+  changeCancelBookingRequestStatus,
 };
 
 export default BookingService;

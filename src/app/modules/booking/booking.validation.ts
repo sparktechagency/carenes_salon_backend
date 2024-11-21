@@ -26,4 +26,12 @@ const bookingValidationSchema = z.object({
   ),
 });
 
+export const changeCancelRequestStatusValidationsSchema = z.object({
+  body: z.object({
+    status: z.enum(['accept', 'reject'], {
+      required_error: "Status is required",
+    }),
+  }),
+})
+
 export default bookingValidationSchema;

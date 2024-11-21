@@ -12,15 +12,10 @@ const BookingRescheduleSchema = new Schema<IBookingReschedule>({
         type: Date,
         required:true
     },
-    rescheduleTime: {
-        type: String,
-        required: true,
-    },
-    shopId: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: "Shop",
-    },
+    // rescheduleTime: {
+    //     type: String,
+    //     required: true,
+    // },
     status:{
         type:String,
         enum:Object.values(ENUM_RESCHEDULE_STATUS),

@@ -39,6 +39,7 @@ export const ENUM_NOTIFICATION_TYPE={
   RESCHEDULE_BOOKING: 'reschedule-booking',
   START_BOOKING:"start-booking",
   REGISTER_CLIENT:"register-client",
+  REJECT_REQUEST:"reject-request",
 }
 
 
