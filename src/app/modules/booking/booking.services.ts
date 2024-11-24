@@ -291,7 +291,6 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     }),
   );
 
-
   const totalPrice = servicesWithPrices.reduce(
     (total, service) => total + service.price,
     0,
@@ -416,7 +415,6 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   });
 
   // -------------------------------------
-
 
   // update booking
   await Booking.findByIdAndUpdate(result._id, {
@@ -733,12 +731,41 @@ const getShopBookings = async (
   };
 };
 
+// get pay on shop booking history
+
+const getPayOnShopBookingHistory = async (
+  shopId: string,
+  query: Record<string, unknown>,
+) => {
+  const payOnShopBookingQuery = new QueryBuilder(
+    Booking.find({
+      shopId: shopId,
+      bookingPaymentType: ENUM_BOOKING_PAYMENT.PAY_ON_SHOP,
+    }),
+    query,
+  )
+    .search([])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+    const meta  = await payOnShopBookingQuery.countTotal();
+    const result = await payOnShopBookingQuery.modelQuery;
+
+    return {
+      meta,result
+    }
+
+};
+
 const BookingService = {
   createBooking,
   getCustomerBookings,
   createCancelBookingRequest,
   changeCancelBookingRequestStatus,
   getShopBookings,
+  getPayOnShopBookingHistory
 };
 
 export default BookingService;
