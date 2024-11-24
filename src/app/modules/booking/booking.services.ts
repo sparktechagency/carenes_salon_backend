@@ -511,8 +511,10 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
 
   console.log('Payment Intent created:', paymentIntent.id);
 
-  // update booking 
-  await Booking.findByIdAndUpdate(result._id, {paymentIntentId:paymentIntent.id});
+  // update booking
+  await Booking.findByIdAndUpdate(result._id, {
+    paymentIntentId: paymentIntent.id,
+  });
   return paymentIntent.client_secret;
 };
 
@@ -636,65 +638,62 @@ const acceptCancelBookingRequest = async (
   const requestReceiver =
     userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
 
-    // refund -----------------------------------
-    if(USER_ROLE.customer){
-      const refundAmountInCents = booking.totalPrice * 100;
-      try {
-        const refund = await stripe.refunds.create({
-          payment_intent: booking.paymentIntentId,  
-          amount: refundAmountInCents,  
-        });
-      
-        console.log('Refund successful:', refund);
-        return refund;
-      
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error('Refund failed:', error.message);
+  // refund -----------------------------------
+  if (USER_ROLE.customer) {
+    const refundAmountInCents = booking.totalPrice * 100;
+    try {
+      const refund = await stripe.refunds.create({
+        payment_intent: booking.paymentIntentId,
+        amount: refundAmountInCents,
+      });
 
-          if (error instanceof Stripe.Stripe) {
+      console.log('Refund successful:', refund);
+      return refund;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Refund failed:', error.message);
 
-            console.log('Stripe error:', error.message);
-          } else {
-            console.log('Unexpected error:', error.message);
-          }
+        if (error instanceof Stripe.Stripe) {
+          console.log('Stripe error:', error.message);
         } else {
-          console.error('Unexpected error type:', error);
+          console.log('Unexpected error:', error.message);
         }
-        throw new AppError(httpStatus.SERVICE_UNAVAILABLE,"Something went wrong when payment occur , please try again or contact with support")
+      } else {
+        console.error('Unexpected error type:', error);
       }
-      
-      
+      throw new AppError(
+        httpStatus.SERVICE_UNAVAILABLE,
+        'Something went wrong when payment occur , please try again or contact with support',
+      );
     }
-    else if(USER_ROLE.client){
-      const refundAmountInCents = booking.totalPrice * 100;
-      try {
-        const refund = await stripe.refunds.create({
-          payment_intent: booking.paymentIntentId,  
-          amount: refundAmountInCents,  
-        });
-      
-        console.log('Refund successful:', refund);
-        return refund;
-      
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error('Refund failed:', error.message);
+  } else if (USER_ROLE.client) {
+    const refundAmountInCents = booking.totalPrice * 100;
+    try {
+      const refund = await stripe.refunds.create({
+        payment_intent: booking.paymentIntentId,
+        amount: refundAmountInCents,
+      });
 
-          if (error instanceof Stripe.Stripe) {
+      console.log('Refund successful:', refund);
+      return refund;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Refund failed:', error.message);
 
-            console.log('Stripe error:', error.message);
-          } else {
-            console.log('Unexpected error:', error.message);
-          }
+        if (error instanceof Stripe.Stripe) {
+          console.log('Stripe error:', error.message);
         } else {
-          console.error('Unexpected error type:', error);
+          console.log('Unexpected error:', error.message);
         }
-        throw new AppError(httpStatus.SERVICE_UNAVAILABLE,"Something went wrong when payment occur , please try again or contact with support")
+      } else {
+        console.error('Unexpected error type:', error);
       }
-      
-      
+      throw new AppError(
+        httpStatus.SERVICE_UNAVAILABLE,
+        'Something went wrong when payment occur , please try again or contact with support',
+      );
     }
+  }
 
   const notificationMessage =
     userData.role === USER_ROLE.client
@@ -737,6 +736,8 @@ const rejectCancelBookingRequest = async (
   const customer = await Customer.findById(booking.customerId).select(
     'firstName lastName profile_image',
   );
+
+  await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
 
   await Notification.findByIdAndDelete(notificationId);
   const requestReceiver =
@@ -813,7 +814,7 @@ const getShopBookings = async (
   // Populate `services.serviceId` with the full service details
   bookingQuery.modelQuery = bookingQuery.modelQuery.populate({
     path: 'services.serviceId',
-    model: 'Service', 
+    model: 'Service',
     select: 'serviceName',
   });
   const meta = await bookingQuery.countTotal(); // Meta info for total count
