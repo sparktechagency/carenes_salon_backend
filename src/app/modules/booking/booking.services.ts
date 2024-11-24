@@ -50,97 +50,6 @@ const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 //     })
 //   );
 
-//   // Calculate the total time for selected services
-//   const totalDuration = await calculateTotalServiceTime(serviceIds);
-
-//   // Create the start date in local time
-//   const [startHours, startMinutes] = startTime.split(':').map(Number);
-//   const startDate = new Date(date);
-//   startDate.setHours(startHours, startMinutes, 0);
-
-//   // Create the end date based on total duration
-//   const endDate = new Date(startDate);
-//   endDate.setMinutes(startDate.getMinutes() + totalDuration);
-
-//   // Check for conflicting bookings
-//   const existingBookings = await Booking.find({
-//     staffId: payload.staffId,
-//     $or: [
-//       { startTime: { $lt: endDate }, endTime: { $gt: startDate } }, // Overlapping existing booking
-//     ],
-//   });
-
-//   if (existingBookings.length > 0) {
-//     throw new AppError(httpStatus.CONFLICT,'The selected time slot is conflict with other booking. Please choose a different time.');
-//   }
-
-//   // Fetch blocked hours for the staff and shop
-//   const blockHours = await BlockHour.find({
-//     entityId: payload.staffId,
-//     entityType: 'Staff',
-//     day: new Date(date).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' }),
-//   });
-
-//   const businessBlockHour = await BlockHour.find({
-//     entityId: shopId,
-//     entityType: 'Shop',
-//     day: new Date(date).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' }),
-//   });
-
-//   // Check if the selected time is within a blocked hour
-//   const isBlocked = blockHours.some(
-//     (bh) => startDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) >= bh.startTime &&
-//             startDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) < bh.endTime
-//   );
-
-//   const isBusinessBlocked = businessBlockHour.some(
-//     (bh) => startDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) >= bh.startTime &&
-//             startDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) < bh.endTime
-//   );
-
-//   if (isBlocked || isBusinessBlocked) {
-//     throw new Error('The selected time slot is blocked. Please choose a different time.');
-//   }
-
-//   const result = await Booking.create({
-//     ...payload,
-//     startTime: startDate,
-//     endTime: endDate,
-//     customerId,
-//     services: servicesWithPrices,
-//   });
-
-//   return result;
-// };
-// const createBooking = async (customerId: string, payload: any) => {
-//   const { serviceIds, date, startTime, shopId } = payload;
-
-//   // Fetch current date for discount comparison
-//   const now = new Date();
-
-//   // Fetch services with their applicable prices
-//   const servicesWithPrices = await Promise.all(
-//     serviceIds.map(async (serviceId: string) => {
-//       const service = await Service.findById(serviceId).select('price');
-//       if (!service) throw new Error(`Service with ID ${serviceId} not found`);
-
-//       // Check for an active discount
-//       const discount = await Discount.findOne({
-//         shop: shopId,
-//         discountStartDate: { $lte: now },
-//         discountEndDate: { $gte: now },
-//         $or: [{ services: 'all-services' }, { services: service._id }],
-//       });
-
-//       // Calculate discount price if discount applies; otherwise, use original price
-//       const price = discount
-//         ? service.price - (service.price * discount.discountPercentage) / 100
-//         : service.price;
-
-//       return { serviceId: service._id, price };
-//     })
-//   );
-
 //   // Calculate the total price of the selected services
 //   const totalPrice = servicesWithPrices.reduce((total, service) => total + service.price, 0);
 
@@ -382,13 +291,12 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     }),
   );
 
-  // Calculate the total price of the selected services-----------
+
   const totalPrice = servicesWithPrices.reduce(
     (total, service) => total + service.price,
     0,
   );
 
-  // Calculate the total time for selected services
   const totalDuration = await calculateTotalServiceTime(serviceIds);
 
   // Create the start date in local time
@@ -509,7 +417,6 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
 
   // -------------------------------------
 
-  console.log('Payment Intent created:', paymentIntent.id);
 
   // update booking
   await Booking.findByIdAndUpdate(result._id, {
