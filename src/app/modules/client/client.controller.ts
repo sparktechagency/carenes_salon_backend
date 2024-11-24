@@ -136,6 +136,16 @@ const notifyAllShopsForAdminFee = catchAsync(async (req, res) => {
   });
 })
 
+const notifySingleShopsForAdminFee = catchAsync(async(req,res)=>{
+  const result = await ClientServices.notifySingleShopsForAdminFee(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Notification sent successfully to shop',
+    data: result,
+  });
+})
+
 
 const ClientController = {
   updateClientProfile,
@@ -148,7 +158,8 @@ const ClientController = {
   getShopDetails,
   getPayOnShopData,
   payAdminFee,
-  notifyAllShopsForAdminFee
+  notifyAllShopsForAdminFee,
+  notifySingleShopsForAdminFee
 };
 
 export default ClientController;

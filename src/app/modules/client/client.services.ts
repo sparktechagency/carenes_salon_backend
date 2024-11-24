@@ -518,6 +518,23 @@ const notifyAllShopsForAdminFee = async () => {
   console.log('Notifications successfully sent to all eligible shops.');
 };
 
+const notifySingleShopsForAdminFee = async (shopId: string) => {
+  const shop = await Client.findById(shopId);
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+  const notificationData = {
+    title: 'Admin Fee Alert',
+    message: `Dear ${shop.shopName}, your current due charge is ${shop.payOnShopChargeDueAmount}. Please clear it to avoid penalties.`,
+    seen: false,
+    receiver: shop.user.toString(),
+    type: ENUM_NOTIFICATION_TYPE.NOTIFY_ADMIN_FEE,
+  };
+
+  await Notification.create(notificationData);
+  console.log(`Notification sent to shop: ${shop.shopName}`);
+};
+
 const ClientServices = {
   updateClientProfile,
   getAllClientFromDB,
@@ -529,7 +546,9 @@ const ClientServices = {
   getShopDetails,
   getPayOnShopData,
   payAdminFee,
-  notifyAllShopsForAdminFee
+  notifyAllShopsForAdminFee,
+  notifySingleShopsForAdminFee
+  
 };
 
 export default ClientServices;
