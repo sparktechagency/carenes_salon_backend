@@ -18,6 +18,6 @@ router.get(
   BookingController.getCustomerBookings,
 );
 router.patch("/change-cancel-booking-request-status/:id",auth(USER_ROLE.client,USER_ROLE.customer),validateRequest(changeCancelRequestStatusValidationsSchema),BookingController.changeCancelBookingRequestStatus)
-
 router.post("/create-cancel-booking-request", auth(USER_ROLE.customer,USER_ROLE.client),BookingController.createCancelBookingRequest);
+router.get("/get-shop-bookings",auth(USER_ROLE.client),BookingController.getShopBookings);
 export const bookingRoutes = router;

@@ -528,7 +528,10 @@ const getCustomerBookings = async (
   customerId: string,
   query: Record<string, unknown>,
 ) => {
-  const bookingQuery = new QueryBuilder(Booking.find(), query)
+  const bookingQuery = new QueryBuilder(
+    Booking.find({ customerId: customerId }),
+    query,
+  )
     .search(['customerId'])
     .filter()
     .sort()
@@ -695,11 +698,75 @@ const rejectCancelBookingRequest = async (
   await Notification.create(notificationData);
 };
 
+// const getShopBookings = async (
+//   shopId: string,
+//   query: Record<string, unknown>,
+// ) => {
+//   console.log("booking id",shopId)
+//   const bookingQuery = new QueryBuilder(Booking.find({shopId:shopId}), query)
+//     .search(['name'])
+//     .filter()
+//     .sort()
+//     .paginate()
+//     .fields();
+//   const meta = await bookingQuery.countTotal();
+//   const result = await bookingQuery.modelQuery;
+
+//   return {
+//     meta,
+//     result,
+//   };
+// };
+
+const getShopBookings = async (
+  shopId: string,
+  query: Record<string, unknown>,
+) => {
+  if (query.startTime) {
+    const startTime = new Date(query.startTime as string);
+    // Ensure the time is set to midnight for exact matching
+    query.startTime = {
+      $gte: new Date(startTime.setHours(0, 0, 0, 0)),
+      $lte: new Date(startTime.setHours(23, 59, 59, 999)),
+    };
+  }
+  if (!query.sort) {
+    query.sort = 'startTime';
+  }
+
+  // Check for service filter in query
+  if (query.serviceId) {
+    query['services.serviceId'] = query.serviceId; // Match bookings with the selected serviceId
+    delete query.serviceId; // Remove serviceId from the query object to avoid duplicate keys
+  }
+  const bookingQuery = new QueryBuilder(Booking.find({ shopId }), query)
+    .search(['name'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  // Populate `services.serviceId` with the full service details
+  bookingQuery.modelQuery = bookingQuery.modelQuery.populate({
+    path: 'services.serviceId',
+    model: 'Service', 
+    select: 'serviceName',
+  });
+  const meta = await bookingQuery.countTotal(); // Meta info for total count
+  const result = await bookingQuery.modelQuery; // Query results
+
+  return {
+    meta,
+    result,
+  };
+};
+
 const BookingService = {
   createBooking,
   getCustomerBookings,
   createCancelBookingRequest,
   changeCancelBookingRequestStatus,
+  getShopBookings,
 };
 
 export default BookingService;

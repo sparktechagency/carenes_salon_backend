@@ -25,4 +25,6 @@ export interface IBooking {
     bookingPaymentType:(typeof ENUM_BOOKING_PAYMENT)[keyof typeof ENUM_BOOKING_PAYMENT];
     paymentStatus:(typeof ENUM_PAYMENT_STATUS)[keyof typeof ENUM_PAYMENT_STATUS];
     shopCategoryId: Types.ObjectId;
+    note:string;
   }
+

@@ -42,11 +42,21 @@ const createBooking = catchAsync(async (req, res) => {
       data: result,
     });
    })
+   const getShopBookings = catchAsync(async(req,res)=>{
+    const result = await BookingService.getShopBookings(req.user.profileId,req.query);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Shop booking retrieved successfully',
+      data: result,
+    });
+   })
 const BookingController = {
     createBooking,
     getCustomerBookings,
     createCancelBookingRequest,
-    changeCancelBookingRequestStatus
+    changeCancelBookingRequestStatus,
+    getShopBookings
 }
 
 export default BookingController;

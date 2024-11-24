@@ -95,10 +95,16 @@ app.post(
 );
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));
+app.use(
+  cors({
+    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    credentials: true,
+  }),
+);
 app.use(express.static('uploads'));
 // application routers ----------------
 app.use('/', router);
+
 // app.post('/connect-stipe',auth(USER_ROLE.client), createConnectedAccountAndOnboardingLink);
 
 app.post('/create-payment-intent', async (req: Request, res: Response) => {
@@ -123,8 +129,8 @@ app.post('/create-payment-intent', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/get-account', async(req, res) => {
-  const account = await stripe.accounts.retrieve("acct_1QMp4bClOJ3gSuLf");
+app.get('/get-account', async (req, res) => {
+  const account = await stripe.accounts.retrieve('acct_1QMp4bClOJ3gSuLf');
 
   console.log('Connected Account Details:', account);
   return 0;
