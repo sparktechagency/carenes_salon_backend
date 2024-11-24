@@ -68,4 +68,5 @@ router.get("/get-shop-details/:id",auth(USER_ROLE.superAdmin,USER_ROLE.admin),Cl
 router.get('/single-shop/:id', ClientController.getSingleShop);
 router.get("/pay-on-shop-data",auth(USER_ROLE.admin,USER_ROLE.superAdmin),ClientController.getPayOnShopData);
 router.post("/pay-admin-fee",auth(USER_ROLE.client),ClientController.payAdminFee);
+router.post("/notify-all-shops",auth(USER_ROLE.admin,USER_ROLE.superAdmin),ClientController.notifyAllShopsForAdminFee);
 export const clientRoutes = router;

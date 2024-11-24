@@ -15,9 +15,13 @@ import BusinessHour from '../bussinessHour/businessHour.model';
 import Discount from '../discount/discount.model';
 import ShopCategory from '../shopCategory/shopCategory.model';
 import Booking from '../booking/booking.model';
-import { ENUM_PAYMENT_PURPOSE } from '../../utilities/enum';
+import {
+  ENUM_NOTIFICATION_TYPE,
+  ENUM_PAYMENT_PURPOSE,
+} from '../../utilities/enum';
 import Stripe from 'stripe';
 import config from '../../config';
+import Notification from '../notification/notification.model';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 
 const updateClientProfile = async (
@@ -467,26 +471,52 @@ const getPayOnShopData = async (query: Record<string, unknown>) => {
   return { meta, result };
 };
 
+const payAdminFee = async (shopId: string, amount: number) => {
+  const amountInCents = Math.round(amount * 100);
 
-const payAdminFee = async(shopId:string,amount:number)=>{
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amountInCents,
+    currency: 'eur',
+    payment_method_types: ['card'],
+    metadata: {
+      shopId,
+      purpose: ENUM_PAYMENT_PURPOSE.ADMIN_FEE,
+    },
+  });
+  return { client_secret: paymentIntent.client_secret };
+};
 
-   const amountInCents = Math.round(amount * 100);
+// notify shops for admin fee
+const notifyAllShopsForAdminFee = async () => {
+  const shops = await Client.find({
+    payOnShopChargeDueAmount: { $gt: 100 },
+    isDeleted: false,
+    status: 'active',
+  });
 
-   const paymentIntent = await stripe.paymentIntents.create({
-     amount: amountInCents,
-     currency: 'eur', 
-     payment_method_types: ['card'],
-     metadata: {
-       shopId, 
-       purpose: ENUM_PAYMENT_PURPOSE.ADMIN_FEE,
-     },
-   });
-   return {client_secret: paymentIntent.client_secret};
+  if (!shops.length) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Shops not found who have admin fee more then 100 eur',
+    );
+  }
 
-}
+  const notifications = shops.map((shop) => ({
+    title: 'Admin Fee Alert',
+    message: `Dear ${shop.shopName}, your current due charge is ${shop.payOnShopChargeDueAmount}. Please clear it to avoid penalties.`,
+    seen: false,
+    receiver: shop.user.toString(),
+    type: ENUM_NOTIFICATION_TYPE.NOTIFY_ADMIN_FEE,
+  }));
 
+  await Notification.insertMany(notifications);
 
+  for (const shop of shops) {
+    console.log(`Notification sent to shop: ${shop.shopName}`);
+  }
 
+  console.log('Notifications successfully sent to all eligible shops.');
+};
 
 const ClientServices = {
   updateClientProfile,
@@ -498,7 +528,8 @@ const ClientServices = {
   addBankDetails,
   getShopDetails,
   getPayOnShopData,
-  payAdminFee
+  payAdminFee,
+  notifyAllShopsForAdminFee
 };
 
 export default ClientServices;

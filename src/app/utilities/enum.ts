@@ -41,6 +41,7 @@ export const ENUM_NOTIFICATION_TYPE={
   REGISTER_CLIENT:"register-client",
   REJECT_REQUEST:"reject-request",
   ACCEPT_REQUEST:"accept-request",
+  NOTIFY_ADMIN_FEE:"notify-admin-fee",
 }
 
 
