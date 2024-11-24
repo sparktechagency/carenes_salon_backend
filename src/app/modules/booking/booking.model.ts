@@ -53,6 +53,9 @@ const BookingSchema = new Schema<IBooking>({
       type:String,
 
     },
+    paymentIntentId:{
+      type:String,
+    }
   }, {
     timestamps: true,
   });

@@ -510,6 +510,9 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   // -------------------------------------
 
   console.log('Payment Intent created:', paymentIntent.id);
+
+  // update booking 
+  await Booking.findByIdAndUpdate(result._id, {paymentIntentId:paymentIntent.id});
   return paymentIntent.client_secret;
 };
 
@@ -632,6 +635,67 @@ const acceptCancelBookingRequest = async (
 
   const requestReceiver =
     userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
+
+    // refund -----------------------------------
+    if(USER_ROLE.customer){
+      const refundAmountInCents = booking.totalPrice * 100;
+      try {
+        const refund = await stripe.refunds.create({
+          payment_intent: booking.paymentIntentId,  
+          amount: refundAmountInCents,  
+        });
+      
+        console.log('Refund successful:', refund);
+        return refund;
+      
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error('Refund failed:', error.message);
+
+          if (error instanceof Stripe.Stripe) {
+
+            console.log('Stripe error:', error.message);
+          } else {
+            console.log('Unexpected error:', error.message);
+          }
+        } else {
+          console.error('Unexpected error type:', error);
+        }
+        throw new AppError(httpStatus.SERVICE_UNAVAILABLE,"Something went wrong when payment occur , please try again or contact with support")
+      }
+      
+      
+    }
+    else if(USER_ROLE.client){
+      const refundAmountInCents = booking.totalPrice * 100;
+      try {
+        const refund = await stripe.refunds.create({
+          payment_intent: booking.paymentIntentId,  
+          amount: refundAmountInCents,  
+        });
+      
+        console.log('Refund successful:', refund);
+        return refund;
+      
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error('Refund failed:', error.message);
+
+          if (error instanceof Stripe.Stripe) {
+
+            console.log('Stripe error:', error.message);
+          } else {
+            console.log('Unexpected error:', error.message);
+          }
+        } else {
+          console.error('Unexpected error type:', error);
+        }
+        throw new AppError(httpStatus.SERVICE_UNAVAILABLE,"Something went wrong when payment occur , please try again or contact with support")
+      }
+      
+      
+    }
+
   const notificationMessage =
     userData.role === USER_ROLE.client
       ? `${shop.shopName} accept your cancel request`
