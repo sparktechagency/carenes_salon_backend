@@ -61,3 +61,10 @@ export const ENUM_RESCHEDULE_STATUS={
   ACCEPTED: 'reschedule',
   PENDING: 'pending',
 }
+
+
+export const ENUM_PAYMENT_PURPOSE = {
+  BOOKING: 'booking',
+  REFUNDS:'refunds',
+  ADMIN_FEE:"admin_fee"
+}

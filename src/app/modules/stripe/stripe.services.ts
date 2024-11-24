@@ -11,7 +11,11 @@ const createConnectedAccountAndOnboardingLink = async (
   salonEmail: string,
   profileId: string,
 ) => {
-  const isClientConnected = await Client.findOne({ isStripeConnected: true,email: salonEmail,_id: profileId});
+  const isClientConnected = await Client.findOne({
+    isStripeConnected: true,
+    email: salonEmail,
+    _id: profileId,
+  });
 
   if (isClientConnected) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Stripe is already connected');
@@ -94,21 +98,16 @@ const updateClientStripeConnectionStatus = async (accountId: string) => {
 const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
   const bookingId = paymentIntent.metadata.bookingId;
 
-  // Retrieve the client profile by profileId
   const booking = await Booking.findById(bookingId);
 
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
 
-  // Assuming the payment is successful, we can handle your logic here
   console.log('Payment Intent succeeded:', paymentIntent.id);
 
-  // Example: You might want to mark the payment as complete
   booking.paymentStatus = ENUM_PAYMENT_STATUS.SUCCESS;
   await booking.save();
-
-  // Here, you could also handle the admin fee transfer, but Stripe handles that automatically.
 };
 
 const stripeServices = {

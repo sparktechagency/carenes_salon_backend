@@ -115,6 +115,18 @@ const getPayOnShopData = catchAsync(async (req, res) => {
   });
 });
 
+const payAdminFee = catchAsync(async (req, res) => {
+  const result = await ClientServices.payAdminFee(req.params.id, req.body.amount);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Admin fee paid successfully',
+    data: result,
+  });
+})
+
+
+
 const ClientController = {
   updateClientProfile,
   getAllClient,
@@ -124,7 +136,8 @@ const ClientController = {
   addShopDetails,
   addBankDetails,
   getShopDetails,
-  getPayOnShopData
+  getPayOnShopData,
+  payAdminFee
 };
 
 export default ClientController;

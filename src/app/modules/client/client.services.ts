@@ -15,6 +15,10 @@ import BusinessHour from '../bussinessHour/businessHour.model';
 import Discount from '../discount/discount.model';
 import ShopCategory from '../shopCategory/shopCategory.model';
 import Booking from '../booking/booking.model';
+import { ENUM_PAYMENT_PURPOSE } from '../../utilities/enum';
+import Stripe from 'stripe';
+import config from '../../config';
+const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 
 const updateClientProfile = async (
   userId: string,
@@ -88,7 +92,12 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
   );
 
   // Step 3: Build the client query with pagination, search, etc.
-  const ClientQuery = new QueryBuilder(Client.find().select("shopName shopImages totalRating totalRatingCount phoneNumber email location status "), query)
+  const ClientQuery = new QueryBuilder(
+    Client.find().select(
+      'shopName shopImages totalRating totalRatingCount phoneNumber email location status ',
+    ),
+    query,
+  )
     .search(['name'])
     .fields()
     .filter()
@@ -441,18 +450,43 @@ const getShopDetails = async (id: string) => {
   return shop;
 };
 
-const getPayOnShopData = async(query:Record<string,unknown>)=>{
-  const shopQuery = new QueryBuilder(Client.find().select("shopName payOnShopChargeDueAmount shopImages "),query).search(['name'])
-  .fields()
-  .filter()
-  .paginate()
-  .sort();
+const getPayOnShopData = async (query: Record<string, unknown>) => {
+  const shopQuery = new QueryBuilder(
+    Client.find().select('shopName payOnShopChargeDueAmount shopImages '),
+    query,
+  )
+    .search(['name'])
+    .fields()
+    .filter()
+    .paginate()
+    .sort();
 
   const meta = await shopQuery.countTotal();
   const result = await shopQuery.modelQuery;
 
   return { meta, result };
+};
+
+
+const payAdminFee = async(shopId:string,amount:number)=>{
+
+   const amountInCents = Math.round(amount * 100);
+
+   const paymentIntent = await stripe.paymentIntents.create({
+     amount: amountInCents,
+     currency: 'eur', 
+     payment_method_types: ['card'],
+     metadata: {
+       shopId, 
+       purpose: ENUM_PAYMENT_PURPOSE.ADMIN_FEE,
+     },
+   });
+   return {client_secret: paymentIntent.client_secret};
+
 }
+
+
+
 
 const ClientServices = {
   updateClientProfile,
@@ -463,7 +497,8 @@ const ClientServices = {
   addShopDetails,
   addBankDetails,
   getShopDetails,
-  getPayOnShopData
+  getPayOnShopData,
+  payAdminFee
 };
 
 export default ClientServices;
