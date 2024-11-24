@@ -741,7 +741,9 @@ const getPayOnShopBookingHistory = async (
     Booking.find({
       shopId: shopId,
       bookingPaymentType: ENUM_BOOKING_PAYMENT.PAY_ON_SHOP,
-    }),
+      status:{$ne:"canceled"}
+      
+    }).select("startTime endTime totalPrice services"),
     query,
   )
     .search([])
@@ -750,6 +752,11 @@ const getPayOnShopBookingHistory = async (
     .paginate()
     .fields();
 
+    payOnShopBookingQuery.modelQuery = payOnShopBookingQuery.modelQuery.populate({
+      path: 'services.serviceId',
+      model: 'Service',
+      select: 'serviceName price',
+    });
     const meta  = await payOnShopBookingQuery.countTotal();
     const result = await payOnShopBookingQuery.modelQuery;
 

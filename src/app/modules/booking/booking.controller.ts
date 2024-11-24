@@ -51,12 +51,26 @@ const createBooking = catchAsync(async (req, res) => {
       data: result,
     });
    })
+
+
+  const getPayOnShopBookingHistory =catchAsync(async(req,res)=>{
+    const result = await BookingService.getPayOnShopBookingHistory(req.user.profileId,req.query);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Pay on shop booking history retrieved successfully',
+      data: result,
+    });
+ 
+  })
+
 const BookingController = {
     createBooking,
     getCustomerBookings,
     createCancelBookingRequest,
     changeCancelBookingRequestStatus,
-    getShopBookings
+    getShopBookings,
+    getPayOnShopBookingHistory
 }
 
 export default BookingController;
