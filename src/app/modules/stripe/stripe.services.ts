@@ -4,7 +4,10 @@ import config from '../../config';
 import AppError from '../../error/appError';
 import Client from '../client/client.model';
 import Booking from '../booking/booking.model';
-import { ENUM_PAYMENT_STATUS } from '../../utilities/enum';
+import {
+  ENUM_PAYMENT_PURPOSE,
+  ENUM_PAYMENT_STATUS,
+} from '../../utilities/enum';
 
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 const createConnectedAccountAndOnboardingLink = async (
@@ -96,18 +99,22 @@ const updateClientStripeConnectionStatus = async (accountId: string) => {
 };
 
 const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
-  const bookingId = paymentIntent.metadata.bookingId;
+  if (paymentIntent.metadata.purpose === ENUM_PAYMENT_PURPOSE.ADMIN_FEE) {
+    await Client.findByIdAndUpdate(paymentIntent.metadata.shopId,{payOnShopChargeDueAmount:{$inc:-paymentIntent.amount / 100}})
+  } else {
+    const bookingId = paymentIntent.metadata.bookingId;
 
-  const booking = await Booking.findById(bookingId);
+    const booking = await Booking.findById(bookingId);
 
-  if (!booking) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+    if (!booking) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+    }
+
+    console.log('Payment Intent succeeded:', paymentIntent.id);
+
+    booking.paymentStatus = ENUM_PAYMENT_STATUS.SUCCESS;
+    await booking.save();
   }
-
-  console.log('Payment Intent succeeded:', paymentIntent.id);
-
-  booking.paymentStatus = ENUM_PAYMENT_STATUS.SUCCESS;
-  await booking.save();
 };
 
 const stripeServices = {
