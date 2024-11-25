@@ -17,8 +17,25 @@ router.get(
   auth(USER_ROLE.customer),
   BookingController.getCustomerBookings,
 );
-router.patch("/change-cancel-booking-request-status/:id",auth(USER_ROLE.client,USER_ROLE.customer),validateRequest(changeCancelRequestStatusValidationsSchema),BookingController.changeCancelBookingRequestStatus)
-router.post("/create-cancel-booking-request", auth(USER_ROLE.customer,USER_ROLE.client),BookingController.createCancelBookingRequest);
-router.get("/get-shop-bookings",auth(USER_ROLE.client),BookingController.getShopBookings);
-router.get("/pay-on-shop-bookings",auth(USER_ROLE.client),BookingController.getPayOnShopBookingHistory);
+router.patch(
+  '/change-cancel-booking-request-status/:id',
+  auth(USER_ROLE.client, USER_ROLE.customer),
+  validateRequest(changeCancelRequestStatusValidationsSchema),
+  BookingController.changeCancelBookingRequestStatus,
+);
+router.post(
+  '/create-cancel-booking-request',
+  auth(USER_ROLE.customer, USER_ROLE.client),
+  BookingController.createCancelBookingRequest,
+);
+router.get(
+  '/get-shop-bookings',
+  auth(USER_ROLE.client),
+  BookingController.getShopBookings,
+);
+router.get(
+  '/pay-on-shop-bookings',
+  auth(USER_ROLE.client),
+  BookingController.getPayOnShopBookingHistory,
+);
 export const bookingRoutes = router;
