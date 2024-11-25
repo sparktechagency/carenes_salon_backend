@@ -7,7 +7,6 @@ import { TUser } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
-import sendSMS from '../../helper/sendSms';
 import { IClient } from '../client/client.interface';
 import Client from '../client/client.model';
 import { IAdmin } from '../admin/admin.interface';
@@ -249,18 +248,27 @@ const verifyCode = async (email: string, verifyCode: number) => {
   return result;
 };
 
-const resendVerifyCode = async (phoneNumber: string) => {
-  const user = await User.findOne({ phoneNumber: phoneNumber });
+const resendVerifyCode = async (email: string) => {
+  const user = await User.findOne({ email: email });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
   const verifyCode = generateVerifyCode();
   const updateUser = await User.findOneAndUpdate(
-    { phoneNumber: phoneNumber },
+    { email: email },
     { verifyCode: verifyCode, codeExpireIn: new Date(Date.now() + 5 * 60000) },
   );
-  const smsMessage = `Your verification code is: ${updateUser?.verifyCode}`;
-  await sendSMS(user?.phoneNumber, smsMessage);
+  if(!updateUser){
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR,"Error occurred while updating")
+  }
+  sendEmail({
+    email:updateUser.email,
+    subject: 'Activate Your Account',
+    html: registrationSuccessEmailBody(
+      "Dear",
+      updateUser.verifyCode,
+    ),
+  });
 };
 
 // block , unblock user

@@ -87,7 +87,7 @@ const verifyCode = catchAsync(async (req, res) => {
   });
 });
 const resendVerifyCode = catchAsync(async (req, res) => {
-  const result = await userServices.resendVerifyCode(req?.body?.phoneNumber);
+  const result = await userServices.resendVerifyCode(req?.body?.email);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

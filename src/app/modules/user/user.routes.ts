@@ -51,12 +51,6 @@ router.post(
 
 router.post(
   '/resend-verify-code',
-  auth(
-    USER_ROLE.customer,
-    USER_ROLE.client,
-    USER_ROLE.admin,
-    USER_ROLE.superAdmin,
-  ),
   validateRequest(userValidations.resendVerifyCodeSchema),
   userControllers.resendVerifyCode,
 );

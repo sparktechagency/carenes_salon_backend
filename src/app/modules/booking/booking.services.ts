@@ -314,6 +314,8 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       { startTime: { $lt: endDate }, endTime: { $gt: startDate } }, // Overlapping existing booking
     ],
   });
+
+  console.log("existing bookings",existingBookings);
   //check operation
   if (existingBookings.length > 0) {
     throw new AppError(
@@ -409,9 +411,10 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     },
     metadata: {
       bookingId: result._id.toString(),
-      shopId: shop._id.toString(), // Use your custom data here
+      shopId: shop._id.toString(), 
     },
-    // on_behalf_of: shop.stripAccountId as string,
+    
+    on_behalf_of: shop.stripAccountId,
   });
 
   // -------------------------------------

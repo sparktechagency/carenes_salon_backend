@@ -72,7 +72,7 @@ const verifyResetOtp = catchAsync(async (req, res) => {
 });
 
 const resendResetCode = catchAsync(async (req, res) => {
-  const result = await authServices.resendResetCode(req?.body.phoneNumber);
+  const result = await authServices.resendResetCode(req?.body.email);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

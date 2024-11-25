@@ -130,9 +130,25 @@ app.post('/create-payment-intent', async (req: Request, res: Response) => {
 });
 
 app.get('/get-account', async (req, res) => {
-  const account = await stripe.accounts.retrieve('acct_1QMp4bClOJ3gSuLf');
+  const accountStatus = await stripe.accounts.retrieve('acct_1QMnBYEOWpkNPDJD');
 
-  console.log('Connected Account Details:', account);
+  // console.log('Connected Account Details:', account);
+  // console.log({
+  //   payouts_enabled: accountStatus.payouts_enabled,
+  //   charges_enabled: accountStatus.charges_enabled,
+  //   requirements: accountStatus.requirements,
+  //   default_currency: accountStatus.default_currency,
+  //   capabilities: accountStatus.capabilities
+  // })
+  console.log(accountStatus.capabilities);
+  const balance = await stripe.balance.retrieve({
+    stripeAccount: accountStatus.id
+  });
+  //  console.log('Balance:', {
+  //   available: balance.available,
+  //   pending: balance.pending,
+  //   instant_available: balance.instant_available
+  // });
   return 0;
 });
 
