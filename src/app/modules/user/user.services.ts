@@ -44,7 +44,7 @@ const registerCustomer = async (
       password: password,
       role: USER_ROLE.customer,
       verifyCode,
-      codeExpireIn: new Date(Date.now() + 5 * 60000),
+      codeExpireIn: new Date(Date.now() + 2 * 60000),
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -189,7 +189,7 @@ const registerAdmin = async (password: string, adminData: IAdmin) => {
       password: password,
       role: USER_ROLE.admin,
       isActive: true,
-      isVerified:true
+      isVerified: true,
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -256,18 +256,19 @@ const resendVerifyCode = async (email: string) => {
   const verifyCode = generateVerifyCode();
   const updateUser = await User.findOneAndUpdate(
     { email: email },
-    { verifyCode: verifyCode, codeExpireIn: new Date(Date.now() + 5 * 60000) },
+    { verifyCode: verifyCode, codeExpireIn: new Date(Date.now() + 2 * 60000) },
+    { new: true, runValidators: true },
   );
-  if(!updateUser){
-    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR,"Error occurred while updating")
+  if (!updateUser) {
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error occurred while updating',
+    );
   }
   sendEmail({
-    email:updateUser.email,
+    email: updateUser.email,
     subject: 'Activate Your Account',
-    html: registrationSuccessEmailBody(
-      "Dear",
-      updateUser.verifyCode,
-    ),
+    html: registrationSuccessEmailBody('Dear', updateUser.verifyCode),
   });
 };
 
@@ -286,7 +287,6 @@ const blockUnblockUser = async (id: string, status: string) => {
 
   return result;
 };
-
 
 // crone jobs -------------
 cron.schedule('*/2 * * * *', async () => {
@@ -309,8 +309,6 @@ cron.schedule('*/2 * * * *', async () => {
       const clientDeleteResult = await Client.deleteMany({
         user: { $in: expiredUserIds },
       });
-
-      
 
       // Delete the expired User documents
       const userDeleteResult = await User.deleteMany({

@@ -19,7 +19,7 @@ const CustomerSchema = new Schema<ICustomer>(
     email: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
     city: {
       type: String,

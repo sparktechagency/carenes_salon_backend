@@ -208,15 +208,6 @@ const refreshToken = async (token: string) => {
   if (user.status === 'blocked') {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
   }
-  // if (
-  //   user?.passwordChangedAt &&
-  //   (await User.isJWTIssuedBeforePasswordChange(
-  //     user?.passwordChangedAt,
-  //     iat as number,
-  //   ))
-  // ) {
-  //   throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized');
-  // }
   const jwtPayload = {
     id: user?._id,
     email: user?.email,
@@ -252,12 +243,6 @@ const forgetPassword = async (email: string) => {
       codeExpireIn: new Date(Date.now() + 5 * 60000),
     },
   );
-
-  // sendEmail(
-  //   user.email,
-  //   'Reset password code',
-  //   resetPasswordEmailBody(user.username, resetCode),
-  // );
   sendEmail({
     email: user.email,
     subject: 'Reset password code',
@@ -265,22 +250,6 @@ const forgetPassword = async (email: string) => {
   });
 
   return null;
-
-  // const jwtPayload = {
-  //   id: user?._id,
-  //   email: user?.email,
-  //   role: user?.role as TUserRole,
-  // };
-  // const resetToken = createToken(
-  //   jwtPayload,
-  //   config.jwt_access_secret as string,
-  //   '10m',
-  // );
-  // const resetUiLink = `${config.reset_password_ui_link}?${user._id}&token=${resetToken}`;
-  // const emailContent = generateResetPasswordEmail(resetUiLink);
-
-  // // Send the email
-  // sendEmail(user?.email, 'Reset your password within 10 mins!', emailContent);
 };
 
 // verify forgot otp
@@ -324,6 +293,14 @@ const resetPassword = async (payload: {
     );
   }
   const user = await User.findOne({ email: payload.email });
+
+  if (user?.updatedAt && user?.updatedAt < new Date(Date.now() - 3 * 60000)) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Forgot password first then set new password',
+    );
+  }
+
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
   }

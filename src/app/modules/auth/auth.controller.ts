@@ -44,7 +44,7 @@ const forgetPassword = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Password reset code send to the phone number',
+    message: 'Password reset code send to the email',
     data: result,
   });
 });
