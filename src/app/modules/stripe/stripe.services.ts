@@ -100,8 +100,10 @@ const updateClientStripeConnectionStatus = async (accountId: string) => {
 
 const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
   if (paymentIntent.metadata.purpose === ENUM_PAYMENT_PURPOSE.ADMIN_FEE) {
-    await Client.findByIdAndUpdate(paymentIntent.metadata.shopId,{payOnShopChargeDueAmount:{$inc:-paymentIntent.amount / 100}});
-    console.log("Pay admin fee success")
+    await Client.findByIdAndUpdate(paymentIntent.metadata.shopId, {
+      payOnShopChargeDueAmount: { $inc: -paymentIntent.amount / 100 },
+    });
+    console.log('Pay admin fee success');
   } else {
     const bookingId = paymentIntent.metadata.bookingId;
 

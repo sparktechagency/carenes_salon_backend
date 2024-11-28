@@ -20,8 +20,12 @@ router.post(
   validateRequest(staffValidations.createStaffValidationSchema),
   StaffController.createStaff,
 );
-router.get("/all-staff",auth(USER_ROLE.admin,USER_ROLE.superAdmin),StaffController.getAllStaff);
-router.get("/my-staff",auth(USER_ROLE.client),StaffController.getMyStaff);
+router.get(
+  '/all-staff',
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  StaffController.getAllStaff,
+);
+router.get('/my-staff', auth(USER_ROLE.client), StaffController.getMyStaff);
 router.patch(
   '/update/:id',
   auth(USER_ROLE.client),
@@ -36,9 +40,25 @@ router.patch(
   StaffController.updateStaff,
 );
 
-router.delete("/delete/:id",auth(USER_ROLE.client),StaffController.deleteStaff);
-router.get("/get-available-staff",validateRequest(staffValidations.getAvailableStaffValidationSchema),StaffController.getAvailableStaff)
-router.get("/single-staff/:id",auth(USER_ROLE.superAdmin,USER_ROLE.customer,USER_ROLE.admin,USER_ROLE.client),StaffController.getSingleStaff);
-
+router.delete(
+  '/delete/:id',
+  auth(USER_ROLE.client),
+  StaffController.deleteStaff,
+);
+router.get(
+  '/get-available-staff',
+  validateRequest(staffValidations.getAvailableStaffValidationSchema),
+  StaffController.getAvailableStaff,
+);
+router.get(
+  '/single-staff/:id',
+  auth(
+    USER_ROLE.superAdmin,
+    USER_ROLE.customer,
+    USER_ROLE.admin,
+    USER_ROLE.client,
+  ),
+  StaffController.getSingleStaff,
+);
 
 export const staffRoutes = router;

@@ -82,7 +82,7 @@ const verifyCode = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Successfully verified your account with phone number',
+    message: 'Successfully verified your account with email',
     data: result,
   });
 });
@@ -96,15 +96,20 @@ const resendVerifyCode = catchAsync(async (req, res) => {
   });
 });
 
-const blockUnblockUser = catchAsync(async(req,res)=>{
-  const result = await userServices.blockUnblockUser(req.params.id,req.body.status);
+const blockUnblockUser = catchAsync(async (req, res) => {
+  const result = await userServices.blockUnblockUser(
+    req.params.id,
+    req.body.status,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message:`User successfully ${result?.status === "blocked" ? "blocked" : "unblocked"}`,
+    message: `User successfully ${
+      result?.status === 'blocked' ? 'blocked' : 'unblocked'
+    }`,
     data: result,
   });
-})
+});
 
 const userController = {
   registerCustomer,
@@ -113,6 +118,6 @@ const userController = {
   getMyProfile,
   verifyCode,
   resendVerifyCode,
-  blockUnblockUser
+  blockUnblockUser,
 };
 export default userController;

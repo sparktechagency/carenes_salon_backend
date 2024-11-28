@@ -15,6 +15,7 @@ import BusinessHour from '../bussinessHour/businessHour.model';
 import sendEmail from '../../utilities/sendEmail';
 import registrationSuccessEmailBody from '../../mailTemplete/registerSuccessEmail';
 import cron from 'node-cron';
+
 const generateVerifyCode = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
 };

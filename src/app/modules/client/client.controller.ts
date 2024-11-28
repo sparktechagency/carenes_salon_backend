@@ -88,7 +88,10 @@ const addShopDetails = catchAsync(async (req, res) => {
 });
 
 const addBankDetails = catchAsync(async (req, res) => {
-  const result =await ClientServices.addBankDetails(req.user.profileId, req.body);
+  const result = await ClientServices.addBankDetails(
+    req.user.profileId,
+    req.body,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -97,7 +100,7 @@ const addBankDetails = catchAsync(async (req, res) => {
   });
 });
 const getShopDetails = catchAsync(async (req, res) => {
-  const result =await ClientServices.getShopDetails(req.params.id);
+  const result = await ClientServices.getShopDetails(req.params.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -106,7 +109,7 @@ const getShopDetails = catchAsync(async (req, res) => {
   });
 });
 const getPayOnShopData = catchAsync(async (req, res) => {
-  const result =await ClientServices.getPayOnShopData(req.query);
+  const result = await ClientServices.getPayOnShopData(req.query);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -116,17 +119,19 @@ const getPayOnShopData = catchAsync(async (req, res) => {
 });
 
 const payAdminFee = catchAsync(async (req, res) => {
-  const result = await ClientServices.payAdminFee(req.params.id, req.body.amount);
+  const result = await ClientServices.payAdminFee(
+    req.params.id,
+    req.body.amount,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Admin fee paid successfully',
     data: result,
   });
-})
+});
 
 const notifyAllShopsForAdminFee = catchAsync(async (req, res) => {
-
   const result = await ClientServices.notifyAllShopsForAdminFee();
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -134,19 +139,20 @@ const notifyAllShopsForAdminFee = catchAsync(async (req, res) => {
     message: 'Notification sent successfully to all shops',
     data: result,
   });
-})
+});
 
-const notifySingleShopsForAdminFee = catchAsync(async(req,res)=>{
-  const result = await ClientServices.notifySingleShopsForAdminFee(req.params.id);
+const notifySingleShopsForAdminFee = catchAsync(async (req, res) => {
+  const result = await ClientServices.notifySingleShopsForAdminFee(
+    req.params.id,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Notification sent successfully to shop',
     data: result,
   });
-})
-
-
+});
+// common ------------
 const ClientController = {
   updateClientProfile,
   getAllClient,
@@ -159,7 +165,7 @@ const ClientController = {
   getPayOnShopData,
   payAdminFee,
   notifyAllShopsForAdminFee,
-  notifySingleShopsForAdminFee
+  notifySingleShopsForAdminFee,
 };
 
 export default ClientController;

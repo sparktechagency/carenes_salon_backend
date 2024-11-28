@@ -314,8 +314,6 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       { startTime: { $lt: endDate }, endTime: { $gt: startDate } }, // Overlapping existing booking
     ],
   });
-
-  console.log("existing bookings",existingBookings);
   //check operation
   if (existingBookings.length > 0) {
     throw new AppError(
@@ -389,7 +387,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
 
   //=============================
 
-  console.log('client accoutid', shop.stripAccountId);
+  // console.log('client accoutid', shop.stripAccountId);
   const amount = totalPrice;
   const amountInCents = totalPrice * 100;
   const adminFee = Math.round(totalPrice * 0.05); // 5% of the amount
@@ -411,9 +409,9 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     },
     metadata: {
       bookingId: result._id.toString(),
-      shopId: shop._id.toString(), 
+      shopId: shop._id.toString(),
     },
-    
+
     on_behalf_of: shop.stripAccountId,
   });
 
@@ -547,6 +545,9 @@ const acceptCancelBookingRequest = async (
     userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
 
   // refund -----------------------------------
+
+  // Create the refund
+  //TODO: need to handle based on who cancel the booking and when the booking is canceled
   if (USER_ROLE.customer) {
     const refundAmountInCents = booking.totalPrice * 100;
     try {
@@ -575,6 +576,8 @@ const acceptCancelBookingRequest = async (
       );
     }
   } else if (USER_ROLE.client) {
+    // Create the refund
+    //TODO: need to handle based on who cancel the booking and when the booking is canceled
     const refundAmountInCents = booking.totalPrice * 100;
     try {
       const refund = await stripe.refunds.create({
@@ -744,9 +747,8 @@ const getPayOnShopBookingHistory = async (
     Booking.find({
       shopId: shopId,
       bookingPaymentType: ENUM_BOOKING_PAYMENT.PAY_ON_SHOP,
-      status:{$ne:"canceled"}
-      
-    }).select("startTime endTime totalPrice services"),
+      status: { $ne: 'canceled' },
+    }).select('startTime endTime totalPrice services'),
     query,
   )
     .search([])
@@ -755,18 +757,18 @@ const getPayOnShopBookingHistory = async (
     .paginate()
     .fields();
 
-    payOnShopBookingQuery.modelQuery = payOnShopBookingQuery.modelQuery.populate({
-      path: 'services.serviceId',
-      model: 'Service',
-      select: 'serviceName price',
-    });
-    const meta  = await payOnShopBookingQuery.countTotal();
-    const result = await payOnShopBookingQuery.modelQuery;
+  payOnShopBookingQuery.modelQuery = payOnShopBookingQuery.modelQuery.populate({
+    path: 'services.serviceId',
+    model: 'Service',
+    select: 'serviceName price',
+  });
+  const meta = await payOnShopBookingQuery.countTotal();
+  const result = await payOnShopBookingQuery.modelQuery;
 
-    return {
-      meta,result
-    }
-
+  return {
+    meta,
+    result,
+  };
 };
 
 const BookingService = {
@@ -775,7 +777,7 @@ const BookingService = {
   createCancelBookingRequest,
   changeCancelBookingRequestStatus,
   getShopBookings,
-  getPayOnShopBookingHistory
+  getPayOnShopBookingHistory,
 };
 
 export default BookingService;
