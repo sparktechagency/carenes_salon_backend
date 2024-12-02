@@ -157,6 +157,15 @@ const updateClientStatus = async (id: string, status: string) => {
       { isActive: isActive },
       { runValidators: true, new: true, session: session },
     );
+    //! TODO: need to send notification after saving in database
+    const notificationData = {
+      title: isActive ? 'Activate shop' : 'Deactivate shop',
+      message: isActive
+        ? 'Congratulations admin approved your shop.Please connect your bank information for receive payments'
+        : 'An Admin deactivate your shop , please contact with support',
+      receiver: result._id,
+    };
+    await Notification.create(notificationData);
 
     await session.commitTransaction();
     session.endSession();
