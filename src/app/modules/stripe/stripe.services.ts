@@ -8,6 +8,7 @@ import {
   ENUM_PAYMENT_PURPOSE,
   ENUM_PAYMENT_STATUS,
 } from '../../utilities/enum';
+import Transaction from '../transaction/transaction.model';
 
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 const createConnectedAccountAndOnboardingLink = async (
@@ -104,6 +105,13 @@ const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
       payOnShopChargeDueAmount: { $inc: -paymentIntent.amount / 100 },
     });
     console.log('Pay admin fee success');
+    const transactionData = {
+      senderEntityId: paymentIntent.metadata.shopId,
+      senderEntityType: 'Client',
+      amount: paymentIntent.amount,
+      type: 'Shop Charge',
+    };
+    await Transaction.create(transactionData);
   } else {
     const bookingId = paymentIntent.metadata.bookingId;
 
@@ -117,6 +125,15 @@ const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
 
     booking.paymentStatus = ENUM_PAYMENT_STATUS.SUCCESS;
     await booking.save();
+    const transactionData = {
+      senderEntityId: booking.customerId,
+      receiverEntityId: booking.shopId,
+      senderEntityType: 'Customer',
+      receiverEntityType: 'Client',
+      amount: booking.totalPrice,
+      type: 'Booking',
+    };
+    await Transaction.create(transactionData);
   }
 };
 
