@@ -11,7 +11,7 @@ router.get(
   TransactionController.getAllTransaction,
 );
 router.get(
-  '/get-client-transaction',
+  '/get-shop-transaction',
   auth(USER_ROLE.client),
   TransactionController.getClientTransaction,
 );

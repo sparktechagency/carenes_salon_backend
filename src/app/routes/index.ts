@@ -26,6 +26,7 @@ import { ratingRoutes } from '../modules/rating/rating.routes';
 import { stripeRoutes } from '../modules/stripe/stripe.routes';
 import { rescheduleRequestRoutes } from '../modules/booking_reschedule/booking_reschedule.routes';
 import { paypalRoutes } from '../modules/paypal/paypal.routes';
+import { transactionRoutes } from '../modules/transaction/transaction.routes';
 
 const router = Router();
 
@@ -137,6 +138,10 @@ const moduleRoutes = [
   {
     path: '/reschedule-request',
     router: rescheduleRequestRoutes,
+  },
+  {
+    path: '/transaction',
+    router: transactionRoutes,
   },
 ];
 

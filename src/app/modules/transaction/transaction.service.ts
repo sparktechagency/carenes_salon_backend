@@ -2,7 +2,18 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import Transaction from './transaction.model';
 
 const getAllTransaction = async (query: Record<string, unknown>) => {
-  const transactionQuery = new QueryBuilder(Transaction.find(), query)
+  const transactionQuery = new QueryBuilder(
+    Transaction.find()
+      .populate({
+        path: 'senderEntityId',
+        select: 'firstName lastName profile_image',
+      })
+      .populate({
+        path: 'receiverEntityId',
+        select: 'firstName lastName profile_image',
+      }),
+    query,
+  )
     .search(['name'])
     .filter()
     .sort()
@@ -26,7 +37,15 @@ const getClientTransaction = async (
   const transactionQuery = new QueryBuilder(
     Transaction.find({
       $or: [{ senderEntityId: shopId }, { receiverEntityId: shopId }],
-    }),
+    })
+      .populate({
+        path: 'senderEntityId',
+        select: 'firstName lastName profile_image',
+      })
+      .populate({
+        path: 'receiverEntityId',
+        select: 'firstName lastName profile_image',
+      }),
     query,
   )
     .search(['name'])
