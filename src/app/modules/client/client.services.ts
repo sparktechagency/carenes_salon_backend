@@ -547,8 +547,7 @@ const ClientServices = {
   getPayOnShopData,
   payAdminFee,
   notifyAllShopsForAdminFee,
-  notifySingleShopsForAdminFee
-  
+  notifySingleShopsForAdminFee,
 };
 
 export default ClientServices;

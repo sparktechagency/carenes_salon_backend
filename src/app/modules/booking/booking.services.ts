@@ -132,7 +132,6 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
   }
   // Fetch current date for discount comparison
   const now = new Date();
-
   // Fetch services with their applicable prices
   const servicesWithPrices = await Promise.all(
     serviceIds.map(async (serviceId: string) => {
@@ -320,7 +319,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   if (existingBookings.length > 0) {
     throw new AppError(
       httpStatus.CONFLICT,
-      'The selected time slot is conflict with other booking. Please choose a different time.3333',
+      'The selected time slot is conflict with other booking. Please choose a different time.',
     );
   }
 
