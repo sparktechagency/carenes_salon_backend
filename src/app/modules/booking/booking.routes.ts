@@ -38,4 +38,9 @@ router.get(
   auth(USER_ROLE.client),
   BookingController.getPayOnShopBookingHistory,
 );
+router.get(
+  '/get-sales-services-data',
+  auth(USER_ROLE.client),
+  BookingController.getSalesAndServiceData,
+);
 export const bookingRoutes = router;

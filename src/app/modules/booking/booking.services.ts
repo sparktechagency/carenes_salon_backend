@@ -22,6 +22,7 @@ import Customer from '../customer/customer.model';
 import { USER_ROLE } from '../user/user.constant';
 import Notification from '../notification/notification.model';
 import PaypalService from '../paypal/paypal.service';
+import mongoose from 'mongoose';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 // const createBooking = async (customerId: string, payload: any) => {
 //   const { serviceIds, date, startTime, shopId } = payload;
@@ -698,26 +699,6 @@ const rejectCancelBookingRequest = async (
   await Notification.create(notificationData);
 };
 
-// const getShopBookings = async (
-//   shopId: string,
-//   query: Record<string, unknown>,
-// ) => {
-//   console.log("booking id",shopId)
-//   const bookingQuery = new QueryBuilder(Booking.find({shopId:shopId}), query)
-//     .search(['name'])
-//     .filter()
-//     .sort()
-//     .paginate()
-//     .fields();
-//   const meta = await bookingQuery.countTotal();
-//   const result = await bookingQuery.modelQuery;
-
-//   return {
-//     meta,
-//     result,
-//   };
-// };
-
 const getShopBookings = async (
   shopId: string,
   query: Record<string, unknown>,
@@ -795,6 +776,213 @@ const getPayOnShopBookingHistory = async (
   };
 };
 
+// const getSalesAndServiceData = async (
+//   shopId: string,
+//   query: Record<string, unknown>,
+// ) => {
+//   try {
+//     // Build the match query dynamically based on whether staffId is provided
+//     const matchQuery: any = {
+//       shopId: new mongoose.Types.ObjectId(shopId),
+//       $or: [
+//         { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS },
+//         { paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP },
+//       ],
+//     };
+
+//     // Check if staffId is provided and add it to the match query
+//     if (query.staffId) {
+//       matchQuery.staffId = new mongoose.Types.ObjectId(query.staffId as string); // Add staffId filter if it's provided
+//     }
+
+//     const result = await Booking.aggregate([
+//       {
+//         $match: matchQuery, // Use the dynamically built match query
+//       },
+//       {
+//         $facet: {
+//           totalSales: [
+//             {
+//               $group: {
+//                 _id: null,
+//                 totalSales: { $sum: '$totalPrice' }, // Calculate total sales for the shop
+//               },
+//             },
+//           ],
+//           serviceDetails: [
+//             {
+//               $unwind: '$services', // Flatten the services array
+//             },
+//             {
+//               $group: {
+//                 _id: '$services.serviceId', // Group by serviceId
+//                 serviceCount: { $sum: 1 }, // Count the occurrences of each service
+//                 totalSales: { $sum: '$services.price' }, // Sum the sales for each service
+//               },
+//             },
+//             {
+//               $lookup: {
+//                 from: 'services', // Assuming 'services' collection contains service details
+//                 localField: '_id',
+//                 foreignField: '_id',
+//                 as: 'serviceDetails',
+//               },
+//             },
+//             {
+//               $unwind: '$serviceDetails', // Unwind the service details to access the name
+//             },
+//             {
+//               $project: {
+//                 serviceName: '$serviceDetails.name', // Get the service name
+//                 serviceCount: 1,
+//                 totalSales: 1,
+//               },
+//             },
+//           ],
+//         },
+//       },
+//       {
+//         $unwind: '$totalSales', // Flatten the totalSales result
+//       },
+//     ]);
+
+//     // Extract data from the aggregation result
+//     const totalSales = result[0]?.totalSales?.totalSales || 0; // Total sales for the shop
+//     const serviceDetails = result[0]?.serviceDetails || []; // Array of unique services with counts and sales
+
+//     return {
+//       totalSales,
+//       serviceDetails,
+//     };
+//   } catch (err) {
+//     console.error('Error fetching sales and service data:', err);
+//     return {
+//       totalSales: 0,
+//       serviceDetails: [],
+//     };
+//   }
+// };
+const getSalesAndServiceData = async (
+  shopId: string,
+  query: Record<string, unknown>,
+) => {
+  // The match query dynamically based on whether staffId is provided
+  const matchQuery: any = {
+    shopId: new mongoose.Types.ObjectId(shopId),
+    // $or: [
+    //   { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS },
+    //   { paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP },
+    // ],
+    $or: [
+      { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS, status: 'booked' },
+      { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS, status: 'completed' },
+      { paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP, status: 'booked' },
+      { paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP, status: 'completed' },
+    ],
+  };
+
+  if (query.staffId) {
+    matchQuery.staffId = new mongoose.Types.ObjectId(query.staffId as string);
+  }
+
+  // Time range filter based on query.timeRange
+  const currentDate = new Date();
+  let dateFilter: any = {};
+
+  if (query.timeRange === 'today') {
+    // Get the start and end of today
+    const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(currentDate.setHours(23, 59, 59, 999));
+    dateFilter = { startTime: { $gte: startOfDay, $lte: endOfDay } };
+  } else if (query.timeRange === 'last-month') {
+    // Get the first and last date of the current month (this month, not the last month)
+    const startOfCurrentMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1,
+    );
+    const endOfCurrentMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0,
+    );
+    dateFilter = {
+      startTime: { $gte: startOfCurrentMonth, $lte: endOfCurrentMonth },
+    };
+  } else if (query.timeRange === 'last-year') {
+    // Get the first and last date of the current year (this year, not the last year)
+    const startOfCurrentYear = new Date(currentDate.getFullYear(), 0, 1);
+    const endOfCurrentYear = new Date(currentDate.getFullYear(), 11, 31);
+    dateFilter = {
+      startTime: { $gte: startOfCurrentYear, $lte: endOfCurrentYear },
+    };
+  }
+
+  if (Object.keys(dateFilter).length > 0) {
+    matchQuery.startTime = dateFilter.startTime;
+  }
+
+  const result = await Booking.aggregate([
+    {
+      $match: matchQuery,
+    },
+    {
+      $facet: {
+        totalSales: [
+          {
+            $group: {
+              _id: null,
+              totalSales: { $sum: '$totalPrice' },
+            },
+          },
+        ],
+        serviceDetails: [
+          {
+            $unwind: '$services', // Flatten the services array
+          },
+          {
+            $group: {
+              _id: '$services.serviceId', // Group by serviceId
+              serviceCount: { $sum: 1 }, // Count the occurrences of each service
+              totalSales: { $sum: '$services.price' }, // Sum the sales for each service
+            },
+          },
+          {
+            $lookup: {
+              from: 'services', // Assuming 'services' collection contains service details
+              localField: '_id',
+              foreignField: '_id',
+              as: 'serviceDetails',
+            },
+          },
+          {
+            $unwind: '$serviceDetails', // Unwind the service details to access the name
+          },
+          {
+            $project: {
+              serviceName: '$serviceDetails.name', // Get the service name
+              serviceCount: 1,
+              totalSales: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: '$totalSales', // Flatten the totalSales result
+    },
+  ]);
+
+  // Extract data from the aggregation result
+  const totalSales = result[0]?.totalSales?.totalSales || 0;
+  const serviceDetails = result[0]?.serviceDetails || [];
+
+  return {
+    totalSales,
+    serviceDetails,
+  };
+};
+
 const BookingService = {
   createBooking,
   getCustomerBookings,
@@ -802,6 +990,7 @@ const BookingService = {
   changeCancelBookingRequestStatus,
   getShopBookings,
   getPayOnShopBookingHistory,
+  getSalesAndServiceData,
 };
 
 export default BookingService;
