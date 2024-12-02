@@ -10,6 +10,7 @@ import Booking from './booking.model';
 import {
   ENUM_BOOKING_PAYMENT,
   ENUM_NOTIFICATION_TYPE,
+  ENUM_PAYMENT_METHOD,
   ENUM_PAYMENT_STATUS,
 } from '../../utilities/enum';
 import Client from '../client/client.model';
@@ -20,6 +21,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import Customer from '../customer/customer.model';
 import { USER_ROLE } from '../user/user.constant';
 import Notification from '../notification/notification.model';
+import PaypalService from '../paypal/paypal.service';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 // const createBooking = async (customerId: string, payload: any) => {
 //   const { serviceIds, date, startTime, shopId } = payload;
@@ -372,56 +374,79 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     );
   }
 
-  // Create the booking with total price and service details
-  const result = await Booking.create({
-    ...payload,
-    shopCategoryId: shop.shopCategoryId,
-    startTime: startDate,
-    endTime: endDate,
-    customerId,
-    services: servicesWithPrices,
-    paymentStatus: ENUM_PAYMENT_STATUS.PENDING,
-    totalPrice, // Store the total price in the booking
-    totalDuration,
-  });
+  // check if the stripe payment or paypal payment
+  if (payload.paymentMethod === ENUM_PAYMENT_METHOD.STRIPE) {
+    // Create the booking with total price and service details
+    const result = await Booking.create({
+      ...payload,
+      shopCategoryId: shop.shopCategoryId,
+      startTime: startDate,
+      endTime: endDate,
+      customerId,
+      services: servicesWithPrices,
+      paymentStatus: ENUM_PAYMENT_STATUS.PENDING,
+      totalPrice, // Store the total price in the booking
+      totalDuration,
+    });
 
-  //=============================
+    //=============================
 
-  // console.log('client accoutid', shop.stripAccountId);
-  const amount = totalPrice;
-  const amountInCents = totalPrice * 100;
-  const adminFee = Math.round(totalPrice * 0.05); // 5% of the amount
-  if (adminFee >= amount) {
-    throw new Error(
-      'Admin fee cannot be greater than or equal to the total amount.',
-    );
+    // console.log('client accoutid', shop.stripAccountId);
+    const amount = totalPrice;
+    const amountInCents = totalPrice * 100;
+    const adminFee = Math.round(totalPrice * 0.05); // 5% of the amount
+    if (adminFee >= amount) {
+      throw new Error(
+        'Admin fee cannot be greater than or equal to the total amount.',
+      );
+    }
+    // Create the payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amountInCents,
+      currency: 'eur',
+      automatic_payment_methods: {
+        enabled: true,
+      },
+      application_fee_amount: amountInCents * 0.2,
+      transfer_data: {
+        destination: shop.stripAccountId as string,
+      },
+      metadata: {
+        bookingId: result._id.toString(),
+        shopId: shop._id.toString(),
+      },
+
+      on_behalf_of: shop.stripAccountId,
+    });
+
+    // -------------------------------------
+
+    // update booking
+    await Booking.findByIdAndUpdate(result._id, {
+      paymentIntentId: paymentIntent.id,
+    });
+    return paymentIntent.client_secret;
+  } else if (payload.paymentMethod === ENUM_PAYMENT_METHOD.PAYPAL) {
+    const result = await PaypalService.handlePaypalPayment(totalPrice);
+
+    const createBooking = await Booking.create({
+      ...payload,
+      shopCategoryId: shop.shopCategoryId,
+      startTime: startDate,
+      endTime: endDate,
+      customerId,
+      services: servicesWithPrices,
+      paymentStatus: ENUM_PAYMENT_STATUS.PENDING,
+      totalPrice, // Store the total price in the booking
+      totalDuration,
+      orderId: result.orderId,
+    });
+
+    return {
+      approvalLink: result.approvalUrl,
+      orderId: result.orderId,
+    };
   }
-  // Create the payment intent
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: amountInCents,
-    currency: 'eur',
-    automatic_payment_methods: {
-      enabled: true,
-    },
-    application_fee_amount: amountInCents * 0.2,
-    transfer_data: {
-      destination: shop.stripAccountId as string,
-    },
-    metadata: {
-      bookingId: result._id.toString(),
-      shopId: shop._id.toString(),
-    },
-
-    on_behalf_of: shop.stripAccountId,
-  });
-
-  // -------------------------------------
-
-  // update booking
-  await Booking.findByIdAndUpdate(result._id, {
-    paymentIntentId: paymentIntent.id,
-  });
-  return paymentIntent.client_secret;
 };
 
 const createBooking = async (customerId: string, payload: any) => {

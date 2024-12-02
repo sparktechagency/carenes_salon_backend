@@ -32,40 +32,41 @@ export const ENUM_PAYMENT_PREFERENCES = {
   BOTH: 'both',
 };
 
-
-export const ENUM_NOTIFICATION_TYPE={
+export const ENUM_NOTIFICATION_TYPE = {
   BOOKING: 'booking',
   CANCEL_BOOKING: 'cancel-booking',
   RESCHEDULE_BOOKING: 'reschedule-booking',
-  START_BOOKING:"start-booking",
-  REGISTER_CLIENT:"register-client",
-  REJECT_REQUEST:"reject-request",
-  ACCEPT_REQUEST:"accept-request",
-  NOTIFY_ADMIN_FEE:"notify-admin-fee",
-}
-
+  START_BOOKING: 'start-booking',
+  REGISTER_CLIENT: 'register-client',
+  REJECT_REQUEST: 'reject-request',
+  ACCEPT_REQUEST: 'accept-request',
+  NOTIFY_ADMIN_FEE: 'notify-admin-fee',
+};
 
 export const ENUM_BOOKING_PAYMENT = {
   ONLINE: 'online',
-  PAY_ON_SHOP:"pay-on-shop"
-}
+  PAY_ON_SHOP: 'pay-on-shop',
+};
 
 export const ENUM_PAYMENT_STATUS = {
-  PENDING:"pending",
-  SUCCESS:"success",
-  PAY_ON_SHOP:"pay-on-shop",
-}
+  PENDING: 'pending',
+  SUCCESS: 'success',
+  PAY_ON_SHOP: 'pay-on-shop',
+};
 
-
-export const ENUM_RESCHEDULE_STATUS={
+export const ENUM_RESCHEDULE_STATUS = {
   REJECTED: 'rejected',
   ACCEPTED: 'reschedule',
   PENDING: 'pending',
-}
-
+};
 
 export const ENUM_PAYMENT_PURPOSE = {
   BOOKING: 'booking',
-  REFUNDS:'refunds',
-  ADMIN_FEE:"admin_fee"
-}
+  REFUNDS: 'refunds',
+  ADMIN_FEE: 'admin_fee',
+};
+
+export const ENUM_PAYMENT_METHOD = {
+  STRIPE: 'stripe',
+  PAYPAL: 'paypal',
+};

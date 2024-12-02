@@ -25,6 +25,7 @@ import { discountRoutes } from '../modules/discount/discount.routes';
 import { ratingRoutes } from '../modules/rating/rating.routes';
 import { stripeRoutes } from '../modules/stripe/stripe.routes';
 import { rescheduleRequestRoutes } from '../modules/booking_reschedule/booking_reschedule.routes';
+import { paypalRoutes } from '../modules/paypal/paypal.routes';
 
 const router = Router();
 
@@ -128,6 +129,10 @@ const moduleRoutes = [
   {
     path: '/stripe',
     router: stripeRoutes,
+  },
+  {
+    path: '/paypal',
+    router: paypalRoutes,
   },
   {
     path: '/reschedule-request',

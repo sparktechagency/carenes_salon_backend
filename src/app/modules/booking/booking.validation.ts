@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
   ENUM_BOOKING_PAYMENT,
+  ENUM_PAYMENT_METHOD,
   ENUM_PAYMENT_STATUS,
 } from '../../utilities/enum';
 
@@ -26,6 +27,9 @@ const bookingValidationSchema = z.object({
   ),
   paymentStatus: z.enum(
     Object.values(ENUM_PAYMENT_STATUS) as [string, ...string[]],
+  ),
+  paymentMethod: z.enum(
+    Object.values(ENUM_PAYMENT_METHOD) as [string, ...string[]],
   ),
 });
 

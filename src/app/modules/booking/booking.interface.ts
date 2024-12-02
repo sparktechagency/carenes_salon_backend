@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 import {
   ENUM_BOOKING_PAYMENT,
+  ENUM_PAYMENT_METHOD,
   ENUM_PAYMENT_STATUS,
 } from '../../utilities/enum';
 
@@ -27,7 +28,9 @@ export interface IBooking {
   totalDuration: number;
   bookingPaymentType: (typeof ENUM_BOOKING_PAYMENT)[keyof typeof ENUM_BOOKING_PAYMENT];
   paymentStatus: (typeof ENUM_PAYMENT_STATUS)[keyof typeof ENUM_PAYMENT_STATUS];
+  paymentMethod: (typeof ENUM_PAYMENT_METHOD)[keyof typeof ENUM_PAYMENT_METHOD];
   shopCategoryId: Types.ObjectId;
   paymentIntentId: string;
+  orderId: string;
   note: string;
 }

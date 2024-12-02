@@ -2,6 +2,7 @@ import { model, Schema } from 'mongoose';
 import { IBooking } from './booking.interface';
 import {
   ENUM_BOOKING_PAYMENT,
+  ENUM_PAYMENT_METHOD,
   ENUM_PAYMENT_STATUS,
 } from '../../utilities/enum';
 
@@ -65,11 +66,15 @@ const BookingSchema = new Schema<IBooking>(
       enum: Object.values(ENUM_PAYMENT_STATUS),
       required: true,
     },
+    paymentMethod: { type: String, enum: Object.values(ENUM_PAYMENT_METHOD) },
     shopCategoryId: { type: Schema.Types.ObjectId, required: true },
     note: {
       type: String,
     },
     paymentIntentId: {
+      type: String,
+    },
+    orderId: {
       type: String,
     },
   },

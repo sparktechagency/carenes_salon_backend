@@ -17,6 +17,7 @@ import config from './app/config';
 import auth from './app/middlewares/auth';
 import { USER_ROLE } from './app/modules/user/user.constant';
 import stripeServices from './app/modules/stripe/stripe.services';
+import paypal from './app/utilities/paypalConfig';
 const endpointSecret =
   'whsec_f05875eb42dd8051fbc20bcdb538e22c499ecd114bde7eea65bb0602b1730562';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
@@ -142,7 +143,7 @@ app.get('/get-account', async (req, res) => {
   // })
   console.log(accountStatus.capabilities);
   const balance = await stripe.balance.retrieve({
-    stripeAccount: accountStatus.id
+    stripeAccount: accountStatus.id,
   });
   //  console.log('Balance:', {
   //   available: balance.available,
@@ -159,6 +160,90 @@ const test = (req: Request, res: Response) => {
 };
 
 app.get('/', test);
+
+//play with paypal ==================================================
+
+// Constants for fees
+const PLATFORM_FEE_PERCENTAGE = 5;
+
+app.post('/create-payment', async (req, res) => {
+  const { amount, salonOwnerEmail } = req.body;
+
+  // Calculate admin fee and salon owner amount
+  const platformFee = (amount * PLATFORM_FEE_PERCENTAGE) / 100;
+  const salonOwnerAmount = amount - platformFee;
+
+  // Create the payment
+  const paymentJson = {
+    intent: 'sale',
+    payer: { payment_method: 'paypal' },
+    redirect_urls: {
+      return_url: 'http://localhost:3000/payment-success',
+      cancel_url: 'http://localhost:3000/payment-cancel',
+    },
+    transactions: [
+      {
+        amount: { total: amount.toFixed(2), currency: 'USD' },
+        description: 'Salon booking payment',
+      },
+    ],
+  };
+
+  paypal.payment.create(paymentJson, (error, payment) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Payment creation failed' });
+    } else {
+      res.json({ id: payment.id, approvalUrl: payment.links[1].href });
+    }
+  });
+});
+
+// Execute Payment and Split Amount
+app.post('/execute-payment', async (req, res) => {
+  const { paymentId, payerId, amount, salonOwnerEmail } = req.body;
+
+  paypal.payment.execute(
+    paymentId,
+    { payer_id: payerId },
+    async (error, payment) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Payment execution failed' });
+      } else {
+        // Use Payouts API to transfer to salon owner
+        const platformFee = (amount * PLATFORM_FEE_PERCENTAGE) / 100;
+        const salonOwnerAmount = amount - platformFee;
+
+        const payoutJson = {
+          sender_batch_header: {
+            sender_batch_id: `batch_${Date.now()}`,
+            email_subject: 'Payment from Platform',
+          },
+          items: [
+            {
+              recipient_type: 'EMAIL',
+              amount: { value: salonOwnerAmount.toFixed(2), currency: 'USD' },
+              receiver: salonOwnerEmail,
+              note: 'Your share from a salon booking payment.',
+            },
+          ],
+        };
+
+        paypal.payout.create(payoutJson, async (error, payout) => {
+          if (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Payout failed' });
+          } else {
+            res.json({ success: true, payment, payout });
+          }
+        });
+      }
+    },
+  );
+});
+
+//===============================================================================
 
 // global error handler
 app.use(globalErrorHandler);
