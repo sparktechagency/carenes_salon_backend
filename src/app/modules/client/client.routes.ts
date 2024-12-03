@@ -55,7 +55,7 @@ router.patch(
 
 router.get(
   '/get-all-client',
-  auth(USER_ROLE.superAdmin),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   ClientController.getAllClient,
 );
 router.get(
@@ -64,10 +64,30 @@ router.get(
   validateRequest(ClientValidations.getNearbyShopValidationSchema),
   ClientController.getNearbyShop,
 );
-router.get("/get-shop-details/:id",auth(USER_ROLE.superAdmin,USER_ROLE.admin),ClientController.getShopDetails);
+router.get(
+  '/get-shop-details/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  ClientController.getShopDetails,
+);
 router.get('/single-shop/:id', ClientController.getSingleShop);
-router.get("/pay-on-shop-data",auth(USER_ROLE.admin,USER_ROLE.superAdmin),ClientController.getPayOnShopData);
-router.post("/pay-admin-fee",auth(USER_ROLE.client),ClientController.payAdminFee);
-router.post("/notify-all-shops",auth(USER_ROLE.admin,USER_ROLE.superAdmin),ClientController.notifyAllShopsForAdminFee);
-router.post("/notify-single-shop/:id",auth(USER_ROLE.admin,USER_ROLE.superAdmin),ClientController.notifySingleShopsForAdminFee)
+router.get(
+  '/pay-on-shop-data',
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  ClientController.getPayOnShopData,
+);
+router.post(
+  '/pay-admin-fee',
+  auth(USER_ROLE.client),
+  ClientController.payAdminFee,
+);
+router.post(
+  '/notify-all-shops',
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  ClientController.notifyAllShopsForAdminFee,
+);
+router.post(
+  '/notify-single-shop/:id',
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  ClientController.notifySingleShopsForAdminFee,
+);
 export const clientRoutes = router;
