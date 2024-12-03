@@ -48,4 +48,5 @@ router.patch(
   auth(USER_ROLE.client),
   BookingController.markNoShow,
 );
+
 export const bookingRoutes = router;

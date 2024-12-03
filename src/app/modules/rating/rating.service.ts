@@ -17,7 +17,7 @@ const createRating = async (customerId: string, payload: IRating) => {
     throw new AppError(httpStatus.NOT_FOUND, 'Staff not found');
   }
 
-  const result = await Rating.create(payload);
+  const result = await Rating.create({ ...payload, customer: customerId });
 
   await Client.findByIdAndUpdate(payload.shop, {
     $inc: { totalRating: payload.shopRating, totalRatingCount: 1 },
@@ -31,7 +31,13 @@ const createRating = async (customerId: string, payload: IRating) => {
 
 // get sob rating
 const getSobRating = async (shopId: string, query: Record<string, any>) => {
-  const sobRatingQuery = new QueryBuilder(Rating.find(), query)
+  const sobRatingQuery = new QueryBuilder(
+    Rating.find().populate({
+      path: 'customer',
+      select: 'firstName lastName city',
+    }),
+    query,
+  )
     .search(['name'])
     .filter()
     .sort()
@@ -49,8 +55,8 @@ const getSobRating = async (shopId: string, query: Record<string, any>) => {
 };
 
 const RatingServices = {
-    createRating,
-    getSobRating
-}
+  createRating,
+  getSobRating,
+};
 
 export default RatingServices;

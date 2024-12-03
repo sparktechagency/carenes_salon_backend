@@ -365,7 +365,7 @@ const getCustomerBookings = async (
   query: Record<string, unknown>,
 ) => {
   const bookingQuery = new QueryBuilder(
-    Booking.find({ customerId: customerId }),
+    Booking.find({ customerId: customerId, status: { $ne: 'canceled' } }),
     query,
   )
     .search(['customerId'])
@@ -620,7 +620,10 @@ const getShopBookings = async (
     query['services.serviceId'] = query.serviceId; // Match bookings with the selected serviceId
     delete query.serviceId; // Remove serviceId from the query object to avoid duplicate keys
   }
-  const bookingQuery = new QueryBuilder(Booking.find({ shopId }), query)
+  const bookingQuery = new QueryBuilder(
+    Booking.find({ shopId, status: { $ne: 'canceled' } }),
+    query,
+  )
     .search(['name'])
     .filter()
     .sort()
