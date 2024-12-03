@@ -94,6 +94,19 @@ const getSalesAndServiceData = catchAsync(async (req, res) => {
   });
 });
 
+const markNoShow = catchAsync(async (req, res) => {
+  const result = await BookingService.markNoShow(
+    req.user.profileId,
+    req.params.id,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Successfully marked as no-show',
+    data: result,
+  });
+});
+
 const BookingController = {
   createBooking,
   getCustomerBookings,
@@ -102,6 +115,7 @@ const BookingController = {
   getShopBookings,
   getPayOnShopBookingHistory,
   getSalesAndServiceData,
+  markNoShow,
 };
 
 export default BookingController;

@@ -43,4 +43,9 @@ router.get(
   auth(USER_ROLE.client),
   BookingController.getSalesAndServiceData,
 );
+router.patch(
+  '/mark-no-show/:id',
+  auth(USER_ROLE.client),
+  BookingController.markNoShow,
+);
 export const bookingRoutes = router;

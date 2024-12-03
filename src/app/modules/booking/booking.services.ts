@@ -883,6 +883,21 @@ const getSalesAndServiceData = async (
   };
 };
 
+const markNoShow = async (shopId: string, id: string) => {
+  const booking = await Booking.findOne({ _id: id, shopId: shopId });
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+
+  const result = await Booking.findByIdAndUpdate(
+    id,
+    { status: 'completed' },
+    { new: true, runValidators: true },
+  );
+
+  return result;
+};
+
 const BookingService = {
   createBooking,
   getCustomerBookings,
@@ -891,6 +906,7 @@ const BookingService = {
   getShopBookings,
   getPayOnShopBookingHistory,
   getSalesAndServiceData,
+  markNoShow,
 };
 
 export default BookingService;
