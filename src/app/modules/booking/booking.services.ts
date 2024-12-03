@@ -676,92 +676,6 @@ const getPayOnShopBookingHistory = async (
   };
 };
 
-// const getSalesAndServiceData = async (
-//   shopId: string,
-//   query: Record<string, unknown>,
-// ) => {
-//   try {
-//     // Build the match query dynamically based on whether staffId is provided
-//     const matchQuery: any = {
-//       shopId: new mongoose.Types.ObjectId(shopId),
-//       $or: [
-//         { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS },
-//         { paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP },
-//       ],
-//     };
-
-//     // Check if staffId is provided and add it to the match query
-//     if (query.staffId) {
-//       matchQuery.staffId = new mongoose.Types.ObjectId(query.staffId as string); // Add staffId filter if it's provided
-//     }
-
-//     const result = await Booking.aggregate([
-//       {
-//         $match: matchQuery, // Use the dynamically built match query
-//       },
-//       {
-//         $facet: {
-//           totalSales: [
-//             {
-//               $group: {
-//                 _id: null,
-//                 totalSales: { $sum: '$totalPrice' }, // Calculate total sales for the shop
-//               },
-//             },
-//           ],
-//           serviceDetails: [
-//             {
-//               $unwind: '$services', // Flatten the services array
-//             },
-//             {
-//               $group: {
-//                 _id: '$services.serviceId', // Group by serviceId
-//                 serviceCount: { $sum: 1 }, // Count the occurrences of each service
-//                 totalSales: { $sum: '$services.price' }, // Sum the sales for each service
-//               },
-//             },
-//             {
-//               $lookup: {
-//                 from: 'services', // Assuming 'services' collection contains service details
-//                 localField: '_id',
-//                 foreignField: '_id',
-//                 as: 'serviceDetails',
-//               },
-//             },
-//             {
-//               $unwind: '$serviceDetails', // Unwind the service details to access the name
-//             },
-//             {
-//               $project: {
-//                 serviceName: '$serviceDetails.name', // Get the service name
-//                 serviceCount: 1,
-//                 totalSales: 1,
-//               },
-//             },
-//           ],
-//         },
-//       },
-//       {
-//         $unwind: '$totalSales', // Flatten the totalSales result
-//       },
-//     ]);
-
-//     // Extract data from the aggregation result
-//     const totalSales = result[0]?.totalSales?.totalSales || 0; // Total sales for the shop
-//     const serviceDetails = result[0]?.serviceDetails || []; // Array of unique services with counts and sales
-
-//     return {
-//       totalSales,
-//       serviceDetails,
-//     };
-//   } catch (err) {
-//     console.error('Error fetching sales and service data:', err);
-//     return {
-//       totalSales: 0,
-//       serviceDetails: [],
-//     };
-//   }
-// };
 const getSalesAndServiceData = async (
   shopId: string,
   query: Record<string, unknown>,
@@ -898,6 +812,14 @@ const markNoShow = async (shopId: string, id: string) => {
   return result;
 };
 
+const getSingleBooking = async (id: string) => {
+  const booking = await Booking.findById(id).populate('services.serviceId');
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  return booking;
+};
+
 const BookingService = {
   createBooking,
   getCustomerBookings,
@@ -907,6 +829,7 @@ const BookingService = {
   getPayOnShopBookingHistory,
   getSalesAndServiceData,
   markNoShow,
+  getSingleBooking,
 };
 
 export default BookingService;
