@@ -394,6 +394,7 @@ const getNearbyShopWithTime = async (
       location: 1,
       totalRating: 1,
       totalRatingCount: 1,
+      shopGenderCategory: 1,
     },
   });
   const result = await Client.aggregate(pipeline);
