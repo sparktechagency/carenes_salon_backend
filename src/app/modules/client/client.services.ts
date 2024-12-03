@@ -360,7 +360,42 @@ const getNearbyShopWithTime = async (
       },
     },
   });
+  // Conditionally add ratingRatio calculation and sorting if 'topRated' is in query
+  if (query.topRated) {
+    pipeline.push({
+      $addFields: {
+        ratingRatio: {
+          $cond: {
+            if: { $eq: [{ $ifNull: ['$totalRatingCount', 0] }, 0] }, // Prevent division by zero
+            then: 0,
+            else: { $divide: ['$totalRating', '$totalRatingCount'] }, // totalRating / totalRatingCount
+          },
+        },
+      },
+    });
 
+    // Sort the results by the computed ratingRatio in descending order
+    pipeline.push({
+      $sort: {
+        ratingRatio: -1, // -1 for descending order (top-rated to bottom-rated based on ratio)
+      },
+    });
+  }
+
+  // Add projection to select specific fields
+  pipeline.push({
+    $project: {
+      shopName: 1,
+      shopCategoryId: 1,
+      distance: 1,
+      estimatedTime: 1,
+      isBookmark: 1,
+      shopImages: 1,
+      location: 1,
+      totalRating: 1,
+      totalRatingCount: 1,
+    },
+  });
   const result = await Client.aggregate(pipeline);
 
   const bookmarks = await ShopBookmark.find({ customer: customerId }).select(
