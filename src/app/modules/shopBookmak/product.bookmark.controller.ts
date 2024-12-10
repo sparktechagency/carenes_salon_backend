@@ -1,20 +1,37 @@
+import httpStatus from 'http-status';
 import catchAsync from '../../utilities/catchasync';
 import sendResponse from '../../utilities/sendResponse';
 import shopBookmarkServices from './shop.bookmark.services';
 
-const createBookmark = catchAsync(async (req, res) => {
-  const result = await shopBookmarkServices.createBookmarkIntoDB(
-    req?.body?.shopId,
-    req?.user?.profileId,
-  );
+// const createBookmark = catchAsync(async (req, res) => {
+//   const result = await shopBookmarkServices.createBookmarkIntoDB(
+//     req?.body?.shopId,
+//     req?.user?.profileId,
+//   );
 
+//   sendResponse(res, {
+//     statusCode: 201,
+//     success: true,
+//     message: 'Bookmark created successfully',
+//     data: result,
+//   });
+// });
+
+const shopBookmarkAddDelete = catchAsync(async (req, res) => {
+  const result = await shopBookmarkServices.shopBookmarkAddAndDelete(
+    req.user.profileId,
+    req.params.id,
+  );
   sendResponse(res, {
-    statusCode: 201,
+    statusCode: httpStatus.OK,
     success: true,
-    message: 'Bookmark created successfully',
+    message: result
+      ? 'Bookmark added successfully'
+      : 'Bookmark deleted successfully',
     data: result,
   });
 });
+
 // get my bookmark
 const getMyBookmark = catchAsync(async (req, res) => {
   const result = await shopBookmarkServices.getMyBookmarkFromDB(
@@ -44,7 +61,7 @@ const deleteBookmark = catchAsync(async (req, res) => {
 });
 
 const shopBookmarkController = {
-  createBookmark,
+  shopBookmarkAddDelete,
   getMyBookmark,
   deleteBookmark,
 };
