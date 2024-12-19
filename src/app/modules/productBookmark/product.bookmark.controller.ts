@@ -1,17 +1,33 @@
+import httpStatus from 'http-status';
 import catchAsync from '../../utilities/catchasync';
 import sendResponse from '../../utilities/sendResponse';
 import productBookmarkServices from './product.bookmark.services';
 
-const createBookmark = catchAsync(async (req, res) => {
-  const result = await productBookmarkServices.createBookmarkIntoDB(
-    req?.body?.productId,
-    req?.user?.profileId,
-  );
+// const createBookmark = catchAsync(async (req, res) => {
+//   const result = await productBookmarkServices.createBookmarkIntoDB(
+//     req?.body?.productId,
+//     req?.user?.profileId,
+//   );
 
+//   sendResponse(res, {
+//     statusCode: 201,
+//     success: true,
+//     message: 'Bookmark created successfully',
+//     data: result,
+//   });
+// });
+
+const productBookmarkAddDelete = catchAsync(async (req, res) => {
+  const result = await productBookmarkServices.productBookmarkAddDelete(
+    req.user.profileId,
+    req.params.id,
+  );
   sendResponse(res, {
-    statusCode: 201,
+    statusCode: httpStatus.OK,
     success: true,
-    message: 'Bookmark created successfully',
+    message: result
+      ? 'Bookmark added successfully'
+      : 'Bookmark deleted successfully',
     data: result,
   });
 });
@@ -44,7 +60,8 @@ const deleteBookmark = catchAsync(async (req, res) => {
 });
 
 const productBookmarkController = {
-  createBookmark,
+  // createBookmark,
+  productBookmarkAddDelete,
   getMyBookmark,
   deleteBookmark,
 };
