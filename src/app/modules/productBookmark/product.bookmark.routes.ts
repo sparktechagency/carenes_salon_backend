@@ -5,10 +5,15 @@ import productBookmarkController from './product.bookmark.controller';
 
 const router = express.Router();
 
+// router.post(
+//   '/create-product-bookmark',
+//   auth(USER_ROLE.customer),
+//   productBookmarkController.createBookmark,
+// );
 router.post(
-  '/create-product-bookmark',
+  '/add-delete-product-bookmark/:id',
   auth(USER_ROLE.customer),
-  productBookmarkController.createBookmark,
+  productBookmarkController.productBookmarkAddDelete,
 );
 router.get(
   '/my-bookmark-products',
