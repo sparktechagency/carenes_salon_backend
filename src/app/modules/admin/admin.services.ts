@@ -98,7 +98,6 @@ const getAllAdminFromDB = async (query: Record<string, any>) => {
   };
 };
 
-
 // rating
 const addRating = async (shopId: string, rating: number) => {
   const result = await Admin.findByIdAndUpdate(

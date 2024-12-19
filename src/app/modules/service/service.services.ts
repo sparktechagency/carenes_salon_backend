@@ -166,14 +166,17 @@ const getMyServices = async (shopId: string) => {
   return categoriesWithServices;
 };
 
-const getSingleService = async(id:string)=>{
-  const service = await Service.findById(id).populate("category","appointmentColor categoryName");
-  if(!service){
-    throw new AppError(httpStatus.NOT_FOUND,"Service not found")
+const getSingleService = async (id: string) => {
+  const service = await Service.findById(id).populate(
+    'category',
+    'appointmentColor categoryName',
+  );
+  if (!service) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Service not found');
   }
 
   return service;
-}
+};
 
 const ServiceService = {
   createService,
@@ -181,7 +184,7 @@ const ServiceService = {
   deleteService,
   getAllService,
   getMyServices,
-  getSingleService
+  getSingleService,
 };
 
 export default ServiceService;
