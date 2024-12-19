@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 export interface IStaff {
   _id: any;
   toObject(): any;
-  shop:Types.ObjectId;
+  shop: Types.ObjectId;
   name: string;
   specialty: string;
   phoneNumber: string;
@@ -12,6 +12,7 @@ export interface IStaff {
   employmentStartDate: Date;
   services: 'all-services' | Types.ObjectId[];
   profile_image?: string;
-  totalRating:number;
-  totalRatingCount:number;
+  totalRating: number;
+  totalRatingCount: number;
+  appointmentColor: string;
 }

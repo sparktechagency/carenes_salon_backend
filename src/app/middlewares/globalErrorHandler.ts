@@ -93,18 +93,18 @@ const globalErrorHandler: ErrorRequestHandler = (
   next,
 ) => {
   let statusCode = 500;
-  let message = 'Something went wrong';
-  let errorMessage = '';
+  // let message = 'Something went wrong';
+  let errorMessage = 'Something went wrong';
   let errorDetails = {};
 
   if (err.code === 11000) {
-    message = 'Duplicate Error';
+    // message = 'Duplicate Error';
     const match = err.message.match(/"([^"]*)"/);
     const extractedMessage = match && match[1];
     errorMessage = `${extractedMessage} is already exists`;
     statusCode = 400;
   } else if (err instanceof ZodError) {
-    message = 'Validation Error';
+    // message = 'Validation Error';
     const concatedMessage = err.issues.map((issue, index) => {
       if (index === err.issues.length - 1) {
         return issue.message;
@@ -117,7 +117,7 @@ const globalErrorHandler: ErrorRequestHandler = (
       issues: err.issues,
     };
   } else if (err instanceof mongoose.Error.ValidationError) {
-    message = 'Mongoose Validation Error';
+    // message = 'Mongoose Validation Error';
     errorMessage = Object.values(err.errors)
       .map((val) => val.message)
       .join(', ');
@@ -128,14 +128,14 @@ const globalErrorHandler: ErrorRequestHandler = (
     errorMessage = err.message;
   } else if (err?.name === 'CastError') {
     statusCode = 400;
-    message = 'Invalid ID';
+    // message = 'Invalid ID';
     errorMessage = `${err.value} is not a valid ID!`;
     errorDetails = err;
   }
   return res.status(statusCode).json({
     success: false,
-    message: message,
-    errorMessage: errorMessage,
+    message: errorMessage,
+    // errorMessage: errorMessage,
     errorDetails,
     stack: err?.stack || null,
     // err,

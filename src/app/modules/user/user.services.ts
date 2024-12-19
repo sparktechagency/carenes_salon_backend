@@ -17,7 +17,7 @@ import registrationSuccessEmailBody from '../../mailTemplete/registerSuccessEmai
 import cron from 'node-cron';
 
 const generateVerifyCode = (): number => {
-  return Math.floor(10000 + Math.random() * 90000);
+  return Math.floor(1000 + Math.random() * 9000);
 };
 
 const registerCustomer = async (

@@ -4,10 +4,10 @@ import { IStaff } from './staff.interface';
 
 const staffSchema = new Schema<IStaff>(
   {
-    shop:{
-      type:Schema.Types.ObjectId,
-      required:true,
-      ref:"Client",
+    shop: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Client',
     },
     name: { type: String, required: true },
     specialty: { type: String, required: true },
@@ -30,8 +30,9 @@ const staffSchema = new Schema<IStaff>(
       },
     },
     profile_image: { type: String, default: '' },
-    totalRating:{type:Number,default:0},
-    totalRatingCount:{type:Number,default:0}
+    totalRating: { type: Number, default: 0 },
+    totalRatingCount: { type: Number, default: 0 },
+    appointmentColor: { type: String, required: true },
   },
   { timestamps: true },
 );

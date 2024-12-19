@@ -35,35 +35,31 @@ router.post(
 );
 router.get(
   '/get-privacy-policy',
-  auth(USER_ROLE.superAdmin),
+
   ManageController.getPrivacyPolicy,
 );
 router.get(
   '/get-slider',
-  auth(USER_ROLE.superAdmin),
+
   ManageController.getSlider,
 );
 router.get('/get-faq', auth(USER_ROLE.superAdmin), ManageController.getFAQ);
 router.get(
   '/get-about-us',
-  auth(USER_ROLE.superAdmin),
+
   ManageController.getAboutUs,
 );
 router.get(
   '/get-terms-conditions',
-  auth(USER_ROLE.superAdmin),
+
   ManageController.getTermsConditions,
 );
 router.get(
   '/get-contact-us',
-  auth(USER_ROLE.superAdmin),
+
   ManageController.getContactUs,
 );
-router.patch(
-  '/edit-privacy-policy/:id',
-  auth(USER_ROLE.superAdmin),
-  ManageController.editPrivacyPolicy,
-);
+router.patch('/edit-privacy-policy/:id', ManageController.editPrivacyPolicy);
 router.patch(
   '/edit-slider/:id',
   auth(USER_ROLE.superAdmin),

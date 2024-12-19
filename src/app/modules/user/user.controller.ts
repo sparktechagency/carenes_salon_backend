@@ -12,28 +12,13 @@ const registerCustomer = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Costumer register successfully',
+    message: 'Customer register successfully',
     data: result,
   });
 });
 
 // register Client
 const registerClient = catchAsync(async (req, res) => {
-  // const { files } = req;
-  // let drivingLicence;
-  // if (files && typeof files === 'object' && 'licence_image' in files) {
-  //   drivingLicence = files['licence_image'][0].path;
-  // } else {
-  //   drivingLicence = null;
-  // }
-  // const payload = {
-  //   ...req.body,
-  //   Client: {
-  //     ...req.body.Client,
-  //     drivingLicence,
-  //   },
-  // };
-
   const result = await userServices.registerClient(
     req?.body?.password,
     req.body.confirmPassword,

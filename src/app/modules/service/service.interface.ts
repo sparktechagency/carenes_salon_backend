@@ -2,7 +2,7 @@
 import { Schema, Types } from 'mongoose';
 
 interface IService {
-  _id:Types.ObjectId;
+  _id: Types.ObjectId;
   toObject: any;
   shop: Schema.Types.ObjectId;
   serviceName: string;

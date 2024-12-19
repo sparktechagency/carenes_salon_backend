@@ -20,7 +20,6 @@ async function main() {
   try {
     await mongoose.connect(config.database_url as string);
     logger.info('DB Connected Successfully');
-    seedSuperAdmin();
 
     const port =
       typeof config.port === 'number' ? config.port : Number(config.port);
@@ -28,6 +27,7 @@ async function main() {
       logger.info(
         `Example app listening on port http://192.168.10.153:${config.port}`,
       );
+      seedSuperAdmin();
     });
 
     // Set up Socket.IO-----------------
