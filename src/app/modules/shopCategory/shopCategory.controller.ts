@@ -18,6 +18,12 @@ const createShopCategory = catchAsync(async (req, res) => {
   });
 });
 const updateShopCategory = catchAsync(async (req, res) => {
+  const { files } = req;
+  // Check if files and store_image exist, and process multiple images
+  if (files && typeof files === 'object' && 'shop_category_image' in files) {
+    req.body.image = files['shop_category_image'][0].path;
+  }
+
   const result = await ShopCategoryServices.updateShopCategory(
     req.params.id,
     req.body,

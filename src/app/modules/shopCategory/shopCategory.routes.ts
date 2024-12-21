@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post(
   '/create',
-  // auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   uploadFile(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
@@ -23,7 +23,14 @@ router.post(
 );
 router.patch(
   '/update/:id',
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  // auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  uploadFile(),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
+    next();
+  },
   validateRequest(shopCategoryValidations.updateShopCategoryValidationSchema),
   ShopCategoryController.updateShopCategory,
 );
