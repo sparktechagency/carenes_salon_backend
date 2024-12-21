@@ -12,13 +12,11 @@ import Booking from '../booking/booking.model';
 const createStaffIntoDB = async (profileId: string, payload: IStaff) => {
   const session = await mongoose.startSession();
   session.startTransaction();
-
   try {
     // Create staff with session
     const [staff] = await Staff.create([{ ...payload, shop: profileId }], {
       session,
     });
-
     const defaultBusinessHours = [
       { day: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
       {
@@ -123,7 +121,14 @@ const getAllStaff = async (query: Record<string, any>) => {
     },
     {} as Record<string, number>,
   );
-  const StaffQuery = new QueryBuilder(Staff.find().select("name specialty phoneNumber profile_image totalRating totalRatingCount").populate({path:"shop",select:"shopName"}), query)
+  const StaffQuery = new QueryBuilder(
+    Staff.find()
+      .select(
+        'name specialty phoneNumber profile_image totalRating totalRatingCount',
+      )
+      .populate({ path: 'shop', select: 'shopName' }),
+    query,
+  )
     .search(['name'])
     .fields()
     .filter()

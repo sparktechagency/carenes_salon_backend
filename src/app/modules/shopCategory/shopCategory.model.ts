@@ -17,6 +17,10 @@ const ShopCategorySchema: Schema = new Schema(
       enum: ['active', 'inactive'],
       default: 'active',
     },
+    image: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,
