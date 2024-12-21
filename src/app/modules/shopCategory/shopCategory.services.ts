@@ -35,7 +35,6 @@ const deleteShopCategory = async (id: string) => {
   return result;
 };
 
-
 const getAllShopCategory = async (query: Record<string, any>) => {
   const shopCategoryQuery = new QueryBuilder(ShopCategory.find(), query)
     .search(['name'])
@@ -65,7 +64,9 @@ const getAllShopCategory = async (query: Record<string, any>) => {
 
   // Aggregate total sales for each shop category
   const salesData = await Booking.aggregate([
-    { $match: { shopCategoryId: { $in: shopCategoryIds }, status: 'completed' } },
+    {
+      $match: { shopCategoryId: { $in: shopCategoryIds }, status: 'completed' },
+    },
     {
       $unwind: '$services',
     },
@@ -78,8 +79,12 @@ const getAllShopCategory = async (query: Record<string, any>) => {
   ]);
 
   // Step 3: Map data back to the shop categories
-  const serviceCountsMap = Object.fromEntries(serviceCounts.map(item => [item._id.toString(), item.totalServices]));
-  const salesDataMap = Object.fromEntries(salesData.map(item => [item._id.toString(), item.totalSales]));
+  const serviceCountsMap = Object.fromEntries(
+    serviceCounts.map((item) => [item._id.toString(), item.totalServices]),
+  );
+  const salesDataMap = Object.fromEntries(
+    salesData.map((item) => [item._id.toString(), item.totalSales]),
+  );
 
   const result = shopCategories.map((category: any) => ({
     ...category.toObject(),
@@ -97,7 +102,7 @@ const ShopCategoryServices = {
   createShopCategory,
   updateShopCategory,
   deleteShopCategory,
-  getAllShopCategory
+  getAllShopCategory,
 };
 
 export default ShopCategoryServices;

@@ -4,6 +4,11 @@ import sendResponse from '../../utilities/sendResponse';
 import ShopCategoryServices from './shopCategory.services';
 
 const createShopCategory = catchAsync(async (req, res) => {
+  const { files } = req;
+  // Check if files and store_image exist, and process multiple images
+  if (files && typeof files === 'object' && 'shop_category_image' in files) {
+    req.body.image = files['shop_category_image'][0].path;
+  }
   const result = await ShopCategoryServices.createShopCategory(req.body);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -47,7 +52,7 @@ const ShopCategoryController = {
   createShopCategory,
   updateShopCategory,
   deleteShopCategory,
-  getAllShopCategory
+  getAllShopCategory,
 };
 
 export default ShopCategoryController;
