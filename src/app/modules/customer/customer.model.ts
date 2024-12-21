@@ -29,7 +29,7 @@ const CustomerSchema = new Schema<ICustomer>(
     },
     gender: {
       type: String,
-      enum: ['male', 'female'],
+      enum: ['Male', 'Female'],
     },
     age: {
       type: Number,

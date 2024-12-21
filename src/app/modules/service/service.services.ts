@@ -133,6 +133,10 @@ const updateService = async (id: string, payload: Partial<IService>) => {
       throw new AppError(httpStatus.NOT_FOUND, 'Category not exits');
     }
   }
+  const service = await Service.findById(id);
+  if (!service) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Service not found');
+  }
   const result = await Service.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,
