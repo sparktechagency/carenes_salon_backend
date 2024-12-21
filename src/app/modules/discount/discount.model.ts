@@ -85,21 +85,21 @@ const DiscountSchema: Schema = new Schema<IDiscount>(
       },
       ref: 'Service', // Reference to the Service model for population
     },
-    products: {
-      type: Schema.Types.Mixed,
-      required: true,
-      validate: {
-        validator: function (value: any) {
-          return (
-            value === 'all-products' ||
-            (Array.isArray(value) &&
-              value.every((id) => Types.ObjectId.isValid(id)))
-          );
-        },
-        message: 'Products must be "all-products" or an array of ObjectIds.',
-      },
-      ref: 'Product', // Reference to the Product model for population
-    },
+    // products: {
+    //   type: Schema.Types.Mixed,
+    //   required: true,
+    //   validate: {
+    //     validator: function (value: any) {
+    //       return (
+    //         value === 'all-products' ||
+    //         (Array.isArray(value) &&
+    //           value.every((id) => Types.ObjectId.isValid(id)))
+    //       );
+    //     },
+    //     message: 'Products must be "all-products" or an array of ObjectIds.',
+    //   },
+    //   ref: 'Product', // Reference to the Product model for population
+    // },
     discountStartDate: {
       type: Date,
       required: true,

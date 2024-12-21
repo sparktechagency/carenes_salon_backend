@@ -21,33 +21,42 @@ const createDiscount = async (shopId: string, payload: IDiscount) => {
   return result;
 };
 
-  
 const getDiscount = async (shopId: string) => {
-    const discount = await Discount.findOne({ shop: shopId }).exec();
-  
-    if (!discount) {
-      throw new AppError(httpStatus.BAD_REQUEST, "You don't have any discount added");
-    }
-  
-    if (discount.products !== 'all-products') {
-      // Ensure TypeScript understands that product IDs are of type ObjectId
-      const products = await Promise.all(
-        discount.products.map((productId: Types.ObjectId) => Product.findById(productId))
-      );
-    //   discount.products = products;
-    discount.products = products.filter((product): product is NonNullable<typeof product> => product !== null) as any;
-    }
-    if (discount.services !== 'all-services') {
-      // Ensure TypeScript understands that product IDs are of type ObjectId
-      const products = await Promise.all(
-        discount.services.map((serviceId: Types.ObjectId) => Product.findById(serviceId))
-      );
+  const discount = await Discount.findOne({ shop: shopId }).exec();
+
+  if (!discount) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You don't have any discount added",
+    );
+  }
+
+  // if (discount.products !== 'all-products') {
+  //   // Ensure TypeScript understands that product IDs are of type ObjectId
+  //   const products = await Promise.all(
+  //     discount.products.map((productId: Types.ObjectId) =>
+  //       Product.findById(productId),
+  //     ),
+  //   );
+  //   //   discount.products = products;
+  //   discount.products = products.filter(
+  //     (product): product is NonNullable<typeof product> => product !== null,
+  //   ) as any;
+  // }
+  if (discount.services !== 'all-services') {
+    const products = await Promise.all(
+      discount.services.map((serviceId: Types.ObjectId) =>
+        Product.findById(serviceId),
+      ),
+    );
     //   discount.products  = products;
-    discount.services = products.filter((service): service is NonNullable<typeof service> => service !== null) as any;
-    }
-  
-    return discount;
-  };
+    discount.services = products.filter(
+      (service): service is NonNullable<typeof service> => service !== null,
+    ) as any;
+  }
+
+  return discount;
+};
 const updateDiscount = async (
   shopId: string,
   id: string,
@@ -61,10 +70,14 @@ const updateDiscount = async (
       "You don't have any discount schedule",
     );
   }
-  const result = await Discount.findOneAndUpdate({ _id: id, shop: shopId }, payload, {
-    new: true,
-    runValidators: true,
-  });
+  const result = await Discount.findOneAndUpdate(
+    { _id: id, shop: shopId },
+    payload,
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
   return result;
 };
 

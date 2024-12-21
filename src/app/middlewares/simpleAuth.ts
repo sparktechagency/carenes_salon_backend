@@ -9,6 +9,7 @@ const simpleAuth = catchAsync(
 
     if (!token) {
       next();
+      return;
     }
 
     const decoded = jwt.verify(
