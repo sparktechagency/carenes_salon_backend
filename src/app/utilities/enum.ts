@@ -70,3 +70,8 @@ export const ENUM_PAYMENT_METHOD = {
   STRIPE: 'stripe',
   PAYPAL: 'paypal',
 };
+
+export const ENUM_NOTIFICATION_RECEIVER = {
+  ADMIN: 'admin',
+  SUPER_ADMIN: 'super-admin',
+};

@@ -45,7 +45,7 @@ const seeNotification = async (user: JwtPayload) => {
   let result;
   if (user?.role === USER_ROLE.superAdmin) {
     result = await Notification.updateMany(
-      { receiver: USER_ROLE.superAdmin },
+      { receiver: 'admin' },
       { seen: true },
       { runValidators: true, new: true },
     );
