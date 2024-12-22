@@ -330,7 +330,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
 
     // -------------------------------------
 
-    // update booking
+    // update booking--------------
     await Booking.findByIdAndUpdate(result._id, {
       paymentIntentId: paymentIntent.id,
     });
