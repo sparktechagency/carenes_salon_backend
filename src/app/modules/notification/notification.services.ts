@@ -6,7 +6,7 @@ import { USER_ROLE } from '../user/user.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
 import Notification from './notification.model';
 import getAdminNotificationCount from '../../helper/getAdminNotification';
-import getUnseenNotificationCount from '../../helper/getUnseenNotification';
+import getUserNotificationCount from '../../helper/getUnseenNotification';
 
 const getAllNotificationFromDB = async (
   query: Record<string, any>,
@@ -60,9 +60,7 @@ const seeNotification = async (user: JwtPayload) => {
       { runValidators: true, new: true },
     );
   }
-  const updatedNotificationCount = await getUnseenNotificationCount(
-    user?.userId,
-  );
+  const updatedNotificationCount = await getUserNotificationCount(user?.userId);
   //@ts-ignore
   global.io.to(user?.userId).emit('notifications', updatedNotificationCount);
   return result;
