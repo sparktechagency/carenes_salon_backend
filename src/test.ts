@@ -240,39 +240,6 @@
 //     res.status(201).json({ message: 'Booking successful', booking: newBooking });
 //   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // -00000000000000000000000000000000000000000
 // const dayjs = require('dayjs');
 // const utc = require('dayjs/plugin/utc');
@@ -329,7 +296,7 @@
 
 //     // Send notifications to the admin
 //     const adminUnseenNotificationCount = await getAdminNotificationCount();
-//     global.io.emit("admin-notifications", adminUnseenNotificationCount);
+//     global.io.emit("admin-notification", adminUnseenNotificationCount);
 
 //     return result;
 //   } catch (err) {
@@ -456,14 +423,7 @@
 // // Schedule to run the update function every second
 // setInterval(updateAuctionStatuses, 1000);
 
-
-
-
-
-
-// cvc format 
-
-
+// cvc format
 
 // Import necessary modules
 // const express = require('express');

@@ -51,7 +51,7 @@ const seeNotification = async (user: JwtPayload) => {
     );
     const adminUnseenNotificationCount = await getAdminNotificationCount();
     //@ts-ignore
-    global.io.emit('admin-notifications', adminUnseenNotificationCount);
+    global.io.emit('admin-notification', adminUnseenNotificationCount);
   }
   if (user?.role !== USER_ROLE.superAdmin) {
     result = await Notification.updateMany(
