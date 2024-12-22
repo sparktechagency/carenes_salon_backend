@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
@@ -22,6 +23,7 @@ import {
 import Stripe from 'stripe';
 import config from '../../config';
 import Notification from '../notification/notification.model';
+import getAdminNotificationCount from '../../helper/getAdminNotification';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 
 const updateClientProfile = async (
@@ -72,6 +74,16 @@ const addBankDetails = async (id: string, payload: Partial<IClient>) => {
     { ...payload, isProfileCompleted: true },
     { new: true, runValidators: true },
   );
+
+  const notificationData = {
+    title: 'New Shop Register!',
+    message: `A new shop is registered named ${shop.shopName}`,
+    receiver: 'admin',
+  };
+  await Notification.create(notificationData);
+  const unseenNotiCount = await getAdminNotificationCount();
+  //@ts-ignore
+  global.io.emit('admin-notifications');
   return result;
 };
 const getAllClientFromDB = async (query: Record<string, any>) => {

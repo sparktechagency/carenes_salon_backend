@@ -34,7 +34,6 @@ const initializeSocket = (server: HTTPServer) => {
       if (!currentUser) {
         return;
       }
-      // console.log(currentUser);
       const currentUserId = currentUser?._id.toString();
       // create a room-------------------------
       socket.join(currentUserId as string);
@@ -43,10 +42,8 @@ const initializeSocket = (server: HTTPServer) => {
       // send to the client
       io.emit('onlineUser', Array.from(onlineUser));
 
-      // message page
+      // message page-----------------
       socket.on('message-page', async (userId) => {
-        // console.log("online",onlineUser);
-        // console.log(userId);
         const userDetails = await getUserDetails(userId);
         if (userDetails) {
           const payload = {
