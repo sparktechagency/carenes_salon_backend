@@ -20,7 +20,7 @@ const getUserDetails = async (id: string) => {
     );
   } else if (user?.role == USER_ROLE.client) {
     userDetails = await Client.findOne({ user: user._id }).select(
-      'shopName shopImages',
+      'shopName shopImages user',
     );
   }
   return userDetails;
