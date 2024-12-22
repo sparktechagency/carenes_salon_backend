@@ -6,11 +6,11 @@ import Conversation from '../modules/conversation/conversation.model';
 import { getConversation } from '../helper/getConversation';
 import Message from '../modules/message/message.model';
 import { User } from '../modules/user/user.model';
-import { uploadFile } from '../helper/fileUploader';
-import util from 'util';
-import path from 'path';
+// import { uploadFile } from '../helper/fileUploader';
+// import util from 'util';
+// import path from 'path';
 // Promisify the upload middleware for use with Socket.IO
-const uploadMiddleware = util.promisify(uploadFile());
+// const uploadMiddleware = util.promisify(uploadFile());
 // let io: IOServer | null = null;
 let io: IOServer;
 
