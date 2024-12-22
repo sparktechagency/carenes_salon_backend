@@ -25,14 +25,15 @@ const initializeSocket = (server: HTTPServer) => {
     // online user
     const onlineUser = new Set();
     io.on('connection', async (socket: Socket) => {
-      console.log('A user connected:', socket.id);
-
       const userId = socket.handshake.query.id as string;
       if (!userId) {
         return;
       }
       // const currentUser = await getUserDetails(userId);
       const currentUser = await User.findById(userId);
+      if (!currentUser) {
+        return;
+      }
       // console.log(currentUser);
       const currentUserId = currentUser?._id.toString();
       // create a room-------------------------
@@ -91,6 +92,7 @@ const initializeSocket = (server: HTTPServer) => {
         // const videoUrl = req.files?.chat_video
         //   ? path.join('uploads/video/chat-video', req.files.chat_video[0].filename)
         //   : null;
+
         let conversation = await Conversation.findOne({
           $or: [
             { sender: data?.sender, receiver: data?.receiver },
@@ -111,13 +113,14 @@ const initializeSocket = (server: HTTPServer) => {
           msgByUserId: data?.msgByUserId,
         };
         const saveMessage = await Message.create(messageData);
-        const updateConversation = await Conversation.updateOne(
+        // update conversation
+        await Conversation.updateOne(
           { _id: conversation?._id },
           {
             $push: { messages: saveMessage?._id },
           },
         );
-        console.log(updateConversation);
+
         // get the conversation
         const getConversationMessage = await Conversation.findOne({
           $or: [
@@ -151,7 +154,6 @@ const initializeSocket = (server: HTTPServer) => {
       // sidebar
       socket.on('sidebar', async (crntUserId) => {
         const conversation = await getConversation(crntUserId);
-        // console.log(conversation);
         socket.emit('conversation', conversation);
       });
 
