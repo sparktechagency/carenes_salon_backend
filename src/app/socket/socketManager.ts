@@ -28,7 +28,7 @@ const initializeSocket = (server: HTTPServer) => {
       console.log('A user connected:', socket.id);
 
       const userId = socket.handshake.query.id as string;
-      if(!userId){
+      if (!userId) {
         return;
       }
       // const currentUser = await getUserDetails(userId);
@@ -50,7 +50,9 @@ const initializeSocket = (server: HTTPServer) => {
         if (userDetails) {
           const payload = {
             _id: userDetails._id,
-            name: userDetails.shopName || userDetails.firstName + ' ' + userDetails.lastName,
+            name:
+              userDetails.shopName ||
+              userDetails.firstName + ' ' + userDetails.lastName,
             email: userDetails.email,
             profile_pic: userDetails.profile_image || userDetails.shopImages[0],
             online: onlineUser.has(userId),
@@ -78,14 +80,14 @@ const initializeSocket = (server: HTTPServer) => {
       socket.on('new message', async (data) => {
         // const req = { files: data.files } as any; // Simulate an Express request
         // const res = {} as any; // Dummy response object
-    
+
         // // Use the upload middleware to handle files
         // await uploadMiddleware(req, res);
-    
+
         // const imageUrl = req.files?.chat_image
         //   ? path.join('uploads/images/chat-image', req.files.chat_image[0].filename)
         //   : null;
-    
+
         // const videoUrl = req.files?.chat_video
         //   ? path.join('uploads/video/chat-video', req.files.chat_video[0].filename)
         //   : null;
@@ -104,8 +106,8 @@ const initializeSocket = (server: HTTPServer) => {
         }
         const messageData = {
           text: data.text,
-          imageUrl: data.imageUrl || "",
-          videoUrl: data.videoUrl || "",
+          imageUrl: data.imageUrl || '',
+          videoUrl: data.videoUrl || '',
           msgByUserId: data?.msgByUserId,
         };
         const saveMessage = await Message.create(messageData);
