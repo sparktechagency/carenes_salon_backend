@@ -14,8 +14,6 @@ const app: Application = express();
 // for stripe
 import Stripe from 'stripe'; // Import Stripe using ES module syntax
 import config from './app/config';
-import auth from './app/middlewares/auth';
-import { USER_ROLE } from './app/modules/user/user.constant';
 import stripeServices from './app/modules/stripe/stripe.services';
 import paypal from './app/utilities/paypalConfig';
 const endpointSecret =

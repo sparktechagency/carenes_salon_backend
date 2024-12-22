@@ -167,6 +167,13 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   if (!shop) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Shop not found');
   }
+
+  if (!shop?.stripAccountId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'This shop not add payment method please try again letter or make appointment in other shop',
+    );
+  }
   // Fetch current date for discount comparison
   const now = new Date();
 
@@ -300,6 +307,8 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
         'Admin fee cannot be greater than or equal to the total amount.',
       );
     }
+    // console.log('shop', shop);
+    // console.log('stripe id', shop?.stripAccountId);
     // Create the payment intent
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInCents,
@@ -309,14 +318,14 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       },
       application_fee_amount: amountInCents * 0.2,
       transfer_data: {
-        destination: shop.stripAccountId as string,
+        destination: shop?.stripAccountId as string,
       },
       metadata: {
-        bookingId: result._id.toString(),
-        shopId: shop._id.toString(),
+        bookingId: result?._id.toString(),
+        shopId: shop?._id.toString(),
       },
 
-      on_behalf_of: shop.stripAccountId,
+      on_behalf_of: shop?.stripAccountId,
     });
 
     // -------------------------------------

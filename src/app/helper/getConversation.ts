@@ -55,39 +55,39 @@ export const getConversation = async (crntUserId: string) => {
     // });
     // console.log(conversation);
     // socket.emit('conversation', conversation);
-   
+
     const conversation = await Promise.all(
       currentUserConversation?.map(async (conv) => {
         const countUnseenMessage = conv.messages?.reduce((prev, curr) => {
           const msgByUserId = curr?.msgByUserId?.toString();
-    
+
           if (msgByUserId !== crntUserId) {
             return prev + (curr?.seen ? 0 : 1);
           } else {
             return prev;
           }
         }, 0);
-    
+
         const senderRole = conv.sender.role;
         const receiverRole = conv.receiver.role;
-    
+
         let convSender = null;
         let convReceiver = null;
-    
+
         if (senderRole === USER_ROLE.customer) {
           convSender = await Customer.findOne({ user: conv.sender._id });
         } else if (senderRole === USER_ROLE.client) {
           convSender = await Client.findOne({ user: conv.sender._id });
         }
-    
+
         if (receiverRole === USER_ROLE.customer) {
           convReceiver = await Customer.findOne({ user: conv.receiver._id });
         } else if (receiverRole === USER_ROLE.client) {
           convReceiver = await Client.findOne({ user: conv.receiver._id });
         }
-    
+
         // console.log(convSender, convReceiver);
-    
+
         return {
           _id: conv?._id,
           sender: convSender,
@@ -95,9 +95,9 @@ export const getConversation = async (crntUserId: string) => {
           unseenMsg: countUnseenMessage,
           lastMsg: conv?.messages[conv?.messages?.length - 1],
         };
-      })
+      }),
     );
-    
+
     return conversation;
   } else {
     return [];

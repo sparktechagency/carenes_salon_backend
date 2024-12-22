@@ -83,7 +83,7 @@ const addBankDetails = async (id: string, payload: Partial<IClient>) => {
   await Notification.create(notificationData);
   const unseenNotificationCount = await getAdminNotificationCount();
   //@ts-ignore
-  global.io.emit('admin-notification', unseenNotificationCount);
+  global?.io?.emit('admin-notification', unseenNotificationCount);
   return result;
 };
 const getAllClientFromDB = async (query: Record<string, any>) => {
