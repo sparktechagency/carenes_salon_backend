@@ -26,16 +26,16 @@ const createConnectedAccountAndOnboardingLink = async (
   }
   // Step 1: Create a connected account
   const account = await stripe.accounts.create({
-    type: 'express', // or 'express' based on your need
+    type: 'express',
     email: salonEmail,
     country: 'DE', // Example country
     capabilities: {
       card_payments: { requested: true }, // Enable card payments (includes Apple Pay / Google Pay)
-      transfers: { requested: true }, // Enable transfers to the account
+      transfers: { requested: true },
     },
   });
 
-  console.log('Connected Account Created:', account.id);
+  // console.log('Connected Account Created:', account.id);
 
   const updatedClientProfile = await Client.findByIdAndUpdate(
     profileId,
@@ -53,15 +53,14 @@ const createConnectedAccountAndOnboardingLink = async (
   // Step 2: Create the onboarding link
   const onboardingLink = await stripe.accountLinks.create({
     account: account.id,
-    refresh_url: 'https://yourapp.com/reauth', // URL to re-authenticate if the process fails
-    return_url: 'https://yourapp.com/success', // URL to go after successful setup
+    refresh_url: 'https://yourapp.com/reauth',
+    return_url: 'https://yourapp.com/success',
     type: 'account_onboarding',
   });
   return onboardingLink.url;
 };
 
 const updateClientStripeConnectionStatus = async (accountId: string) => {
-  // Validate the input parameters
   if (!accountId) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -104,7 +103,6 @@ const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
     await Client.findByIdAndUpdate(paymentIntent.metadata.shopId, {
       payOnShopChargeDueAmount: { $inc: -paymentIntent.amount / 100 },
     });
-    console.log('Pay admin fee success');
     const transactionData = {
       senderEntityId: paymentIntent.metadata.shopId,
       senderEntityType: 'Client',
@@ -121,7 +119,7 @@ const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
       throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
     }
 
-    console.log('Payment Intent succeeded:', paymentIntent.id);
+    // console.log('Payment Intent succeeded:', paymentIntent.id);
 
     booking.paymentStatus = ENUM_PAYMENT_STATUS.SUCCESS;
     await booking.save();
