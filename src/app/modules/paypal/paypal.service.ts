@@ -228,7 +228,6 @@ const createPayment = async (amount: number) => {
       throw new Error('Failed to retrieve approval URL');
     }
   } catch (error) {
-    console.error('Error creating PayPal order:', error);
     throw new Error('Failed to create PayPal payment');
   }
 };
