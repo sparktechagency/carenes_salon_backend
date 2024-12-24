@@ -5,10 +5,7 @@ const createStaffValidationSchema = z.object({
   body: z.object({
     name: z.string().min(1, { message: 'Name is required.' }),
     specialty: z.string().min(1, { message: 'Specialty is required.' }),
-    phoneNumber: z
-      .string()
-      .regex(/^\+?[1-9]\d{1,14}$/, { message: 'Invalid phone number format.' })
-      .min(1, { message: 'Phone number is required.' }),
+    phoneNumber: z.string().min(1, { message: 'Phone number is required.' }),
     email: z.string().email({ message: 'Invalid email format.' }),
     employmentStartDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
       message: 'Invalid date format for employment start date.',
