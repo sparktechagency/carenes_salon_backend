@@ -2,7 +2,7 @@
 import httpStatus from 'http-status';
 import AppError from '../../error/appError';
 import Cart from './cart.model';
-import Product from '../product/product.model';
+import { Product } from '../product/product.model';
 
 interface addToCartProps {
   costumerId: string;
@@ -36,8 +36,6 @@ const addToCart = async ({ costumerId, shopId, productId }: addToCartProps) => {
   );
 
   if (existingItem) {
-    // Update quantity if product exists
-    // existingItem.quantity += quantity;
     existingItem.quantity += 1;
   } else {
     const product = await Product.findById(productId).select('price');
