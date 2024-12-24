@@ -17,7 +17,7 @@ const handlePaypalPayment = async (amount: number) => {
   const request = new paypal.orders.OrdersCreateRequest();
   request.prefer('return=representation');
 
-  // Define the URLs for return and cancel
+  // Define the URLs for return and cancel----------------
   const returnUrl = 'https://your-site.com/payment-success';
   const cancelUrl = 'https://your-site.com/payment-cancel';
 
