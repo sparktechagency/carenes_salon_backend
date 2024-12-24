@@ -36,7 +36,7 @@ const staffSchema = new Schema<IStaff>(
   },
   { timestamps: true },
 );
-
+//
 const Staff = model('Staff', staffSchema);
 
 export default Staff;
