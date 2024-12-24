@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Client from '../modules/client/client.model';
 import Conversation from '../modules/conversation/conversation.model';
 import Customer from '../modules/customer/customer.model';
@@ -57,16 +58,19 @@ export const getConversation = async (crntUserId: string) => {
     // socket.emit('conversation', conversation);
 
     const conversation = await Promise.all(
-      currentUserConversation?.map(async (conv) => {
-        const countUnseenMessage = conv.messages?.reduce((prev, curr) => {
-          const msgByUserId = curr?.msgByUserId?.toString();
+      currentUserConversation?.map(async (conv: any) => {
+        const countUnseenMessage = conv.messages?.reduce(
+          (prev: any, curr: any) => {
+            const msgByUserId = curr?.msgByUserId?.toString();
 
-          if (msgByUserId !== crntUserId) {
-            return prev + (curr?.seen ? 0 : 1);
-          } else {
-            return prev;
-          }
-        }, 0);
+            if (msgByUserId !== crntUserId) {
+              return prev + (curr?.seen ? 0 : 1);
+            } else {
+              return prev;
+            }
+          },
+          0,
+        );
 
         const senderRole = conv.sender.role;
         const receiverRole = conv.receiver.role;
@@ -85,8 +89,6 @@ export const getConversation = async (crntUserId: string) => {
         } else if (receiverRole === USER_ROLE.client) {
           convReceiver = await Client.findOne({ user: conv.receiver._id });
         }
-
-        // console.log(convSender, convReceiver);
 
         return {
           _id: conv?._id,
