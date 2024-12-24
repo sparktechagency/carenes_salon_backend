@@ -83,22 +83,23 @@ const addBankDetails = async (id: string, payload: Partial<IClient>) => {
   await Notification.create(notificationData);
   const unseenNotificationCount = await getAdminNotificationCount();
   //@ts-ignore
+  // TODO: need to send notification
   global?.io?.emit('admin-notification', unseenNotificationCount);
   return result;
 };
 const getAllClientFromDB = async (query: Record<string, any>) => {
   // Step 1: Aggregate total sales for each shop
   const totalSales = await Booking.aggregate([
-    { $match: { status: 'completed' } }, // Only consider completed bookings
+    { $match: { status: 'completed' } },
     {
       $group: {
-        _id: '$shopId', // Group by shopId
-        totalSales: { $sum: '$totalPrice' }, // Sum the totalPrice for each shop
+        _id: '$shopId',
+        totalSales: { $sum: '$totalPrice' },
       },
     },
   ]);
 
-  // Step 2: Create a mapping for quick lookup of total sales by shopId
+  // Create a mapping for quick lookup of total sales by shopId
   const salesMap = totalSales.reduce(
     (acc, sale) => {
       acc[sale._id.toString()] = sale.totalSales;
@@ -107,7 +108,7 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
     {} as Record<string, number>,
   );
 
-  // Step 3: Build the client query with pagination, search, etc.
+  //Build the client query with pagination, search, etc.
   const ClientQuery = new QueryBuilder(
     Client.find().select(
       'shopName shopImages totalRating totalRatingCount phoneNumber email location status ',
@@ -123,18 +124,17 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
   const meta = await ClientQuery.countTotal();
   const clients = await ClientQuery.modelQuery;
 
-  // Step 4: Add totalSales to each client in the result
+  // Add totalSales to each client in the result
   const clientsWithSales = clients.map((client) => {
     const clientId = client._id.toString();
     return {
       ...client.toObject(),
-      totalSales: salesMap[clientId] || 0, // Add totalSales, defaulting to 0 if not found
+      totalSales: salesMap[clientId] || 0,
     };
   });
 
-  // Step 5: Sort by totalSales if requested
   if (query.sort === 'topSelling') {
-    clientsWithSales.sort((a, b) => b.totalSales - a.totalSales); // Sort descending by totalSales
+    clientsWithSales.sort((a, b) => b.totalSales - a.totalSales);
   }
 
   return {
@@ -192,119 +192,8 @@ const updateClientStatus = async (id: string, status: string) => {
   }
 };
 
-// const getNearbyShopWithTime = async (
-//   customerId: string,
-//   payload: {
-//     latitude: number;
-//     longitude: number;
-//   },
-//   query: Record<string, any>,
-// ) => {
-//   const matchStage: any[] = [
-//     ...(query.shopName
-//       ? [
-//           {
-//             $match: {
-//               shopName: { $regex: query.shopName, $options: 'i' },
-//             },
-//           },
-//         ]
-//       : []),
-//     ...(query.shopGenderCategory
-//       ? [
-//           {
-//             $match: {
-//               shopGenderCategory: query.shopGenderCategory,
-//             },
-//           },
-//         ]
-//       : []),
-//   ];
-
-//   // Base aggregation pipeline
-//   const pipeline: any[] = [
-//     {
-//       $geoNear: {
-//         near: {
-//           type: 'Point',
-//           coordinates: [payload.longitude, payload.latitude],
-//         },
-//         distanceField: 'distance', // This will store the distance in meters
-//         maxDistance: maxDistanceForShop, // Distance in meters
-//         spherical: true, // Use spherical geometry for Earth-like distances
-//       },
-//     },
-//     ...matchStage,
-//   ];
-//   if (query.shopCategoryId) {
-//     pipeline.push({
-//       $match: {
-//         // shopCategoryId: query.shopCategoryId,
-//         shopCategoryId: new mongoose.Types.ObjectId(query.shopCategoryId),
-//       },
-//     });
-//   }
-
-//   // Add estimated time calculation
-//   pipeline.push({
-//     $addFields: {
-//       estimatedTime: {
-//         $divide: ['$distance', customerSpeed], // distance / speed
-//       },
-//     },
-//   });
-
-//   const result = await Client.aggregate(pipeline);
-
-//   const bookmarks = await ShopBookmark.find({ customer: customerId }).select(
-//     'shop',
-//   );
-//   const bookmarkedShopIds = new Set(bookmarks.map((b) => b.shop.toString()));
-
-//   const enrichedResult = result.map((shop) => ({
-//     ...shop,
-//     isBookmark: bookmarkedShopIds.has(shop._id.toString()),
-//   }));
-
-//   return enrichedResult;
-// };
-
 // get single shop -----------------------------
-// const getSingleShop = async (id: string) => {
-//   const currentDay = getCurrentDay();
-//   const businessHour = await BusinessHour.findOne({entityId:id,day:currentDay}).select("day openTime closeTime isClose");
 
-//   // Find the client/shop by ID and populate the shopCategoryId
-//   const shop = await Client.findById(id).populate('shopCategoryId').select("shopImages shopName location totalRating totalRatingCount _id shopGenderCategory"); // Populate the shop category details
-
-//   // Check if the shop was found
-//   if (!shop) {
-//    throw new AppError(httpStatus.NOT_FOUND,'Shop not found');
-//   }
-
-//   // Fetch categories related to the shop's ID
-//   const categories = await Category.find({ shop: shop._id }).select("categoryName appointmentColor").exec();
-
-//   // For each category, fetch associated services
-//   const categoriesWithServices = await Promise.all(
-//     categories.map(async (category) => {
-//       const services = await Service.find({ category: category._id }).select("serviceName availableFor durationMinutes price").exec();
-//       return {
-//         ...category.toObject(), // Convert category document to plain object
-//         services: services.map(service => ({
-//           ...service.toObject(), // Convert service document to plain object
-//         })),
-//       };
-//     })
-//   );
-
-//   // Format the response as required
-//   return {
-//     ...shop.toObject(), // Convert shop document to plain object
-//     categories: categoriesWithServices,
-//     businessHour
-//   };
-// };
 const getNearbyShopWithTime = async (
   customerId: string,
   payload: {
@@ -345,14 +234,14 @@ const getNearbyShopWithTime = async (
           type: 'Point',
           coordinates: [payload.longitude, payload.latitude],
         },
-        distanceField: 'distance', // This will store the distance in meters
-        maxDistance: maxDistanceForShop, // Distance in meters
+        // This will store the distance in meters
+        distanceField: 'distance',
+        maxDistance: maxDistanceForShop,
         spherical: true, // Use spherical geometry for Earth-like distances
       },
     });
   }
 
-  // Add match stages for shopName and shopGenderCategory if provided
   pipeline.push(...matchStage);
 
   // Add filter for shopCategoryId if provided
@@ -386,10 +275,9 @@ const getNearbyShopWithTime = async (
       },
     });
 
-    // Sort the results by the computed ratingRatio in descending order
     pipeline.push({
       $sort: {
-        ratingRatio: -1, // -1 for descending order (top-rated to bottom-rated based on ratio)
+        ratingRatio: -1,
       },
     });
   }
@@ -569,10 +457,9 @@ const notifyAllShopsForAdminFee = async () => {
   await Notification.insertMany(notifications);
 
   for (const shop of shops) {
+    // TODO: need to send notification to all client
     console.log(`Notification sent to shop: ${shop.shopName}`);
   }
-
-  console.log('Notifications successfully sent to all eligible shops.');
 };
 
 const notifySingleShopsForAdminFee = async (shopId: string) => {
@@ -589,6 +476,7 @@ const notifySingleShopsForAdminFee = async (shopId: string) => {
   };
 
   await Notification.create(notificationData);
+  // TODO: need to send notification to client
   console.log(`Notification sent to shop: ${shop.shopName}`);
 };
 

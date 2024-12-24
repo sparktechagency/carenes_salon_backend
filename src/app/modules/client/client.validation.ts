@@ -92,10 +92,6 @@ const updateClientProfileValidationSchema = z.object({
       .optional(),
     shopGenderCategory: z.enum(['male', 'female']).optional(),
     shopImages: z.array(z.string()).optional(),
-    // phoneNumber: z
-    //   .string({ required_error: 'Phone number is required' })
-    //   .nonempty()
-    //   .optional(),
     location: locationSchema,
     profile_image: z.string().nonempty().optional(),
     bankName: z
