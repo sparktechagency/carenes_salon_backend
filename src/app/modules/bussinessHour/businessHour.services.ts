@@ -58,119 +58,6 @@ const getAvailableDates = async (staffId: string) => {
 
 // get available slots
 
-// const getAvailableTimeSlots = async (staffId: string, date: string) => {
-//   const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
-//   const staffHours = await BusinessHour.findOne({
-//     entityId: staffId,
-//     entityType: 'Staff',
-//     day,
-//   });
-//   console.log('staff hours', staffHours);
-//   if (!staffHours || staffHours.isClosed) return { availableSlots: [] };
-
-//   //   const openTime = new Date(`${date}T${staffHours.openTime}`);
-//   //   const closeTime = new Date(`${date}T${staffHours.closeTime}`);
-//   const openTime = new Date(`${date}T${staffHours.openTime}:00.000+06:00`);
-//   const closeTime = new Date(`${date}T${staffHours.closeTime}:00.000+06:00`);
-
-//   console.log('opentime', openTime);
-//   console.log('closetime', closeTime);
-//   const blockHours = await BlockHour.find({
-//     entityId: staffId,
-//     entityType: 'Staff',
-//     day,
-//   });
-//   const existingBookings = await Booking.find({
-//     staffId,
-//     startTime: { $gte: openTime, $lt: closeTime },
-//   });
-
-//   const availableSlots = [];
-//   let slotStart = new Date(openTime);
-
-//   while (slotStart < closeTime) {
-//     const slotEnd = new Date(slotStart);
-//     slotEnd.setMinutes(slotStart.getMinutes() + 30);
-
-//     const isBlocked = blockHours.some(
-//       (bh) =>
-//         slotStart.toISOString().slice(11, 16) >= bh.startTime &&
-//         slotStart.toISOString().slice(11, 16) < bh.endTime,
-//     );
-//     const isBooked = existingBookings.some(
-//       (b) => slotStart >= b?.startTime && slotEnd <= b?.endTime,
-//     );
-
-//     if (!isBlocked && !isBooked) {
-//       availableSlots.push(slotStart.toISOString().slice(11, 16));
-//     }
-//     slotStart = slotEnd;
-//   }
-
-//   return availableSlots;
-// };
-// const getAvailableTimeSlots = async (staffId: string, date: string) => {
-//     const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
-//     const staffHours = await BusinessHour.findOne({
-//       entityId: staffId,
-//       entityType: 'Staff',
-//       day,
-//     });
-
-//     console.log('staff hours', staffHours);
-
-//     // Check if staff hours are available or if staff is closed
-//     if (!staffHours || staffHours.isClosed) return { availableSlots: [] };
-
-//     // Create open and close time in local time
-//     const openTime = new Date(date);
-//     openTime.setHours(parseInt(staffHours.openTime.split(':')[0]), parseInt(staffHours.openTime.split(':')[1]), 0, 0);
-
-//     const closeTime = new Date(date);
-//     closeTime.setHours(parseInt(staffHours.closeTime.split(':')[0]), parseInt(staffHours.closeTime.split(':')[1]), 0, 0);
-
-//     console.log('opentime', openTime);
-//     console.log('closetime', closeTime);
-
-//     // Fetch blocked hours and existing bookings
-//     const blockHours = await BlockHour.find({
-//       entityId: staffId,
-//       entityType: 'Staff',
-//       day,
-//     });
-
-//     const existingBookings = await Booking.find({
-//       staffId,
-//       startTime: { $gte: openTime, $lt: closeTime },
-//     });
-
-//     const availableSlots = [];
-//     let slotStart = new Date(openTime);
-
-//     // Generate available time slots in 30-minute intervals
-//     while (slotStart < closeTime) {
-//       const slotEnd = new Date(slotStart);
-//       slotEnd.setMinutes(slotStart.getMinutes() + 30);
-
-//       const isBlocked = blockHours.some(
-//         (bh) =>
-//           slotStart.toISOString().slice(11, 16) >= bh.startTime &&
-//           slotStart.toISOString().slice(11, 16) < bh.endTime,
-//       );
-
-//       const isBooked = existingBookings.some(
-//         (b) => slotStart >= b?.startTime && slotEnd <= b?.endTime,
-//       );
-
-//       if (!isBlocked && !isBooked) {
-//         availableSlots.push(slotStart.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-//       }
-//       slotStart = slotEnd;
-//     }
-
-//     return availableSlots;
-//   };
-
 const getAvailableTimeSlots = async (staffId: string, date: string) => {
   const staff = await Staff.findById(staffId);
   // const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
@@ -250,11 +137,8 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
         }) < bh.endTime,
     );
 
-    // console.log("slot start", slotStart.toISOString().slice(11, 16));
-    // console.log("slot end",  slotEnd.toISOString().slice(11, 16))
-    // console.log("is blocked",isBlocked);
     const isBooked = existingBookings.some(
-      (b) => slotStart < b.endTime && slotEnd > b.startTime, // This condition checks for any overlap
+      (b) => slotStart < b.endTime && slotEnd > b.startTime,
     );
 
     // Push slot information with isBooked status
