@@ -77,9 +77,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
   // Check for conflicting bookings
   const existingBookings = await Booking.find({
     staffId: payload.staffId,
-    $and: [
-      { startTime: { $lt: endDate }, endTime: { $gt: startDate } }, // Overlapping existing booking
-    ],
+    $and: [{ startTime: { $lt: endDate }, endTime: { $gt: startDate } }],
   });
 
   if (existingBookings.length > 0) {
@@ -174,7 +172,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       'This shop not add payment method please try again letter or make appointment in other shop',
     );
   }
-  // Fetch current date for discount comparison
+
   const now = new Date();
 
   // Fetch services with their applicable prices-----------------------
@@ -183,7 +181,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       const service = await Service.findById(serviceId).select('price');
       if (!service) throw new Error(`Service with ID ${serviceId} not found`);
 
-      // Check for an active discount
+      // Check for an active discount------
       const discount = await Discount.findOne({
         shop: shopId,
         discountStartDate: { $lte: now },
@@ -191,7 +189,6 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
         $or: [{ services: 'all-services' }, { services: service._id }],
       });
 
-      // Calculate discount price if discount applies; otherwise, use original price
       const price = discount
         ? service.price - (service.price * discount.discountPercentage) / 100
         : service.price;
@@ -216,14 +213,12 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   const endDate = new Date(startDate);
   endDate.setMinutes(startDate.getMinutes() + totalDuration);
 
-  // Check for conflicting bookings
+  // Check for conflicting bookings----------------
   const existingBookings = await Booking.find({
     staffId: payload.staffId,
-    $and: [
-      { startTime: { $lt: endDate }, endTime: { $gt: startDate } }, // Overlapping existing booking
-    ],
+    $and: [{ startTime: { $lt: endDate }, endTime: { $gt: startDate } }],
   });
-  //check operation
+  //check operation-------------
   if (existingBookings.length > 0) {
     throw new AppError(
       httpStatus.CONFLICT,
@@ -298,7 +293,6 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
 
     //=============================
 
-    // console.log('client accoutid', shop.stripAccountId);
     const amount = totalPrice;
     const amountInCents = totalPrice * 100;
     const adminFee = Math.round(totalPrice * 0.05); // 5% of the amount
@@ -307,8 +301,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
         'Admin fee cannot be greater than or equal to the total amount.',
       );
     }
-    // console.log('shop', shop);
-    // console.log('stripe id', shop?.stripAccountId);
+
     // Create the payment intent
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInCents,
@@ -695,10 +688,6 @@ const getSalesAndServiceData = async (
   // The match query dynamically based on whether staffId is provided
   const matchQuery: any = {
     shopId: new mongoose.Types.ObjectId(shopId),
-    // $or: [
-    //   { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS },
-    //   { paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP },
-    // ],
     $or: [
       { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS, status: 'booked' },
       { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS, status: 'completed' },
@@ -799,7 +788,7 @@ const getSalesAndServiceData = async (
     },
   ]);
 
-  // Extract data from the aggregation result
+  // Extract data from the aggregation result--------
   const totalSales = result[0]?.totalSales?.totalSales || 0;
   const serviceDetails = result[0]?.serviceDetails || [];
 
