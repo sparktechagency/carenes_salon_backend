@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import paypal from '@paypal/checkout-server-sdk';
 import paypalClient from '../../utilities/paypalClient';
-import * as payoutsSdk from '@paypal/payouts-sdk'; // Payouts SDK
+import * as payoutsSdk from '@paypal/payouts-sdk';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
 import Booking from '../booking/booking.model';
 import payoutsClient from '../../utilities/payoutClient';
 
 interface CapturePayload {
-  token: string; // Token from PayPal success URL
-  payerId: string; // Payer ID from PayPal success URL
+  token: string;
+  payerId: string;
   salonOwnerEmail: string;
 }
 
@@ -40,19 +40,16 @@ const handlePaypalPayment = async (amount: number) => {
   try {
     const order = await paypalClient.execute(request);
     const orderId = order.result.id;
-    // Find the approval_url from the response
     const approvalUrl = order.result.links.find(
       (link: { rel: string; href: string }) => link.rel === 'approve',
     )?.href;
 
     if (approvalUrl) {
-      // Return the approval URL to the frontend
       return { approvalUrl, orderId: orderId };
     } else {
       throw new Error('Failed to retrieve approval URL');
     }
   } catch (error) {
-    console.error('Error creating PayPal order:', error);
     throw new Error('Failed to create PayPal payment');
   }
 };
