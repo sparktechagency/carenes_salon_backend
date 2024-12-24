@@ -12,7 +12,6 @@ import Client from '../client/client.model';
 import Customer from '../customer/customer.model';
 import { USER_ROLE } from '../user/user.constant';
 import Notification from '../notification/notification.model';
-// import { RescheduleRequest } from './booking_reschedule.model';
 
 const createRescheduleRequest = async (
   userData: JwtPayload,
