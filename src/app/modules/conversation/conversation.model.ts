@@ -1,7 +1,6 @@
 import mongoose, { model, Schema } from 'mongoose';
 import { IConversation } from './conversation.interface';
 
-
 const conversationSchema = new Schema<IConversation>(
   {
     sender: {

@@ -3,26 +3,7 @@ import Client from '../client/client.model';
 import Customer from '../customer/customer.model';
 import Service from '../service/service.model';
 
-// get dashboard meta data
-// const getDashboardMetaData = async () => {
-//   const totalSales = 1000;
-//   const profitOnSales = 400;
-//   const totalService = await Service.countDocuments();
-//   const totalProduct = 1000;
-//   const totalCustomer = await Customer.countDocuments();
-
-//   return {
-//     totalSales,
-//     profitOnSales,
-//     totalService,
-//     totalProduct,
-//     totalCustomer,
-//   };
-// };
-
 const getDashboardMetaData = async () => {
-  // const totalSales = 1000;
-  // const profitOnSales = 400;
   const totalService = await Service.countDocuments();
   const totalCustomer = await Customer.countDocuments();
   const totalClient = await Client.countDocuments();
@@ -37,7 +18,6 @@ const getDashboardMetaData = async () => {
     new Date().getMonth() - 1,
     1,
   );
-  
 
   // Customer -----------
   const currentMonthCustomerCount = await Customer.countDocuments({
@@ -167,49 +147,6 @@ const getDashboardMetaData = async () => {
   };
 };
 
-// const calculateSalesAndProfit = async () => {
-//   const bookings = await Booking.aggregate([
-//     {
-//       $match: {
-//         paymentStatus: { $in: ['success', 'pay-on-shop'] },
-//       },
-//     },
-//     {
-//       $project: {
-//         totalPrice: 1,
-//         bookingPaymentType: 1,
-//         profit: {
-//           $cond: [
-//             { $eq: ['$bookingPaymentType', 'online'] },
-//             { $multiply: ['$totalPrice', 0.05] }, // 5% profit for online
-//             // { $multiply: ["$totalPrice", 0.1] }, // 0.1 profit for pay-on-shop
-//             0.1,
-//           ],
-//         },
-//       },
-//     },
-//     {
-//       $group: {
-//         _id: null,
-//         totalSales: { $sum: '$totalPrice' }, // Total sales from all bookings
-//         totalProfit: { $sum: '$profit' }, // Total profit from calculated profits
-//       },
-//     },
-//   ]);
-
-//   if (!bookings.length) {
-//     return {
-//       totalSales: 0,
-//       totalProfit: 0,
-//     };
-//   }
-
-//   const { totalSales, totalProfit } = bookings[0];
-//   return {
-//     totalSales,
-//     totalProfit,
-//   };
-// };
 const calculateSalesAndProfit = async () => {
   const currentMonthStart = new Date();
   currentMonthStart.setDate(1);
@@ -311,8 +248,6 @@ const calculateSalesAndProfit = async () => {
   };
 };
 
-
-
 const getMonthlySalesAndProfitByYear = async (year: number) => {
   // Calculate start and end dates for the given year
   const startDate = new Date(year, 0, 1); // January 1st of the given year
@@ -352,14 +287,27 @@ const getMonthlySalesAndProfitByYear = async (year: number) => {
 
   // Map month numbers to names
   const monthNames = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   // Fill in missing months with default values
   const fullYearData = Array.from({ length: 12 }, (_, i) => {
-    const monthIndex = i + 1; // Months are 1-based in MongoDB
-    const monthData = data.find(d => d._id.month === monthIndex) || { totalSales: 0, totalProfit: 0 };
+    const monthIndex = i + 1;
+    const monthData = data.find((d) => d._id.month === monthIndex) || {
+      totalSales: 0,
+      totalProfit: 0,
+    };
     return {
       month: monthNames[i],
       totalSales: monthData.totalSales,
@@ -368,20 +316,22 @@ const getMonthlySalesAndProfitByYear = async (year: number) => {
   });
 
   // Calculate total sales for the entire year
-  const totalYearlySales = fullYearData.reduce((sum, monthData) => sum + monthData.totalSales, 0);
+  const totalYearlySales = fullYearData.reduce(
+    (sum, monthData) => sum + monthData.totalSales,
+    0,
+  );
 
   return {
     success: true,
     message: `Sales chart data retrieved successfully for ${year}`,
     data: fullYearData,
-    totalSales: totalYearlySales, // Include total sales for the year
+    totalSales: totalYearlySales,
   };
 };
 
-
 const metaServices = {
   getDashboardMetaData,
-  getMonthlySalesAndProfitByYear
+  getMonthlySalesAndProfitByYear,
 };
 
 export default metaServices;

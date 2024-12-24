@@ -8,22 +8,21 @@ export interface ILocation {
 export interface ICustomer {
   user: Types.ObjectId;
   firstName: string;
-  lastName:string;
+  lastName: string;
   email: string;
-  city:string;
-  country:string;
-  gender:"male"|"female";
-  age:number;
+  city: string;
+  country: string;
+  gender: 'male' | 'female';
+  age: number;
   // location: ILocation;
   profile_image: string;
-  isProfileComplete:boolean;
+  isProfileComplete: boolean;
   isDeleted: boolean;
 }
 
-
 export interface ICompleteCustomer {
-  phoneNumber:string;
-  gender:(typeof ENUM_GENDER)[keyof typeof ENUM_GENDER],
-  city:string,
-  country:string;
+  phoneNumber: string;
+  gender: (typeof ENUM_GENDER)[keyof typeof ENUM_GENDER];
+  city: string;
+  country: string;
 }

@@ -2,8 +2,7 @@ import catchAsync from '../../utilities/catchasync';
 import sendResponse from '../../utilities/sendResponse';
 import metaServices from './meta.services';
 
-
-const getDashboardMetaData = catchAsync(async(req,res)=>{
+const getDashboardMetaData = catchAsync(async (req, res) => {
   const result = await metaServices.getDashboardMetaData();
   sendResponse(res, {
     statusCode: 200,
@@ -11,14 +10,11 @@ const getDashboardMetaData = catchAsync(async(req,res)=>{
     message: 'Dashboard data retrieved successfully',
     data: result,
   });
-})
-
-
-
+});
 
 const getMonthlySalesAndProfitChartData = catchAsync(async (req, res) => {
   const result = await metaServices.getMonthlySalesAndProfitByYear(
-    Number(req.query?.year)
+    Number(req.query?.year),
   );
 
   sendResponse(res, {
@@ -31,7 +27,7 @@ const getMonthlySalesAndProfitChartData = catchAsync(async (req, res) => {
 
 const metaController = {
   getDashboardMetaData,
-  getMonthlySalesAndProfitChartData
+  getMonthlySalesAndProfitChartData,
 };
 
 export default metaController;
