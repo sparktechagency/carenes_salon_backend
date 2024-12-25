@@ -9,7 +9,6 @@ import cookieParser from 'cookie-parser';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import router from './app/routes';
 import notFound from './app/middlewares/notFound';
-import createConnectedAccountAndOnboardingLink from './app/helper/connectStripe';
 const app: Application = express();
 // for stripe
 import Stripe from 'stripe'; // Import Stripe using ES module syntax
