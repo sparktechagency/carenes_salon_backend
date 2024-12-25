@@ -17,7 +17,6 @@ const handlePaypalPayment = async (amount: number) => {
   const request = new paypal.orders.OrdersCreateRequest();
   request.prefer('return=representation');
 
-  // Define the URLs for return and cancel----------------
   const returnUrl = 'https://your-site.com/payment-success';
   const cancelUrl = 'https://your-site.com/payment-cancel';
 
@@ -32,8 +31,8 @@ const handlePaypalPayment = async (amount: number) => {
       },
     ],
     application_context: {
-      return_url: returnUrl, // Specify return URL
-      cancel_url: cancelUrl, // Specify cancel URL
+      return_url: returnUrl,
+      cancel_url: cancelUrl,
     },
   });
 
@@ -53,7 +52,6 @@ const handlePaypalPayment = async (amount: number) => {
     throw new Error('Failed to create PayPal payment');
   }
 };
-// Helper function to get order details using the token
 
 const capturePaymentForAppointment = async (payload: CapturePayload) => {
   const { token } = payload;
@@ -91,7 +89,7 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
       throw new AppError(httpStatus.NOT_FOUND, 'Booking not found.');
     }
 
-    // Step 3: Process payout to the salon owner
+    // process payouts
     await processPayout(salonAmount, 'sb-bo47ij34323369@business.example.com');
     return {
       captureId: captureResponse.result.id,
@@ -99,12 +97,10 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
       adminFee,
     };
   } catch (captureError) {
-    console.error('Error capturing payment:', captureError);
     throw new Error('Failed to capture payment.');
   }
 };
 
-// Helper function to fetch order details using the token
 const getOrderDetails = async (token: string) => {
   const orderRequest = new paypal.orders.OrdersGetRequest(token);
 
@@ -131,7 +127,7 @@ const processPayout = async (salonAmount: number, salonOwnerEmail: string) => {
           value: salonAmount.toFixed(2),
           currency: 'USD', // Adjust currency if needed
         },
-        receiver: salonOwnerEmail, // Dynamic recipient email
+        receiver: salonOwnerEmail,
         note: 'Payment for your appointment',
       },
     ],
@@ -142,7 +138,6 @@ const processPayout = async (salonAmount: number, salonOwnerEmail: string) => {
     console.log('Payout successful:', payoutResponse.result);
     return payoutResponse.result;
   } catch (error) {
-    console.error('Error processing payout:', error);
     throw new AppError(
       httpStatus.INTERNAL_SERVER_ERROR,
       'Failed to process payout to salon owner.',
@@ -172,7 +167,6 @@ const refundPayment = async (payload: RefundPayload) => {
     console.log('Refund successful:', response.result);
     return response.result;
   } catch (error) {
-    console.error('Error processing refund:', error);
     throw new Error('Failed to process refund');
   }
 };
