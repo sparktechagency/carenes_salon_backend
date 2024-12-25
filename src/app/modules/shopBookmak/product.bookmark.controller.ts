@@ -3,20 +3,6 @@ import catchAsync from '../../utilities/catchasync';
 import sendResponse from '../../utilities/sendResponse';
 import shopBookmarkServices from './shop.bookmark.services';
 
-// const createBookmark = catchAsync(async (req, res) => {
-//   const result = await shopBookmarkServices.createBookmarkIntoDB(
-//     req?.body?.shopId,
-//     req?.user?.profileId,
-//   );
-
-//   sendResponse(res, {
-//     statusCode: 201,
-//     success: true,
-//     message: 'Bookmark created successfully',
-//     data: result,
-//   });
-// });
-
 const shopBookmarkAddDelete = catchAsync(async (req, res) => {
   const result = await shopBookmarkServices.shopBookmarkAddAndDelete(
     req.user.profileId,

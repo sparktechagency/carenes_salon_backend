@@ -5,11 +5,6 @@ import shopBookmarkController from './product.bookmark.controller';
 
 const router = express.Router();
 
-// router.post(
-//   '/create-shop-bookmark',
-//   auth(USER_ROLE.customer),
-//   shopBookmarkController.createBookmark,
-// );
 router.post(
   '/add-delete-shop-bookmark/:id',
   auth(USER_ROLE.customer),
