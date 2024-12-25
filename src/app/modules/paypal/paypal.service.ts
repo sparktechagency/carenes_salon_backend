@@ -90,7 +90,11 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
     }
 
     // process payouts
-    await processPayout(salonAmount, 'sb-bo47ij34323369@business.example.com');
+    console.log('styart process transfer');
+    await processPayout(salonAmount, 'sb-h6qip32749974@personal.example.com');
+
+    // await processTransfer(salonAmount, 'sb-h6qip32749974@personal.example.com');
+    // console.log('successfull transfer');
     return {
       captureId: captureResponse.result.id,
       salonAmount,
@@ -112,6 +116,89 @@ const getOrderDetails = async (token: string) => {
   }
 };
 
+// const processPayout = async (salonAmount: number, salonOwnerEmail: string) => {
+//   const payoutRequest = new payoutsSdk.payouts.PayoutsPostRequest();
+//   payoutRequest.requestBody({
+//     sender_batch_header: {
+//       sender_batch_id: `Payout-${Date.now()}`,
+//       email_subject: 'You have received a payment!',
+//       email_message: 'Thank you for using our service!',
+//     },
+//     items: [
+//       {
+//         recipient_type: 'EMAIL',
+//         amount: {
+//           value: salonAmount.toFixed(2),
+//           currency: 'USD', // Adjust currency if needed
+//         },
+//         receiver: salonOwnerEmail,
+//         note: 'Payment for your appointment',
+//       },
+//     ],
+//   });
+
+//   try {
+//     const payoutResponse = await payoutsClient.execute(payoutRequest);
+//     console.log('Payout successful:', payoutResponse.result);
+//     return payoutResponse.result;
+//   } catch (error) {
+//     throw new AppError(
+//       httpStatus.INTERNAL_SERVER_ERROR,
+//       'Failed to process payout to salon owner.',
+//     );
+//   }
+// };
+// const processTransfer = async (
+//   salonAmount: number,
+//   salonOwnerEmail: string,
+// ) => {
+//   // PayPal Transfer (Send Money) request
+//   const request = new paypal.payment.PaymentCreateRequest();
+//   request.prefer('return=representation');
+
+//   request.requestBody({
+//     intent: 'sale', // Intent to complete a sale
+//     payer: {
+//       payment_method: 'paypal', // PayPal payment method
+//     },
+//     transactions: [
+//       {
+//         amount: {
+//           total: salonAmount.toFixed(2), // Total amount for the transaction
+//           currency: 'USD', // Currency for the transaction
+//         },
+//         payee: {
+//           email: salonOwnerEmail, // Payee's email address
+//         },
+//         description: 'Payment for appointment', // Description of the transaction
+//       },
+//     ],
+//     redirect_urls: {
+//       return_url: 'https://your-site.com/payment-success', // Where to redirect on success
+//       cancel_url: 'https://your-site.com/payment-cancel', // Where to redirect on failure
+//     },
+//   });
+
+//   try {
+//     // Execute the payment request
+//     const paymentResponse = await paypalClient.execute(request);
+
+//     // Check if the payment was successful
+//     if (paymentResponse.result.state === 'approved') {
+//       console.log('Payment transfer successful:', paymentResponse.result);
+//       return paymentResponse.result;
+//     } else {
+//       throw new Error('Payment not approved');
+//     }
+//   } catch (error) {
+//     console.error('Failed to process payment transfer:', error);
+//     throw new AppError(
+//       httpStatus.INTERNAL_SERVER_ERROR,
+//       'Failed to process payment transfer.',
+//     );
+//   }
+// };
+
 const processPayout = async (salonAmount: number, salonOwnerEmail: string) => {
   const payoutRequest = new payoutsSdk.payouts.PayoutsPostRequest();
   payoutRequest.requestBody({
@@ -125,7 +212,7 @@ const processPayout = async (salonAmount: number, salonOwnerEmail: string) => {
         recipient_type: 'EMAIL',
         amount: {
           value: salonAmount.toFixed(2),
-          currency: 'USD', // Adjust currency if needed
+          currency: 'USD',
         },
         receiver: salonOwnerEmail,
         note: 'Payment for your appointment',
@@ -138,6 +225,7 @@ const processPayout = async (salonAmount: number, salonOwnerEmail: string) => {
     console.log('Payout successful:', payoutResponse.result);
     return payoutResponse.result;
   } catch (error) {
+    console.error('Failed to process payout:', error);
     throw new AppError(
       httpStatus.INTERNAL_SERVER_ERROR,
       'Failed to process payout to salon owner.',

@@ -166,7 +166,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'Shop not found');
   }
 
-  if (!shop?.stripAccountId) {
+  if (payload.paymentMethod === 'stripe' && !shop?.stripAccountId) {
     throw new AppError(
       httpStatus.FORBIDDEN,
       'This shop not add payment method please try again letter or make appointment in other shop',
