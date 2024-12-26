@@ -19,7 +19,7 @@ const initializeSocket = (server: HTTPServer) => {
     io = new IOServer(server, {
       pingTimeout: 60000,
       cors: {
-        origin: ['http://localhost:3000'],
+        origin: ['http://localhost:3000', 'http://192.168.10.25:7585'],
       },
     });
     // online user

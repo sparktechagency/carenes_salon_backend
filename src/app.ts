@@ -95,7 +95,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://192.168.10.25:7585',
+    ],
     credentials: true,
   }),
 );

@@ -63,7 +63,6 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
     const captureRequest = new paypal.orders.OrdersCaptureRequest(orderId);
     captureRequest.requestBody({});
     const captureResponse = await paypalClient.execute(captureRequest);
-
     if (
       !captureResponse.result.purchase_units[0].payments.captures[0].amount
         .value

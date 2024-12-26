@@ -105,7 +105,7 @@ const registerClient = async (
       role: USER_ROLE.client,
       isActive: false,
       verifyCode,
-      codeExpireIn: new Date(Date.now() + 5 * 60000),
+      codeExpireIn: new Date(Date.now() + 2 * 60000),
     };
 
     const user = await User.create([userData], { session });
@@ -294,7 +294,6 @@ cron.schedule('*/2 * * * *', async () => {
   try {
     const now = new Date();
 
-    // Find unverified users whose expiration time has passed
     const expiredUsers = await User.find({
       isVerified: false,
       codeExpireIn: { $lte: now },
