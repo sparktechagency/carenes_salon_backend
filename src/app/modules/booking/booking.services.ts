@@ -519,7 +519,6 @@ const acceptCancelBookingRequest = async (
       }
     }
   } else if (userData?.role === USER_ROLE.client) {
-    // Create the refund
     //TODO: need to handle based on who cancel the booking and when the booking is canceled
     console.log('hello client');
     const currentTime = notification?.createdAt;
