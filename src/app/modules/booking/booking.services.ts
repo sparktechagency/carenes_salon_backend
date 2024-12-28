@@ -528,30 +528,34 @@ const acceptCancelBookingRequest = async (
     if (timeDifferenceInHours >= 24) {
       refundPercentage = 100;
     }
-    const refundAmountInCents = booking.totalPrice * refundPercentage;
-    try {
-      const refund = await stripe.refunds.create({
-        payment_intent: booking.paymentIntentId,
-        amount: refundAmountInCents,
-      });
 
-      return refund;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error('Refund failed:', error.message);
+    // for stripe payment-----------------
+    if (booking?.paymentMethod === 'stripe') {
+      const refundAmountInCents = booking.totalPrice * refundPercentage;
+      try {
+        const refund = await stripe.refunds.create({
+          payment_intent: booking.paymentIntentId,
+          amount: refundAmountInCents,
+        });
 
-        if (error instanceof Stripe.Stripe) {
-          console.log('Stripe error:', error.message);
+        return refund;
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error('Refund failed:', error.message);
+
+          if (error instanceof Stripe.Stripe) {
+            console.log('Stripe error:', error.message);
+          } else {
+            console.log('Unexpected error:', error.message);
+          }
         } else {
-          console.log('Unexpected error:', error.message);
+          console.error('Unexpected error type:', error);
         }
-      } else {
-        console.error('Unexpected error type:', error);
+        throw new AppError(
+          httpStatus.SERVICE_UNAVAILABLE,
+          'Something went wrong when payment occur , please try again or contact with support',
+        );
       }
-      throw new AppError(
-        httpStatus.SERVICE_UNAVAILABLE,
-        'Something went wrong when payment occur , please try again or contact with support',
-      );
     }
   }
 
