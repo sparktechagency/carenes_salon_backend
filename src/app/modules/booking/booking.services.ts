@@ -519,19 +519,14 @@ const acceptCancelBookingRequest = async (
       }
     }
   } else if (userData?.role === USER_ROLE.client) {
-    //TODO: need to handle based on who cancel the booking and when the booking is canceled
-    console.log('hello client');
     const currentTime = notification?.createdAt;
     const startTime = new Date(booking.startTime);
 
     const timeDifferenceInMs = startTime.getTime() - currentTime.getTime();
     const timeDifferenceInHours = timeDifferenceInMs / (1000 * 60 * 60);
-    console.log('time difference', timeDifferenceInHours);
-    // Calculate refund amount
     let refundPercentage = 50;
     if (timeDifferenceInHours >= 24) {
       refundPercentage = 100;
-      console.log('over 24 hours');
     }
     const refundAmountInCents = booking.totalPrice * refundPercentage;
     try {
@@ -540,7 +535,6 @@ const acceptCancelBookingRequest = async (
         amount: refundAmountInCents,
       });
 
-      console.log('Refund successful:', refund);
       return refund;
     } catch (error: unknown) {
       if (error instanceof Error) {
