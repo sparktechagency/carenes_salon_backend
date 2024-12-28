@@ -490,6 +490,7 @@ const acceptCancelBookingRequest = async (
   // Create the refund
   //TODO: need to handle based on who cancel the booking and when the booking is canceled
   if (userData?.role === USER_ROLE.customer) {
+    // for stripe payment -----------------------------------
     if (booking?.paymentMethod === 'stripe') {
       const refundAmountInCents = booking.totalPrice * 100;
       try {
@@ -498,7 +499,6 @@ const acceptCancelBookingRequest = async (
           amount: refundAmountInCents,
         });
 
-        console.log('Refund successful:', refund);
         return refund;
       } catch (error: unknown) {
         if (error instanceof Error) {
