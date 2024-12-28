@@ -393,6 +393,20 @@ const createCancelBookingRequest = async (
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
+  // Get the current time and booking start time
+  const currentTime = new Date();
+  const startTime = new Date(booking.startTime);
+
+  // Calculate the difference in hours
+  const timeDifferenceInMs = startTime.getTime() - currentTime.getTime();
+  const timeDifferenceInHours = timeDifferenceInMs / (1000 * 60 * 60);
+
+  if (timeDifferenceInHours < 2) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'You can only send a cancellation request at least 2 hours before the booking start time.',
+    );
+  }
   const shop = await Client.findById(booking.shopId).select(
     'shopName shopImages',
   );
@@ -475,37 +489,52 @@ const acceptCancelBookingRequest = async (
 
   // Create the refund
   //TODO: need to handle based on who cancel the booking and when the booking is canceled
-  if (USER_ROLE.customer) {
-    const refundAmountInCents = booking.totalPrice * 100;
-    try {
-      const refund = await stripe.refunds.create({
-        payment_intent: booking.paymentIntentId,
-        amount: refundAmountInCents,
-      });
+  if (userData?.role === USER_ROLE.customer) {
+    if (booking?.paymentMethod === 'stripe') {
+      const refundAmountInCents = booking.totalPrice * 100;
+      try {
+        const refund = await stripe.refunds.create({
+          payment_intent: booking.paymentIntentId,
+          amount: refundAmountInCents,
+        });
 
-      console.log('Refund successful:', refund);
-      return refund;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error('Refund failed:', error.message);
+        console.log('Refund successful:', refund);
+        return refund;
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error('Refund failed:', error.message);
 
-        if (error instanceof Stripe.Stripe) {
-          console.log('Stripe error:', error.message);
+          if (error instanceof Stripe.Stripe) {
+            console.log('Stripe error:', error.message);
+          } else {
+            console.log('Unexpected error:', error.message);
+          }
         } else {
-          console.log('Unexpected error:', error.message);
+          console.error('Unexpected error type:', error);
         }
-      } else {
-        console.error('Unexpected error type:', error);
+        throw new AppError(
+          httpStatus.SERVICE_UNAVAILABLE,
+          'Something went wrong when payment occur , please try again or contact with support',
+        );
       }
-      throw new AppError(
-        httpStatus.SERVICE_UNAVAILABLE,
-        'Something went wrong when payment occur , please try again or contact with support',
-      );
     }
-  } else if (USER_ROLE.client) {
+  } else if (userData?.role === USER_ROLE.client) {
     // Create the refund
     //TODO: need to handle based on who cancel the booking and when the booking is canceled
-    const refundAmountInCents = booking.totalPrice * 100;
+    console.log('hello client');
+    const currentTime = notification?.createdAt;
+    const startTime = new Date(booking.startTime);
+
+    const timeDifferenceInMs = startTime.getTime() - currentTime.getTime();
+    const timeDifferenceInHours = timeDifferenceInMs / (1000 * 60 * 60);
+    console.log('time difference', timeDifferenceInHours);
+    // Calculate refund amount
+    let refundPercentage = 50;
+    if (timeDifferenceInHours >= 24) {
+      refundPercentage = 100;
+      console.log('over 24 hours');
+    }
+    const refundAmountInCents = booking.totalPrice * refundPercentage;
     try {
       const refund = await stripe.refunds.create({
         payment_intent: booking.paymentIntentId,

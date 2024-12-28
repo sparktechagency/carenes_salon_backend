@@ -11,4 +11,5 @@ export interface INotification {
   rescheduleId: Types.ObjectId;
   rescheduleDateTime: Date;
   bookingId: Types.ObjectId;
+  createdAt: Date;
 }
