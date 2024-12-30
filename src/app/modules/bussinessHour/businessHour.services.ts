@@ -159,7 +159,6 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
 };
 
 const getBusinessHour = async (entityId: string, entityType: string) => {
-  console.log(entityId, entityType);
   // Fetch business hours
   const businessHours = await BusinessHour.find({ entityId, entityType });
 
