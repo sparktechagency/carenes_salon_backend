@@ -864,7 +864,7 @@ const getSingleBooking = async (id: string) => {
   return booking;
 };
 
-// crone job
+// crone job-----------------------------------
 cron.schedule('*/10 * * * *', async () => {
   try {
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
