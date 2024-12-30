@@ -152,7 +152,20 @@ const notifySingleShopsForAdminFee = catchAsync(async (req, res) => {
     data: result,
   });
 });
-// common ------------
+
+const addPaypalEmail = catchAsync(async (req, res) => {
+  const result = await ClientServices.addPaypalEmail(
+    req.user.profileId,
+    req.body.paypalEmail,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Paypal email added successfully',
+    data: result,
+  });
+});
+
 const ClientController = {
   updateClientProfile,
   getAllClient,
@@ -166,6 +179,7 @@ const ClientController = {
   payAdminFee,
   notifyAllShopsForAdminFee,
   notifySingleShopsForAdminFee,
+  addPaypalEmail,
 };
 
 export default ClientController;
