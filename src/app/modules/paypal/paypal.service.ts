@@ -67,7 +67,6 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
     captureRequest.requestBody({});
     const captureResponse = await paypalClient.execute(captureRequest);
     const captureId = captureResponse?.result?.id;
-    console.log('capture id', captureId);
     if (
       !captureResponse.result.purchase_units[0].payments.captures[0].amount
         .value
@@ -99,13 +98,10 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
     await Booking.findByIdAndUpdate(
       bookingInfo._id,
       {
-        $set: {
-          status: 'booked',
-          captureId: captureId,
-          paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
-        },
+        captureId: captureId,
+        paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
       },
-      { new: true },
+      { new: true, runValidators: true },
     );
     return {
       captureId: captureResponse.result.id,
