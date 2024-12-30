@@ -26,8 +26,8 @@ const getAvailableSlots = catchAsync(async (req, res) => {
 });
 const getBusinessHour = catchAsync(async (req, res) => {
   const result = await BusinessHourServices.getBusinessHour(
-    req.body.entityId,
-    req.body.entityType,
+    req.query.entityId as string,
+    req.query.entityType as string,
   );
   sendResponse(res, {
     statusCode: httpStatus.OK,

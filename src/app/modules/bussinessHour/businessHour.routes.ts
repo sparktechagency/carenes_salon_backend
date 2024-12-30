@@ -12,7 +12,7 @@ router.get('/get-available-slots', BusinessHourController.getAvailableSlots);
 router.get(
   '/get-business-hour',
   auth(USER_ROLE.client),
-  validateRequest(businessHourValidations.getBusinessHourValidationSchema),
+  // validateRequest(businessHourValidations.getBusinessHourValidationSchema),
   BusinessHourController.getBusinessHour,
 );
 router.patch(
