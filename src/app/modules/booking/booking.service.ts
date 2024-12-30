@@ -31,9 +31,8 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
   if (!shop) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Shop not found');
   }
-  // Fetch current date for discount comparison
+
   const now = new Date();
-  // Fetch services with their applicable prices
   const servicesWithPrices = await Promise.all(
     serviceIds.map(async (serviceId: string) => {
       const service = await Service.findById(serviceId).select('price');
@@ -47,7 +46,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
         $or: [{ services: 'all-services' }, { services: service._id }],
       });
 
-      // Calculate discount price if discount applies; otherwise, use original price
+      // Calculate discount price if discount applies
       const price = discount
         ? service.price - (service.price * discount.discountPercentage) / 100
         : service.price;
@@ -56,13 +55,11 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
     }),
   );
 
-  // Calculate the total price of the selected services
   const totalPrice = servicesWithPrices.reduce(
     (total, service) => total + service.price,
     0,
   );
 
-  // Calculate the total time for selected services
   const totalDuration = await calculateTotalServiceTime(serviceIds);
 
   // Create the start date in local time
@@ -137,7 +134,6 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
     );
   }
 
-  // Create the booking with total price and service details
   const result = await Booking.create({
     ...payload,
     shopCategoryId: shop.shopCategoryId,
@@ -146,7 +142,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
     customerId,
     services: servicesWithPrices,
     paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP,
-    totalPrice, // Store the total price in the booking
+    totalPrice,
     totalDuration,
   });
 

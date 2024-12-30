@@ -324,8 +324,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     return paymentIntent.client_secret;
   } else if (payload.paymentMethod === ENUM_PAYMENT_METHOD.PAYPAL) {
     const result = await PaypalService.handlePaypalPayment(totalPrice);
-
-    const createBooking = await Booking.create({
+    await Booking.create({
       ...payload,
       shopCategoryId: shop.shopCategoryId,
       startTime: startDate,
@@ -333,7 +332,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       customerId,
       services: servicesWithPrices,
       paymentStatus: ENUM_PAYMENT_STATUS.PENDING,
-      totalPrice, // Store the total price in the booking
+      totalPrice,
       totalDuration,
       orderId: result.orderId,
     });
