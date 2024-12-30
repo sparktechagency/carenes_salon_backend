@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import httpStatus from 'http-status';
@@ -527,7 +528,6 @@ const acceptCancelBookingRequest = async (
     if (timeDifferenceInHours >= 24) {
       refundPercentage = 80;
     }
-
     // for stripe payment-----------------
     if (booking?.paymentMethod === 'stripe') {
       // const refundAmountInCents = booking.totalPrice * refundPercentage;
@@ -560,17 +560,17 @@ const acceptCancelBookingRequest = async (
         }
         return refund;
       } catch (error: unknown) {
-        // if (error instanceof Error) {
-        //   console.error('Refund failed:', error.message);
+        if (error instanceof Error) {
+          console.error('Refund failed:', error.message);
 
-        //   if (error instanceof Stripe.Stripe) {
-        //     console.log('Stripe error:', error.message);
-        //   } else {
-        //     console.log('Unexpected error:', error.message);
-        //   }
-        // } else {
-        //   console.error('Unexpected error type:', error);
-        // }
+          if (error instanceof Stripe.Stripe) {
+            console.log('Stripe error:', error.message);
+          } else {
+            console.log('Unexpected error:', error.message);
+          }
+        } else {
+          console.error('Unexpected error type:', error);
+        }
         throw new AppError(
           httpStatus.SERVICE_UNAVAILABLE,
           'Something went wrong when payment occur , please try again or contact with support',
@@ -665,8 +665,8 @@ const getShopBookings = async (
 
   // Check for service filter in query
   if (query.serviceId) {
-    query['services.serviceId'] = query.serviceId; // Match bookings with the selected serviceId
-    delete query.serviceId; // Remove serviceId from the query object to avoid duplicate keys
+    query['services.serviceId'] = query.serviceId;
+    delete query.serviceId;
   }
   const bookingQuery = new QueryBuilder(
     Booking.find({ shopId, status: { $ne: 'canceled' } }),
@@ -684,8 +684,8 @@ const getShopBookings = async (
     model: 'Service',
     select: 'serviceName',
   });
-  const meta = await bookingQuery.countTotal(); // Meta info for total count
-  const result = await bookingQuery.modelQuery; // Query results
+  const meta = await bookingQuery.countTotal();
+  const result = await bookingQuery.modelQuery;
 
   return {
     meta,
@@ -694,7 +694,6 @@ const getShopBookings = async (
 };
 
 // get pay on shop booking history
-
 const getPayOnShopBookingHistory = async (
   shopId: string,
   query: Record<string, unknown>,
@@ -731,7 +730,6 @@ const getSalesAndServiceData = async (
   shopId: string,
   query: Record<string, unknown>,
 ) => {
-  // The match query dynamically based on whether staffId is provided
   const matchQuery: any = {
     shopId: new mongoose.Types.ObjectId(shopId),
     $or: [
@@ -746,7 +744,6 @@ const getSalesAndServiceData = async (
     matchQuery.staffId = new mongoose.Types.ObjectId(query.staffId as string);
   }
 
-  // Time range filter based on query.timeRange
   const currentDate = new Date();
   let dateFilter: any = {};
 
@@ -756,7 +753,6 @@ const getSalesAndServiceData = async (
     const endOfDay = new Date(currentDate.setHours(23, 59, 59, 999));
     dateFilter = { startTime: { $gte: startOfDay, $lte: endOfDay } };
   } else if (query.timeRange === 'last-month') {
-    // Get the first and last date of the current month (this month, not the last month)
     const startOfCurrentMonth = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
@@ -799,29 +795,29 @@ const getSalesAndServiceData = async (
         ],
         serviceDetails: [
           {
-            $unwind: '$services', // Flatten the services array
+            $unwind: '$services',
           },
           {
             $group: {
-              _id: '$services.serviceId', // Group by serviceId
-              serviceCount: { $sum: 1 }, // Count the occurrences of each service
-              totalSales: { $sum: '$services.price' }, // Sum the sales for each service
+              _id: '$services.serviceId',
+              serviceCount: { $sum: 1 },
+              totalSales: { $sum: '$services.price' },
             },
           },
           {
             $lookup: {
-              from: 'services', // Assuming 'services' collection contains service details
+              from: 'services',
               localField: '_id',
               foreignField: '_id',
               as: 'serviceDetails',
             },
           },
           {
-            $unwind: '$serviceDetails', // Unwind the service details to access the name
+            $unwind: '$serviceDetails',
           },
           {
             $project: {
-              serviceName: '$serviceDetails.name', // Get the service name
+              serviceName: '$serviceDetails.name',
               serviceCount: 1,
               totalSales: 1,
             },
@@ -830,11 +826,10 @@ const getSalesAndServiceData = async (
       },
     },
     {
-      $unwind: '$totalSales', // Flatten the totalSales result
+      $unwind: '$totalSales',
     },
   ]);
 
-  // Extract data from the aggregation result--------
   const totalSales = result[0]?.totalSales?.totalSales || 0;
   const serviceDetails = result[0]?.serviceDetails || [];
 
