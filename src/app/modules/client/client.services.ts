@@ -414,7 +414,20 @@ const getPayOnShopData = async (query: Record<string, unknown>) => {
   return { meta, result };
 };
 
-const payAdminFee = async (shopId: string, amount: number) => {
+const payAdminFee = async (payload: any) => {
+  let result;
+  if (payload?.paymentMethod === 'stripe') {
+    result = await payAdminFeeWithStripe(payload?.shopId, payload?.amount);
+  } else if (payload?.paymentMethod === 'paypal') {
+    result = await payAdminFeeWithPaypal(payload?.shopId, payload?.amount);
+  }
+
+  return result;
+};
+
+// pay admin fee with stripe
+
+const payAdminFeeWithStripe = async (shopId: string, amount: number) => {
   const amountInCents = Math.round(amount * 100);
 
   const paymentIntent = await stripe.paymentIntents.create({
@@ -427,6 +440,10 @@ const payAdminFee = async (shopId: string, amount: number) => {
     },
   });
   return { client_secret: paymentIntent.client_secret };
+};
+
+const payAdminFeeWithPaypal = async (shopId: string, amount: number) => {
+  console.log(shopId, amount);
 };
 
 // notify shops for admin fee
