@@ -8,6 +8,8 @@ import BlockHour from '../blockHour/blockHour.model';
 import Discount from '../discount/discount.model';
 import Service from '../service/service.model';
 import Booking from './booking.model';
+import cron from 'node-cron';
+
 import {
   ENUM_BOOKING_PAYMENT,
   ENUM_NOTIFICATION_TYPE,
@@ -861,6 +863,20 @@ const getSingleBooking = async (id: string) => {
   }
   return booking;
 };
+
+// crone job
+cron.schedule('*/10 * * * *', async () => {
+  try {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const result = await Booking.deleteMany({
+      status: 'pending',
+      createdAt: { $lte: fiveMinutesAgo },
+    });
+    console.log(`Deleted ${result.deletedCount} pending bookings`);
+  } catch (error) {
+    console.error('Error running cron job:', error);
+  }
+});
 
 const BookingService = {
   createBooking,
