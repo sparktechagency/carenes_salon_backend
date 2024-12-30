@@ -478,6 +478,19 @@ const notifySingleShopsForAdminFee = async (shopId: string) => {
   console.log(`Notification sent to shop: ${shop.shopName}`);
 };
 
+const addPaypalEmail = async (profileId: string, paypalEmail: string) => {
+  const client = await Client.findById(profileId);
+  if (!client) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Client not found');
+  }
+  const result = await Client.findByIdAndUpdate(
+    profileId,
+    { paypalEmail: paypalEmail },
+    { new: true, runValidators: true },
+  );
+  return result;
+};
+
 const ClientServices = {
   updateClientProfile,
   getAllClientFromDB,
@@ -491,6 +504,7 @@ const ClientServices = {
   payAdminFee,
   notifyAllShopsForAdminFee,
   notifySingleShopsForAdminFee,
+  addPaypalEmail,
 };
 
 export default ClientServices;
