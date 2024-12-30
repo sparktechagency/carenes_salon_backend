@@ -35,4 +35,5 @@ export interface IClient {
   isProfileCompleted: boolean;
   stripAccountId: string;
   isStripeConnected: boolean;
+  paypalEmail?: string;
 }
