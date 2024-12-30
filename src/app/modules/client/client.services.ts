@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
@@ -347,8 +348,6 @@ const getSingleShop = async (id: string) => {
   });
 
   const isAllServicesDiscounted = discount?.services === 'all-services';
-  // console.log("is all service discount",isAllServicesDiscounted);
-  // For each category, fetch associated services and apply discount if applicable
   const categoriesWithServices = await Promise.all(
     categories.map(async (category) => {
       const services = await Service.find({ category: category._id })
@@ -365,7 +364,6 @@ const getSingleShop = async (id: string) => {
           const discountAmount =
             service.price * (discount.discountPercentage / 100);
           const discountPrice = service.price - discountAmount;
-          console.log('discount price', discountPrice);
           return {
             ...service.toObject(),
             discountPrice: discountPrice,
