@@ -83,6 +83,7 @@ const clientSchema = new Schema<IClient>(
     isDeleted: { type: Boolean, default: false },
     stripAccountId: { type: String },
     isStripeConnected: { type: Boolean, default: false },
+    paypalEmail: { type: String },
   },
   {
     timestamps: true,
