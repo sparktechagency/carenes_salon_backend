@@ -8,6 +8,7 @@ import httpStatus from 'http-status';
 import Booking from '../booking/booking.model';
 import payoutsClient from '../../utilities/payoutClient';
 import Client from '../client/client.model';
+import { ENUM_PAYMENT_STATUS } from '../../utilities/enum';
 
 interface CapturePayload {
   token: string;
@@ -94,7 +95,18 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
     const salonOwnerEmail = shopInfo?.paypalEmail;
     // process payouts
     await processPayout(salonAmount, salonOwnerEmail);
-
+    // update booking
+    await Booking.findByIdAndUpdate(
+      bookingInfo._id,
+      {
+        $set: {
+          status: 'booked',
+          captureId: captureId,
+          paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+        },
+      },
+      { new: true },
+    );
     return {
       captureId: captureResponse.result.id,
       salonAmount,
@@ -235,7 +247,7 @@ const refundPayment = async (payload: RefundPayload) => {
   const { captureId } = payload;
 
   try {
-    const captureDetails = await getCaptureDetails('2K644146XB114024F');
+    const captureDetails = await getCaptureDetails(captureId);
     console.log('capture details:', captureDetails);
     const totalAmount = parseFloat(captureDetails.amount.value);
 
@@ -345,58 +357,58 @@ const getCaptureDetails = async (token: string) => {
 //   }
 // };
 
-const createPayment = async (amount: number) => {
-  //   const { amount, salonOwnerEmail, adminEmail } = payload;
+// const createPayment = async (amount: number) => {
+//   //   const { amount, salonOwnerEmail, adminEmail } = payload;
 
-  const request = new paypal.orders.OrdersCreateRequest();
-  request.prefer('return=representation');
+//   const request = new paypal.orders.OrdersCreateRequest();
+//   request.prefer('return=representation');
 
-  // Define return and cancel URLs
-  const returnUrl = 'https://your-site.com/payment-success';
-  const cancelUrl = 'https://your-site.com/payment-cancel';
+//   // Define return and cancel URLs
+//   const returnUrl = 'https://your-site.com/payment-success';
+//   const cancelUrl = 'https://your-site.com/payment-cancel';
 
-  request.requestBody({
-    intent: 'CAPTURE',
-    purchase_units: [
-      {
-        amount: {
-          value: amount.toFixed(2),
-          currency_code: 'USD',
-        },
-        payee: {
-          email_address: salonOwnerEmail, // Payment goes to the salon owner
-        },
-        payment_instruction: {
-          disbursement_mode: 'INSTANT', // Instant payment to salon owner
-          transfer_fee: {
-            value: (amount * 0.05).toFixed(2),
-            currency_code: 'USD',
-          },
-          // This will deduct the 5% from the payment and transfer it to the platform
-        },
-      },
-    ],
-    application_context: {
-      return_url: returnUrl,
-      cancel_url: cancelUrl,
-    },
-  });
+//   request.requestBody({
+//     intent: 'CAPTURE',
+//     purchase_units: [
+//       {
+//         amount: {
+//           value: amount.toFixed(2),
+//           currency_code: 'USD',
+//         },
+//         payee: {
+//           email_address: salonOwnerEmail, // Payment goes to the salon owner
+//         },
+//         payment_instruction: {
+//           disbursement_mode: 'INSTANT', // Instant payment to salon owner
+//           transfer_fee: {
+//             value: (amount * 0.05).toFixed(2),
+//             currency_code: 'USD',
+//           },
+//           // This will deduct the 5% from the payment and transfer it to the platform
+//         },
+//       },
+//     ],
+//     application_context: {
+//       return_url: returnUrl,
+//       cancel_url: cancelUrl,
+//     },
+//   });
 
-  try {
-    const order = await paypalClient.execute(request);
-    const approvalUrl = order.result.links.find(
-      (link: { rel: string; href: string }) => link.rel === 'approve',
-    )?.href;
+//   try {
+//     const order = await paypalClient.execute(request);
+//     const approvalUrl = order.result.links.find(
+//       (link: { rel: string; href: string }) => link.rel === 'approve',
+//     )?.href;
 
-    if (approvalUrl) {
-      return { approvalUrl, orderId: order.result.id };
-    } else {
-      throw new Error('Failed to retrieve approval URL');
-    }
-  } catch (error) {
-    throw new Error('Failed to create PayPal payment');
-  }
-};
+//     if (approvalUrl) {
+//       return { approvalUrl, orderId: order.result.id };
+//     } else {
+//       throw new Error('Failed to retrieve approval URL');
+//     }
+//   } catch (error) {
+//     throw new Error('Failed to create PayPal payment');
+//   }
+// };
 
 const PaypalService = {
   handlePaypalPayment,
