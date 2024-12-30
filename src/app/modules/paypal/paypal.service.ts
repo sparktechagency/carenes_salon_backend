@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import paypal from '@paypal/checkout-server-sdk';
 import paypalClient from '../../utilities/paypalClient';
@@ -63,6 +64,8 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
     const captureRequest = new paypal.orders.OrdersCaptureRequest(orderId);
     captureRequest.requestBody({});
     const captureResponse = await paypalClient.execute(captureRequest);
+    const captureId = captureResponse?.result?.id;
+    console.log('capture id', captureId);
     if (
       !captureResponse.result.purchase_units[0].payments.captures[0].amount
         .value
@@ -234,7 +237,8 @@ const refundPayment = async (payload: RefundPayload) => {
   const { captureId } = payload;
 
   try {
-    const captureDetails = await getCaptureDetails(captureId);
+    const captureDetails = await getCaptureDetails('2K644146XB114024F');
+    console.log('capture details:', captureDetails);
     const totalAmount = parseFloat(captureDetails.amount.value);
 
     const refundAmount = totalAmount; // Full refund
@@ -316,32 +320,32 @@ const processRefundFromSalon = async (
     throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Salon refund failed');
   }
 };
-// const getCaptureDetails = async (token: string) => {
-//   const orderRequest = new paypal.orders.OrdersGetRequest(token);
-
-//   try {
-//     const orderResponse = await paypalClient.execute(orderRequest);
-//     return orderResponse.result;
-//   } catch (error) {
-//     throw new Error('Failed to fetch order details.');
-//   }
-// };
-const getCaptureDetails = async (captureId: string) => {
-  const captureRequest = new paypal.payments.CapturesGetRequest(captureId);
+const getCaptureDetails = async (token: string) => {
+  const orderRequest = new paypal.orders.OrdersGetRequest(token);
 
   try {
-    // Execute the request to fetch capture details
-    const captureResponse = await paypalClient.execute(captureRequest);
-
-    // Log or handle the raw response if needed for debugging
-    console.log('Capture Details:', captureResponse.result);
-
-    return captureResponse.result;
+    const orderResponse = await paypalClient.execute(orderRequest);
+    return orderResponse.result;
   } catch (error) {
-    console.error('Failed to fetch capture details:', error);
-    throw new Error('Failed to fetch capture details.');
+    throw new Error('Failed to fetch order details.');
   }
 };
+// const getCaptureDetails = async (captureId: string) => {
+//   const captureRequest = new paypal.payments.CapturesGetRequest(captureId);
+
+//   try {
+//     // Execute the request to fetch capture details
+//     const captureResponse = await paypalClient.execute(captureRequest);
+
+//     // Log or handle the raw response if needed for debugging
+//     console.log('Capture Details:', captureResponse.result);
+
+//     return captureResponse.result;
+//   } catch (error) {
+//     console.error('Failed to fetch capture details:', error);
+//     throw new Error('Failed to fetch capture details.');
+//   }
+// };
 
 const createPayment = async (amount: number) => {
   //   const { amount, salonOwnerEmail, adminEmail } = payload;

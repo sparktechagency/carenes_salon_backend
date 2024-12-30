@@ -10,9 +10,7 @@ import { feedbackRoutes } from '../modules/feedback/feedback.routes';
 import { productBookmarkRoutes } from '../modules/productBookmark/product.bookmark.routes';
 import { shopBookmarkRoutes } from '../modules/shopBookmak/product.bookmark.routes';
 import { cartRoutes } from '../modules/cart/cart.routes';
-import { orderRoutes } from '../modules/order/order.routes';
 import { metaRoutes } from '../modules/meta/meta.routes';
-import { paymentRoutes } from '../modules/payment/payment.routes';
 import { AdminRoutes } from '../modules/admin/admin.routes';
 import { clientRoutes } from '../modules/client/client.routes';
 import { shopCategoryRoutes } from '../modules/shopCategory/shopCategory.routes';
@@ -88,16 +86,8 @@ const moduleRoutes = [
     router: cartRoutes,
   },
   {
-    path: '/order',
-    router: orderRoutes,
-  },
-  {
     path: '/meta',
     router: metaRoutes,
-  },
-  {
-    path: '/payment',
-    router: paymentRoutes,
   },
   {
     path: '/shop-category',

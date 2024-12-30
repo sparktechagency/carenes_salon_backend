@@ -222,6 +222,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   const existingBookings = await Booking.find({
     staffId: payload.staffId,
     $and: [{ startTime: { $lt: endDate }, endTime: { $gt: startDate } }],
+    status: 'booked',
   });
   //check operation-------------
   if (existingBookings.length > 0) {
@@ -503,22 +504,27 @@ const acceptCancelBookingRequest = async (
 
         return refund;
       } catch (error: unknown) {
-        // if (error instanceof Error) {
-        //   console.error('Refund failed:', error.message);
+        if (error instanceof Error) {
+          console.error('Refund failed:', error.message);
 
-        //   if (error instanceof Stripe.Stripe) {
-        //     console.log('Stripe error:', error.message);
-        //   } else {
-        //     console.log('Unexpected error:', error.message);
-        //   }
-        // } else {
-        //   console.error('Unexpected error type:', error);
-        // }
+          if (error instanceof Stripe.Stripe) {
+            console.log('Stripe error:', error.message);
+          } else {
+            console.log('Unexpected error:', error.message);
+          }
+        } else {
+          console.error('Unexpected error type:', error);
+        }
         throw new AppError(
           httpStatus.SERVICE_UNAVAILABLE,
           'Something went wrong when payment occur , please try again or contact with support',
         );
       }
+    } else if (booking?.paymentMethod === 'paypal') {
+      const refund = await PaypalService.refundPayment({
+        captureId: booking?.orderId,
+      });
+      console.log('refund:', refund);
     }
   } else if (userData?.role === USER_ROLE.client) {
     const currentTime = notification?.createdAt;
@@ -578,6 +584,11 @@ const acceptCancelBookingRequest = async (
           'Something went wrong when payment occur , please try again or contact with support',
         );
       }
+    } else if (booking?.paymentMethod === 'paypal') {
+      const refund = await PaypalService.refundPayment({
+        captureId: booking?.orderId,
+      });
+      console.log('refund:', refund);
     }
   }
 

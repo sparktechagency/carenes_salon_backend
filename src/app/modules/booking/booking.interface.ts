@@ -33,4 +33,5 @@ export interface IBooking {
   paymentIntentId: string;
   orderId: string;
   note: string;
+  captureId?: string;
 }
