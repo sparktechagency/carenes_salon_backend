@@ -90,5 +90,9 @@ router.post(
   auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   ClientController.notifySingleShopsForAdminFee,
 );
-router.post('/add-paypal-email', auth(USER_ROLE.client));
+router.post(
+  '/add-paypal-email',
+  auth(USER_ROLE.client),
+  ClientController.addPaypalEmail,
+);
 export const clientRoutes = router;
