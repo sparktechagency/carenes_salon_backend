@@ -483,9 +483,8 @@ const acceptCancelBookingRequest = async (
 
   const requestReceiver =
     userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
-  // refund -----------------------------------
 
-  // Create the refund
+  // refund -----------------------------------
   //TODO: need to handle based on who cancel the booking and when the booking is canceled
   if (userData?.role === USER_ROLE.customer) {
     // for stripe payment -----------------------------------
