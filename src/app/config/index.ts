@@ -35,4 +35,9 @@ export default {
     smtp_pass: process.env.SMTP_PASS,
     name: process.env.SERVICE_NAME,
   },
+  paypal: {
+    platform_email: process.env.PAYPAL_PLATFORM_EMAIL,
+    client_id: process.env.PAYPAL_CLIENT_ID,
+    client_secret: process.env.PAYPAL_CLIENT_SECRET,
+  },
 };

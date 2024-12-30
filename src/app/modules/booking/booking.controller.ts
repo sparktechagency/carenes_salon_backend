@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utilities/catchasync';
-import BookingService from './booking.services';
+import BookingService from './booking.service';
 import sendResponse from '../../utilities/sendResponse';
 
 const createBooking = catchAsync(async (req, res) => {
@@ -107,6 +107,16 @@ const markNoShow = catchAsync(async (req, res) => {
   });
 });
 
+// const makeCompleteWork = catchAsync(async (req, res) => {
+//   const result = await BookingService.makeCompleteWork(req.params.id);
+//   sendResponse(res, {
+//     statusCode: httpStatus.OK,
+//     success: true,
+//     message: 'Successfully marked as complete',
+//     data: result,
+//   });
+// });
+
 const BookingController = {
   createBooking,
   getCustomerBookings,
@@ -116,6 +126,7 @@ const BookingController = {
   getPayOnShopBookingHistory,
   getSalesAndServiceData,
   markNoShow,
+  // makeCompleteWork,
 };
 
 export default BookingController;

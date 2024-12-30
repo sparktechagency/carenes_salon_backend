@@ -307,12 +307,18 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       amount: amountInCents,
       currency: 'eur',
       automatic_payment_methods: {
-        enabled: true, // Enable support for various payment methods
+        enabled: true,
+      },
+      application_fee_amount: amountInCents * 0.2,
+      transfer_data: {
+        destination: shop?.stripAccountId as string,
       },
       metadata: {
         bookingId: result?._id.toString(),
         shopId: shop?._id.toString(),
       },
+
+      on_behalf_of: shop?.stripAccountId,
     });
 
     // -------------------------------------
@@ -461,7 +467,6 @@ const acceptCancelBookingRequest = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Notification not found');
   }
   const booking = await Booking.findById(notification.bookingId);
-
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
@@ -478,7 +483,6 @@ const acceptCancelBookingRequest = async (
 
   const requestReceiver =
     userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
-
   // refund -----------------------------------
 
   // Create the refund
@@ -495,17 +499,17 @@ const acceptCancelBookingRequest = async (
 
         return refund;
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error('Refund failed:', error.message);
+        // if (error instanceof Error) {
+        //   console.error('Refund failed:', error.message);
 
-          if (error instanceof Stripe.Stripe) {
-            console.log('Stripe error:', error.message);
-          } else {
-            console.log('Unexpected error:', error.message);
-          }
-        } else {
-          console.error('Unexpected error type:', error);
-        }
+        //   if (error instanceof Stripe.Stripe) {
+        //     console.log('Stripe error:', error.message);
+        //   } else {
+        //     console.log('Unexpected error:', error.message);
+        //   }
+        // } else {
+        //   console.error('Unexpected error type:', error);
+        // }
         throw new AppError(
           httpStatus.SERVICE_UNAVAILABLE,
           'Something went wrong when payment occur , please try again or contact with support',
@@ -520,32 +524,50 @@ const acceptCancelBookingRequest = async (
     const timeDifferenceInHours = timeDifferenceInMs / (1000 * 60 * 60);
     let refundPercentage = 50;
     if (timeDifferenceInHours >= 24) {
-      refundPercentage = 100;
+      refundPercentage = 80;
     }
 
     // for stripe payment-----------------
     if (booking?.paymentMethod === 'stripe') {
-      const refundAmountInCents = booking.totalPrice * refundPercentage;
+      // const refundAmountInCents = booking.totalPrice * refundPercentage;
+      const refundAmountInCents = Math.round(
+        booking.totalPrice * refundPercentage,
+      );
+
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        booking?.paymentIntentId,
+        { expand: ['charges'] },
+      );
+      // Retrieve the charge
+      const charge = await stripe.charges.retrieve(paymentIntent.latest_charge);
+      const applicationFeeId = charge.application_fee;
+      // Extract the application fee ID and charge ID
+      const chargeId = charge?.id;
 
       try {
         const refund = await stripe.refunds.create({
           payment_intent: booking.paymentIntentId,
           amount: refundAmountInCents,
         });
-        console.log('refund', refund);
+        if (applicationFeeId && chargeId) {
+          await stripe.refunds.create({
+            charge: chargeId,
+            amount: Math.min(refundAmountInCents, charge.amount),
+          });
+        }
         return refund;
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error('Refund failed:', error.message);
+        // if (error instanceof Error) {
+        //   console.error('Refund failed:', error.message);
 
-          if (error instanceof Stripe.Stripe) {
-            console.log('Stripe error:', error.message);
-          } else {
-            console.log('Unexpected error:', error.message);
-          }
-        } else {
-          console.error('Unexpected error type:', error);
-        }
+        //   if (error instanceof Stripe.Stripe) {
+        //     console.log('Stripe error:', error.message);
+        //   } else {
+        //     console.log('Unexpected error:', error.message);
+        //   }
+        // } else {
+        //   console.error('Unexpected error type:', error);
+        // }
         throw new AppError(
           httpStatus.SERVICE_UNAVAILABLE,
           'Something went wrong when payment occur , please try again or contact with support',
@@ -842,58 +864,6 @@ const getSingleBooking = async (id: string) => {
   return booking;
 };
 
-const makeCompleteWork = async (id: string) => {
-  // 1. Retrieve the booking information
-  const booking = await Booking.findById(id);
-  if (!booking) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
-  }
-
-  // 2. Retrieve the shop (salon) information
-  const shop = await Client.findById(booking?.shopId);
-  if (!shop) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
-  }
-
-  // 3. Retrieve the paymentIntentId from the booking
-  const paymentIntentId = booking.paymentIntentId;
-  if (!paymentIntentId) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Payment intent not found');
-  }
-
-  // 4. Retrieve the payment intent from Stripe
-  const paymentIntent = await stripe.paymentIntents.retrieve(
-    booking?.paymentIntentId,
-    { expand: ['charges'] },
-  );
-  // console.log('paymetn  intent', paymentIntent);
-  // Retrieve the charge
-  const charge = await stripe.charges.retrieve(paymentIntent.latest_charge);
-  // console.log('charges', charge);
-  // Extract the application fee ID and charge ID
-
-  const chargeId = charge?.id;
-  console.log('charged id', chargeId);
-  // 5. Check if the payment was successful
-  if (paymentIntent.status === 'succeeded') {
-    // 6. Calculate the transfer amounts
-    const transferAmount = Math.floor(paymentIntent.amount_received * 0.95); // 95% to salon
-    console.log('stripe acocunt id', shop.stripAccountId);
-    // 7. Transfer 95% to the salon's connected Stripe account
-    const transferToSalon = await stripe.transfers.create({
-      amount: transferAmount,
-      currency: paymentIntent.currency,
-      destination: shop.stripAccountId, // Salon's connected Stripe account ID
-      source_transaction: chargeId,
-      description: 'Payment for completed work',
-    });
-
-    return { transferToSalon };
-  } else {
-    throw new Error('Payment was not successful');
-  }
-};
-
 const BookingService = {
   createBooking,
   getCustomerBookings,
@@ -904,7 +874,6 @@ const BookingService = {
   getSalesAndServiceData,
   markNoShow,
   getSingleBooking,
-  makeCompleteWork,
 };
 
 export default BookingService;

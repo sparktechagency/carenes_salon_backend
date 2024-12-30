@@ -103,7 +103,7 @@ app.use(
     credentials: true,
   }),
 );
-app.use(express.static('uploads'));
+app.use('/uploads', express.static('uploads'));
 // application routers ----------------
 app.use('/', router);
 

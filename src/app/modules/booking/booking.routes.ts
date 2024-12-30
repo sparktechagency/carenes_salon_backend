@@ -48,5 +48,10 @@ router.patch(
   auth(USER_ROLE.client),
   BookingController.markNoShow,
 );
+// router.patch(
+//   '/make-complete/:id',
+//   auth(USER_ROLE.client),
+//   BookingController.makeCompleteWork,
+// );
 
 export const bookingRoutes = router;

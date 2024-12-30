@@ -60,6 +60,60 @@ const createConnectedAccountAndOnboardingLink = async (
   return onboardingLink.url;
 };
 
+// const createConnectedAccountAndOnboardingLink = async (
+//   salonEmail: string,
+//   profileId: string,
+// ) => {
+//   const isClientConnected = await Client.findOne({
+//     isStripeConnected: true,
+//     email: salonEmail,
+//     _id: profileId,
+//   });
+
+//   if (isClientConnected) {
+//     throw new AppError(httpStatus.BAD_REQUEST, 'Stripe is already connected');
+//   }
+
+//   // Step 1: Create a Standard connected account
+//   const account = await stripe.accounts.create({
+//     type: 'standard', // Use 'standard' type for Standard account
+//     email: salonEmail,
+//     country: 'DE', // Example country, can be adjusted based on location
+//     capabilities: {
+//       card_payments: { requested: true },
+//       transfers: { requested: true },
+//     },
+//   });
+
+//   // Log the account ID for debugging (optional)
+//   // console.log('Connected Account Created:', account.id);
+
+//   // Update client profile with Stripe account ID
+//   const updatedClientProfile = await Client.findByIdAndUpdate(
+//     profileId,
+//     { stripAccountId: account.id },
+//     { new: true, runValidators: true },
+//   );
+
+//   if (!updatedClientProfile) {
+//     throw new AppError(
+//       httpStatus.INTERNAL_SERVER_ERROR,
+//       'Server temporarily unavailable',
+//     );
+//   }
+
+//   // Step 2: Create the onboarding link for the Standard account
+//   const onboardingLink = await stripe.accountLinks.create({
+//     account: account.id,
+//     refresh_url: 'https://yourapp.com/reauth', // URL to retry the onboarding process if it fails
+//     return_url: 'https://yourapp.com/success', // URL where the salon owner is redirected after successful onboarding
+//     type: 'account_onboarding', // Onboarding type for Standard accounts
+//   });
+
+//   // Return the onboarding link URL to send to the salon owner
+//   return onboardingLink.url;
+// };
+
 const updateClientStripeConnectionStatus = async (accountId: string) => {
   if (!accountId) {
     throw new AppError(

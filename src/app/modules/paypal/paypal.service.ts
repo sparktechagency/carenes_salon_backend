@@ -88,9 +88,9 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
       throw new AppError(httpStatus.NOT_FOUND, 'Booking not found.');
     }
 
+    const salonOwnerEmail = 'sb-h6qip32749974@personal.example.com';
     // process payouts
-    console.log('styart process transfer');
-    await processPayout(salonAmount, 'sb-h6qip32749974@personal.example.com');
+    await processPayout(salonAmount, salonOwnerEmail);
 
     // await processTransfer(salonAmount, 'sb-h6qip32749974@personal.example.com');
     // console.log('successfull transfer');
@@ -115,38 +115,6 @@ const getOrderDetails = async (token: string) => {
   }
 };
 
-// const processPayout = async (salonAmount: number, salonOwnerEmail: string) => {
-//   const payoutRequest = new payoutsSdk.payouts.PayoutsPostRequest();
-//   payoutRequest.requestBody({
-//     sender_batch_header: {
-//       sender_batch_id: `Payout-${Date.now()}`,
-//       email_subject: 'You have received a payment!',
-//       email_message: 'Thank you for using our service!',
-//     },
-//     items: [
-//       {
-//         recipient_type: 'EMAIL',
-//         amount: {
-//           value: salonAmount.toFixed(2),
-//           currency: 'USD', // Adjust currency if needed
-//         },
-//         receiver: salonOwnerEmail,
-//         note: 'Payment for your appointment',
-//       },
-//     ],
-//   });
-
-//   try {
-//     const payoutResponse = await payoutsClient.execute(payoutRequest);
-//     console.log('Payout successful:', payoutResponse.result);
-//     return payoutResponse.result;
-//   } catch (error) {
-//     throw new AppError(
-//       httpStatus.INTERNAL_SERVER_ERROR,
-//       'Failed to process payout to salon owner.',
-//     );
-//   }
-// };
 // const processTransfer = async (
 //   salonAmount: number,
 //   salonOwnerEmail: string,
@@ -236,29 +204,145 @@ interface RefundPayload {
   captureId: string;
 }
 
+// const refundPayment = async (payload: RefundPayload) => {
+//   const { captureId } = payload;
+
+//   const refundAmount = 100;
+
+//   try {
+//     const request = new paypal.payments.CapturesRefundRequest(captureId);
+//     request.requestBody({
+//       amount: {
+//         value: refundAmount.toFixed(2),
+//         currency_code: 'USD',
+//       },
+//       invoice_id: `Refund-${Date.now()}`,
+//       note_to_payer: 'Refund for your appointment',
+//     });
+
+//     const response = await paypalClient.execute(request);
+//     console.log('Refund successful:', response.result);
+//     return response.result;
+//   } catch (error) {
+//     throw new Error('Failed to process refund');
+//   }
+// };
+
+// another try--------------------
+
 const refundPayment = async (payload: RefundPayload) => {
   const { captureId } = payload;
 
-  const refundAmount = 100;
-
   try {
-    const request = new paypal.payments.CapturesRefundRequest(captureId);
-    request.requestBody({
-      amount: {
-        value: refundAmount,
-        currency_code: 'USD',
-      },
-    });
+    const captureDetails = await getCaptureDetails(captureId);
+    const totalAmount = parseFloat(captureDetails.amount.value);
 
-    const response = await paypalClient.execute(request);
-    console.log('Refund successful:', response.result);
-    return response.result;
+    const refundAmount = totalAmount; // Full refund
+    const adminFee = +(refundAmount * 0.05).toFixed(2);
+    const salonAmount = +(refundAmount - adminFee).toFixed(2);
+
+    // 1. Refund admin fee
+    await processRefundFromAdmin(adminFee);
+
+    // 2. Refund salon owner amount
+    await processRefundFromSalon(salonAmount, captureDetails.salonOwnerEmail);
+
+    return { adminFee, salonAmount };
   } catch (error) {
-    throw new Error('Failed to process refund');
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Refund processing failed',
+    );
   }
 };
 
-// another try--------------------
+const processRefundFromAdmin = async (amount: number) => {
+  try {
+    const request = new paypal.payouts.PayoutsPostRequest();
+    request.requestBody({
+      sender_batch_header: {
+        sender_batch_id: `AdminRefund-${Date.now()}`,
+        email_subject: 'Refund from Admin',
+        email_message: 'Refund for the admin fee',
+      },
+      items: [
+        {
+          recipient_type: 'EMAIL',
+          amount: {
+            value: amount.toFixed(2),
+            currency_code: 'USD',
+          },
+          receiver: 'admin@example.com', // Admin's PayPal email
+          note: 'Refund of admin fee',
+        },
+      ],
+    });
+
+    const response = await payoutsClient.execute(request);
+    console.log('Admin refund successful:', response.result);
+  } catch (error) {
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Admin refund failed');
+  }
+};
+
+const processRefundFromSalon = async (
+  amount: number,
+  salonOwnerEmail: string,
+) => {
+  try {
+    const request = new paypal.payouts.PayoutsPostRequest();
+    request.requestBody({
+      sender_batch_header: {
+        sender_batch_id: `SalonRefund-${Date.now()}`,
+        email_subject: 'Refund from Salon Owner',
+        email_message: 'Refund for the service',
+      },
+      items: [
+        {
+          recipient_type: 'EMAIL',
+          amount: {
+            value: amount.toFixed(2),
+            currency_code: 'USD',
+          },
+          receiver: salonOwnerEmail, // Salon owner's PayPal email
+          note: 'Refund of service fee',
+        },
+      ],
+    });
+
+    const response = await payoutsClient.execute(request);
+    console.log('Salon refund successful:', response.result);
+  } catch (error) {
+    console.error('Failed to process salon refund:', error);
+    throw new Error('Salon refund failed');
+  }
+};
+// const getCaptureDetails = async (token: string) => {
+//   const orderRequest = new paypal.orders.OrdersGetRequest(token);
+
+//   try {
+//     const orderResponse = await paypalClient.execute(orderRequest);
+//     return orderResponse.result;
+//   } catch (error) {
+//     throw new Error('Failed to fetch order details.');
+//   }
+// };
+const getCaptureDetails = async (captureId: string) => {
+  const captureRequest = new paypal.payments.CapturesGetRequest(captureId);
+
+  try {
+    // Execute the request to fetch capture details
+    const captureResponse = await paypalClient.execute(captureRequest);
+
+    // Log or handle the raw response if needed for debugging
+    console.log('Capture Details:', captureResponse.result);
+
+    return captureResponse.result;
+  } catch (error) {
+    console.error('Failed to fetch capture details:', error);
+    throw new Error('Failed to fetch capture details.');
+  }
+};
 
 const createPayment = async (amount: number) => {
   //   const { amount, salonOwnerEmail, adminEmail } = payload;
