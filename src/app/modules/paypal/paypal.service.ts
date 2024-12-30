@@ -313,8 +313,7 @@ const processRefundFromSalon = async (
     const response = await payoutsClient.execute(request);
     console.log('Salon refund successful:', response.result);
   } catch (error) {
-    console.error('Failed to process salon refund:', error);
-    throw new Error('Salon refund failed');
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Salon refund failed');
   }
 };
 // const getCaptureDetails = async (token: string) => {
