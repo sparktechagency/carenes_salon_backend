@@ -333,7 +333,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   } else if (payload.paymentMethod === ENUM_PAYMENT_METHOD.PAYPAL) {
     const result = await PaypalService.handlePaypalPayment(totalPrice);
 
-    const createBooking = await Booking.create({
+    await Booking.create({
       ...payload,
       shopCategoryId: shop.shopCategoryId,
       startTime: startDate,
@@ -540,7 +540,9 @@ const acceptCancelBookingRequest = async (
         { expand: ['charges'] },
       );
       // Retrieve the charge
-      const charge = await stripe.charges.retrieve(paymentIntent.latest_charge);
+      const charge = await stripe.charges.retrieve(
+        paymentIntent.latest_charge as any,
+      );
       const applicationFeeId = charge.application_fee;
       // Extract the application fee ID and charge ID
       const chargeId = charge?.id;
