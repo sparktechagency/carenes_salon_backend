@@ -168,6 +168,12 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       'This shop not add payment method please try again letter or make appointment in other shop',
     );
   }
+  if (payload.paymentMethod === 'paypal' && !shop?.paypalEmail) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'This shop not add payment method please try again letter or make appointment in other shop',
+    );
+  }
 
   const now = new Date();
 
