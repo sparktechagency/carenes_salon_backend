@@ -7,6 +7,7 @@ import AppError from '../../error/appError';
 import httpStatus from 'http-status';
 import Booking from '../booking/booking.model';
 import payoutsClient from '../../utilities/payoutClient';
+import Client from '../client/client.model';
 
 interface CapturePayload {
   token: string;
@@ -81,22 +82,19 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
     );
     const adminFee = +(totalAmount * 0.05).toFixed(2);
     const salonAmount = +(totalAmount - adminFee).toFixed(2);
-
-    // console.log(
-    //   `Payment captured: Total = ${totalAmount}, Admin Fee = ${adminFee}, Salon Amount = ${salonAmount}`,
-    // );
-
     const bookingInfo = await Booking.findOne({ orderId: orderId });
     if (!bookingInfo) {
       throw new AppError(httpStatus.NOT_FOUND, 'Booking not found.');
     }
 
-    const salonOwnerEmail = 'sb-h6qip32749974@personal.example.com';
+    const shopInfo = await Client.findById(bookingInfo?.shopId);
+    if (!shopInfo) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Shop not found.');
+    }
+    const salonOwnerEmail = shopInfo?.paypalEmail;
     // process payouts
     await processPayout(salonAmount, salonOwnerEmail);
 
-    // await processTransfer(salonAmount, 'sb-h6qip32749974@personal.example.com');
-    // console.log('successfull transfer');
     return {
       captureId: captureResponse.result.id,
       salonAmount,
