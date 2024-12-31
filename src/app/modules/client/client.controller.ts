@@ -119,10 +119,7 @@ const getPayOnShopData = catchAsync(async (req, res) => {
 });
 
 const payAdminFee = catchAsync(async (req, res) => {
-  const result = await ClientServices.payAdminFee(
-    req.params.id,
-    req.body.amount,
-  );
+  const result = await ClientServices.payAdminFee(req.params.id, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

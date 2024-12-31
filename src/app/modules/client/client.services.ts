@@ -25,6 +25,7 @@ import Stripe from 'stripe';
 import config from '../../config';
 import Notification from '../notification/notification.model';
 import getAdminNotificationCount from '../../helper/getAdminNotification';
+import { getIO } from '../../socket/socketManager';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 
 const updateClientProfile = async (
@@ -64,6 +65,7 @@ const addShopDetails = async (id: string, payload: Partial<IClient>) => {
 };
 
 const addBankDetails = async (id: string, payload: Partial<IClient>) => {
+  const io = getIO();
   const shop = await await Client.findById(id);
 
   if (!shop) {
@@ -85,11 +87,10 @@ const addBankDetails = async (id: string, payload: Partial<IClient>) => {
   const unseenNotificationCount = await getAdminNotificationCount();
   //@ts-ignore
   // TODO: need to send notification
-  global?.io?.emit('admin-notification', unseenNotificationCount);
+  io.emit('admin-notification', unseenNotificationCount);
   return result;
 };
 const getAllClientFromDB = async (query: Record<string, any>) => {
-  // Step 1: Aggregate total sales for each shop
   const totalSales = await Booking.aggregate([
     { $match: { status: 'completed' } },
     {
@@ -414,14 +415,13 @@ const getPayOnShopData = async (query: Record<string, unknown>) => {
   return { meta, result };
 };
 
-const payAdminFee = async (payload: any) => {
+const payAdminFee = async (profileId: string, payload: any) => {
   let result;
   if (payload?.paymentMethod === 'stripe') {
-    result = await payAdminFeeWithStripe(payload?.shopId, payload?.amount);
+    result = await payAdminFeeWithStripe(profileId, payload?.amount);
   } else if (payload?.paymentMethod === 'paypal') {
-    result = await payAdminFeeWithPaypal(payload?.shopId, payload?.amount);
+    result = await payAdminFeeWithPaypal(profileId, payload?.amount);
   }
-
   return result;
 };
 
