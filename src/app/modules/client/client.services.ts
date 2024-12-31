@@ -425,7 +425,7 @@ const payAdminFee = async (profileId: string, payload: any) => {
   return result;
 };
 
-// pay admin fee with stripe
+// pay admin fee with stripe------------------------------
 
 const payAdminFeeWithStripe = async (shopId: string, amount: number) => {
   const amountInCents = Math.round(amount * 100);

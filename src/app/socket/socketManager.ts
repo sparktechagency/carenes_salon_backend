@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Server as IOServer, Socket } from 'socket.io';
 import { Server as HTTPServer } from 'http';
@@ -129,7 +130,6 @@ const initializeSocket = (server: HTTPServer) => {
           .sort({ updatedAt: -1 });
         // console.log("sender +> receiver",data.sender,data.receiver);
         // console.log("messages",getConversationMessage?.messages);
-        // console.log("online users",onlineUser)
         // send to the frontend ---------------
         io.to(data?.sender).emit(
           'message',
