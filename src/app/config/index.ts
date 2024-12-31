@@ -22,11 +22,13 @@ export default {
   stripe: {
     stripe_secret_key: process.env.STRIPE_SECRET_KEY,
   },
+  // twilio for sms -------------
   twilio: {
     accountSid: process.env.TWILIO_ACCOUNT_SID,
     authToken: process.env.TWILIO_AUTH_TOKEN,
     phoneNumber: process.env.TWILIO_PHONE_NUMBER,
   },
+  // smtp for email -------------
   smtp: {
     smtp_host: process.env.SMTP_HOST,
     smtp_port: process.env.SMTP_PORT,
@@ -35,7 +37,7 @@ export default {
     smtp_pass: process.env.SMTP_PASS,
     name: process.env.SERVICE_NAME,
   },
-  // paypal
+  // paypal -------------
   paypal: {
     platform_email: process.env.PAYPAL_PLATFORM_EMAIL,
     client_id: process.env.PAYPAL_CLIENT_ID,
