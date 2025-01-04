@@ -128,8 +128,6 @@ const initializeSocket = (server: HTTPServer) => {
         })
           .populate('messages')
           .sort({ updatedAt: -1 });
-        // console.log("sender +> receiver",data.sender,data.receiver);
-        // console.log("messages",getConversationMessage?.messages);
         // send to the frontend ---------------
         io.to(data?.sender).emit(
           'message',

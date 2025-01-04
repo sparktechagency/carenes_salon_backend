@@ -4,6 +4,7 @@ import sendResponse from '../../utilities/sendResponse';
 import ClientServices from './client.services';
 
 const updateClientProfile = catchAsync(async (req, res) => {
+  // console.log(req);
   const { files } = req;
   if (files && typeof files === 'object' && 'profile_image' in files) {
     req.body.profile_image = files['profile_image'][0].path;

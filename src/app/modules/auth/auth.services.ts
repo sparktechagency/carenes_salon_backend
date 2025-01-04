@@ -13,10 +13,12 @@ import mongoose from 'mongoose';
 import { USER_ROLE } from '../user/user.constant';
 import Customer from '../customer/customer.model';
 import resetPasswordEmailBody from '../../mailTemplete/resetPasswordEmailBody';
+
 const generateVerifyCode = (): number => {
   return Math.floor(1000 + Math.random() * 9000);
 };
 const loginUserIntoDB = async (payload: TLoginUser) => {
+  console.log('loginUserIntoDB', payload);
   const user = await User.findOne({ email: payload.email });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');

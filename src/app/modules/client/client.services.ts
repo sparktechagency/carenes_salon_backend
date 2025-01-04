@@ -32,6 +32,7 @@ const updateClientProfile = async (
   userId: string,
   payload: Partial<IClient>,
 ) => {
+  console.log('updateClientProfile', payload);
   const result = await Client.findOneAndUpdate({ user: userId }, payload, {
     new: true,
     runValidators: true,
