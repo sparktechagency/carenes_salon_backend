@@ -10,7 +10,7 @@ import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import router from './app/routes';
 import notFound from './app/middlewares/notFound';
 const app: Application = express();
-// for stripe
+// for stripe----
 import Stripe from 'stripe'; // Import Stripe using ES module syntax
 import config from './app/config';
 import stripeServices from './app/modules/stripe/stripe.services';
@@ -97,6 +97,7 @@ app.use(
   cors({
     origin: [
       'http://localhost:5173',
+      'http://localhost:7585',
       'http://localhost:3000',
       'http://192.168.10.25:7585',
     ],

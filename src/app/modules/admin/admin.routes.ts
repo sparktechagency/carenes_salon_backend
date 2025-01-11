@@ -35,10 +35,8 @@ router.patch(
   AdminController.updateShopStatus,
 );
 
-
-
 router.get(
-  '/all-Admins',
+  '/all-admins',
   auth(USER_ROLE.superAdmin),
   AdminController.getAllAdmin,
 );
