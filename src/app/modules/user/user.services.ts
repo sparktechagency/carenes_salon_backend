@@ -15,6 +15,7 @@ import BusinessHour from '../bussinessHour/businessHour.model';
 import sendEmail from '../../utilities/sendEmail';
 import registrationSuccessEmailBody from '../../mailTemplete/registerSuccessEmail';
 import cron from 'node-cron';
+import SuperAdmin from '../superAdmin/superAdmin.model';
 
 const generateVerifyCode = (): number => {
   return Math.floor(1000 + Math.random() * 9000);
@@ -223,6 +224,9 @@ const getMyProfile = async (email: string, role: string) => {
   }
   if (role === USER_ROLE.admin) {
     result = await Admin.findOne({ email: email });
+  }
+  if (role === USER_ROLE.superAdmin) {
+    result = await SuperAdmin.findOne({ email: email });
   }
   return result;
 };
