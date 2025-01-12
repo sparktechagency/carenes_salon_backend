@@ -7,7 +7,10 @@ import { ICompleteCustomer, ICustomer } from './customer.interface';
 
 //!TODO: need to get total speeding for this customer ----
 const getAllCustomer = async (query: Record<string, any>) => {
-  const customerQuery = new QueryBuilder(Customer.find(), query)
+  const customerQuery = new QueryBuilder(
+    Customer.find().populate({ path: 'user', select: 'status -_id' }),
+    query,
+  )
     .search(['firstName', 'lastName', 'email'])
     .filter()
     .sort()
