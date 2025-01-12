@@ -25,6 +25,7 @@ import { stripeRoutes } from '../modules/stripe/stripe.routes';
 import { rescheduleRequestRoutes } from '../modules/booking_reschedule/booking_reschedule.routes';
 import { paypalRoutes } from '../modules/paypal/paypal.routes';
 import { transactionRoutes } from '../modules/transaction/transaction.routes';
+import { superAdminRoutes } from '../modules/superAdmin/superAdmin.routes';
 
 const router = Router();
 
@@ -132,6 +133,10 @@ const moduleRoutes = [
   {
     path: '/transaction',
     router: transactionRoutes,
+  },
+  {
+    path: '/super-admin',
+    router: superAdminRoutes,
   },
 ];
 

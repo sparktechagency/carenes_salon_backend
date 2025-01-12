@@ -20,7 +20,7 @@ const updateCustomerProfile = catchAsync(async (req, res) => {
   }
 
   const result = await customerServices.updateCustomerProfile(
-    req?.user?.id,
+    req?.user?.profileId,
     req?.body,
   );
   sendResponse(res, {

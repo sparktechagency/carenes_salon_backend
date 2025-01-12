@@ -12,6 +12,7 @@ import { USER_ROLE } from '../modules/user/user.constant';
 import Customer from '../modules/customer/customer.model';
 import Client from '../modules/client/client.model';
 import Admin from '../modules/admin/admin.model';
+import SuperAdmin from '../modules/superAdmin/superAdmin.model';
 
 // make costume interface
 
@@ -66,6 +67,8 @@ const auth = (...requiredRoles: TUserRole[]) => {
       profileData = await Client.findOne({ user: id }).select('_id');
     } else if (role === USER_ROLE.admin) {
       profileData = await Admin.findOne({ user: id }).select('_id');
+    } else if (role === USER_ROLE.superAdmin) {
+      profileData = await SuperAdmin.findOne({ user: id }).select('_id');
     }
 
     decoded.profileId = profileData?._id;

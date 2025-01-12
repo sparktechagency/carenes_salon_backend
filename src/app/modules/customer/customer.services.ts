@@ -23,16 +23,16 @@ const getAllCustomer = async (query: Record<string, any>) => {
 };
 
 const updateCustomerProfile = async (
-  userId: string,
+  profileId: string,
   payload: Partial<ICustomer>,
 ) => {
-  const customer = await Customer.findOne({ user: userId });
+  const customer = await Customer.findById(profileId);
 
   if (!customer) {
     throw new AppError(httpStatus.NOT_FOUND, 'Customer not found');
   }
 
-  const result = await Customer.findOneAndUpdate({ user: userId }, payload, {
+  const result = await Customer.findByIdAndUpdate(profileId, payload, {
     new: true,
     runValidators: true,
   });

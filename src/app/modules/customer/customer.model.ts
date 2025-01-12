@@ -34,6 +34,9 @@ const CustomerSchema = new Schema<ICustomer>(
     age: {
       type: Number,
     },
+    phoneNumber: {
+      type: String,
+    },
 
     isProfileComplete: {
       type: Boolean,

@@ -12,7 +12,8 @@ const registerCustomer = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Customer register successfully',
+    message:
+      'Register successfull , please check your email for verification code',
     data: result,
   });
 });

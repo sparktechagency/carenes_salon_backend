@@ -18,6 +18,7 @@ export interface ICustomer {
   profile_image: string;
   isProfileComplete: boolean;
   isDeleted: boolean;
+  phoneNumber: string;
 }
 
 export interface ICompleteCustomer {
