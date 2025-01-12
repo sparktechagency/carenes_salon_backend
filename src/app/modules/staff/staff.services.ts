@@ -87,29 +87,13 @@ const deleteStaffFromDB = async (id: string) => {
   return null;
 };
 
-// get all staff
-// const getAllStaff = async (query: Record<string, any>) => {
-//   const staffQuery = new QueryBuilder(Staff.find(), query)
-//     .search(['name', 'email'])
-//     .filter()
-//     .sort()
-//     .paginate()
-//     .fields();
-//   const meta = await staffQuery.countTotal();
-//   const result = await staffQuery.modelQuery;
-
-//   return {
-//     meta,
-//     result,
-//   };
-// };
 const getAllStaff = async (query: Record<string, any>) => {
   const totalSales = await Booking.aggregate([
-    { $match: { status: 'completed' } }, // Only consider completed bookings
+    { $match: { status: 'completed' } },
     {
       $group: {
-        _id: '$staffId', // Group by shopId
-        totalSales: { $sum: '$totalPrice' }, // Sum the totalPrice for each shop
+        _id: '$staffId',
+        totalSales: { $sum: '$totalPrice' },
       },
     },
   ]);
