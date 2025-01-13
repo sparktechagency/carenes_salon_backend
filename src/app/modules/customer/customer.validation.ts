@@ -51,7 +51,7 @@ const updateCustomerProfileValidationSchema = z.object({
     city: z.string({ required_error: 'City is required' }).optional(),
     country: z.string({ required_error: 'Country is required' }).optional(),
     gender: z.enum(['male', 'female']).optional(),
-    age: z.number().optional(),
+    age: z.string().optional(),
     profile_image: z.string().optional(),
   }),
 });
