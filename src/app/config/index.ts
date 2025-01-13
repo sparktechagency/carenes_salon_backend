@@ -21,6 +21,9 @@ export default {
   super_admin_email: process.env.SUPER_ADMIN_EMAIL,
   stripe: {
     stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+    webhook_endpoint_secret: process.env.WEBHOOK_ENDPOINT_SECRET,
+    onboarding_return_url: process.env.ONBOARDING_RETURN_URL,
+    onboarding_refresh_url: process.env.ONBOARDING_REFRESH_URL,
   },
   // twilio for sms -------------
   twilio: {

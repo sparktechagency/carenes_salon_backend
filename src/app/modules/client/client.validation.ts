@@ -93,27 +93,18 @@ const updateClientProfileValidationSchema = z.object({
     shopGenderCategory: z.enum(['male', 'female']).optional(),
     shopImages: z.array(z.string()).optional(),
     location: locationSchema,
-    profile_image: z.string().nonempty().optional(),
-    bankName: z
-      .string({ required_error: 'Bank name is required' })
-      .nonempty()
-      .optional(),
+    profile_image: z.string().optional(),
+    bankName: z.string({ required_error: 'Bank name is required' }).optional(),
     bankAccountName: z
       .string({ required_error: 'Bank account name is required' })
-      .nonempty()
       .optional(),
     bankAccountNumber: z
       .string({ required_error: 'Bank account number is required' })
-      .nonempty()
       .optional(),
     branchCode: z
       .string({ required_error: 'Branch code is required' })
-      .nonempty()
       .optional(),
-    bankCity: z
-      .string({ required_error: 'Bank city is required' })
-      .nonempty()
-      .optional(),
+    bankCity: z.string({ required_error: 'Bank city is required' }).optional(),
   }),
 });
 

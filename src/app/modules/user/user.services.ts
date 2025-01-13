@@ -244,9 +244,9 @@ const verifyCode = async (email: string, verifyCode: number) => {
   if (verifyCode !== user.verifyCode) {
     throw new AppError(httpStatus.BAD_REQUEST, "Code doesn't match");
   }
-  let result;
+
   if (user.verifyCode === verifyCode) {
-    result = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { email: email },
       { isVerified: true },
       { new: true, runValidators: true },
