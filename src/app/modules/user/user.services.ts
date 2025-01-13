@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { ICustomer } from '../customer/customer.interface';
 import Customer from '../customer/customer.model';
 import { USER_ROLE } from './user.constant';
-import { TUser } from './user.interface';
+import { TUser, TUserRole } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
@@ -16,6 +16,8 @@ import sendEmail from '../../utilities/sendEmail';
 import registrationSuccessEmailBody from '../../mailTemplete/registerSuccessEmail';
 import cron from 'node-cron';
 import SuperAdmin from '../superAdmin/superAdmin.model';
+import { createToken } from './user.utils';
+import config from '../../config';
 
 const generateVerifyCode = (): number => {
   return Math.floor(1000 + Math.random() * 9000);
@@ -250,7 +252,26 @@ const verifyCode = async (email: string, verifyCode: number) => {
       { new: true, runValidators: true },
     );
   }
-  return result;
+
+  const jwtPayload = {
+    id: user?._id,
+    email: user?.email,
+    role: user?.role as TUserRole,
+  };
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string,
+  );
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwt_refresh_secret as string,
+    config.jwt_refresh_expires_in as string,
+  );
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
 
 const resendVerifyCode = async (email: string) => {

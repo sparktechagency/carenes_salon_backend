@@ -61,7 +61,7 @@ const completeCustomerProfileValidationSchema = z.object({
   body: z.object({
     phoneNumber: z.string({ required_error: 'Phone number is required' }),
     gender: z.enum(Object.values(ENUM_GENDER) as [string, ...string[]]),
-    city: z.string({ required_error: 'City is required' }),
+    city: z.string({ required_error: 'City is required' }).optional(),
     country: z.string({ required_error: 'Country is required' }),
   }),
 });

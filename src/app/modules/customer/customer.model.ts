@@ -37,7 +37,9 @@ const CustomerSchema = new Schema<ICustomer>(
     phoneNumber: {
       type: String,
     },
-
+    address: {
+      type: String,
+    },
     isProfileComplete: {
       type: Boolean,
       default: false,

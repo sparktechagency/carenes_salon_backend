@@ -15,6 +15,7 @@ export interface ICustomer {
   gender: 'male' | 'female';
   age: number;
   // location: ILocation;
+  address: string;
   profile_image: string;
   isProfileComplete: boolean;
   isDeleted: boolean;
