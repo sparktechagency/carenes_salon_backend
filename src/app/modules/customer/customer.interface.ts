@@ -13,7 +13,7 @@ export interface ICustomer {
   city: string;
   country: string;
   gender: 'male' | 'female';
-  age: number;
+  age: string;
   // location: ILocation;
   address: string;
   profile_image: string;

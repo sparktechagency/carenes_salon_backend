@@ -89,6 +89,16 @@
             "date": 1736748806569,
             "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-13-12-error.log",
             "hash": "da319f6fe7f4176eaafc4227cfce632543b787e9df8da65da41ecee65e2adbb2"
+        },
+        {
+            "date": 1736754550442,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-13-13-error.log",
+            "hash": "4f45f57f68e31d04c254dcf1d2708d18a32c656533b7f17e59c5a8d3595dfd23"
+        },
+        {
+            "date": 1736756283468,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-13-14-error.log",
+            "hash": "b6632a41b2073ccab9d7c446506c0a433ff2280a8223f5f4b88ac414dfab3fc5"
         }
     ],
     "hashType": "sha256"
