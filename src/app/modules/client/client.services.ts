@@ -404,7 +404,7 @@ const getPayOnShopData = async (query: Record<string, unknown>) => {
     Client.find().select('shopName payOnShopChargeDueAmount shopImages '),
     query,
   )
-    .search(['name'])
+    .search(['shopName'])
     .fields()
     .filter()
     .paginate()
