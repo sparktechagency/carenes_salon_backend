@@ -180,16 +180,22 @@ const changePasswordIntoDB = async (
     payload.newPassword,
     Number(config.bcrypt_salt_rounds),
   );
+  console.log('password', payload.newPassword);
   await User.findOneAndUpdate(
     {
-      id: userData.userId,
+      _id: userData.id,
       role: userData.role,
     },
     {
       password: newHashedPassword,
       passwordChangedAt: new Date(),
     },
+    {
+      new: true,
+      runValidators: true,
+    },
   );
+
   return null;
 };
 
