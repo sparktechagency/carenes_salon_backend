@@ -114,7 +114,7 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
   //Build the client query with pagination, search, etc.
   const ClientQuery = new QueryBuilder(
     Client.find().select(
-      'shopName shopImages totalRating totalRatingCount phoneNumber email location status ',
+      'shopName shopImages totalRating totalRatingCount phoneNumber email location status city',
     ),
     query,
   )
