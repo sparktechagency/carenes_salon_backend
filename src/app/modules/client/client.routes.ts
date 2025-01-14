@@ -26,7 +26,7 @@ router.patch(
   ClientController.updateClientProfile,
 );
 
-router.post(
+router.patch(
   '/add-shop-details',
   authWithoutActive(USER_ROLE.client),
   uploadFile(),

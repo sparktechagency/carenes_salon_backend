@@ -35,7 +35,9 @@ const registerClientValidationSchema = z.object({
 const addShopDetailsValidationSchema = z.object({
   body: z.object({
     phoneNumber: z.string({ required_error: 'Phone number is required' }),
-    dateOfBirth: z.string({ required_error: 'Date of birth is required' }),
+    dateOfBirth: z
+      .string({ required_error: 'Date of birth is required' })
+      .optional(),
     shopName: z.string({ required_error: 'Shop name is required' }),
     shopCategory: z.string({ required_error: 'Shop category is required' }),
     shopCategoryId: z.string({

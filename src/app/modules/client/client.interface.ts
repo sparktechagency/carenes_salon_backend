@@ -14,6 +14,7 @@ export interface IClient {
   phoneNumber: string;
   gender: 'male' | 'female';
   dateOfBirth: Date;
+  city: string;
   shopName: string;
   shopCategory: string;
   shopGenderCategory: 'male' | 'female';

@@ -40,6 +40,9 @@ const clientSchema = new Schema<IClient>(
     shopName: {
       type: String,
     },
+    city: {
+      type: String,
+    },
     shopCategory: { type: String },
     shopGenderCategory: {
       type: String,

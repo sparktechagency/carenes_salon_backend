@@ -114,6 +114,16 @@
             "date": 1736769914327,
             "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\successes\\um-2025-01-13-18-success.log",
             "hash": "eead5b1cb343b196b345293b930c06e30642f0cd4e6dc3c9a86ffa21e6aea82b"
+        },
+        {
+            "date": 1736831007675,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\successes\\um-2025-01-14-11-success.log",
+            "hash": "f60853eac4a4c8fdf4af9fd78576a62491c7368c631cd9905e88f711e1ed64db"
+        },
+        {
+            "date": 1736836116046,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\successes\\um-2025-01-14-12-success.log",
+            "hash": "4813412eafbdcf9b16e8ab82b1dc860355cc4f8d74003e24d9d8680d17ade0d2"
         }
     ],
     "hashType": "sha256"
