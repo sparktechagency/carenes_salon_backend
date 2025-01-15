@@ -58,7 +58,7 @@ const updateAdminStatus = async (id: string, status: string) => {
       throw new AppError(httpStatus.NOT_FOUND, 'Admin not found');
     }
 
-    const isActive = status === 'activate';
+    const isActive = status === 'active';
 
     await User.findOneAndUpdate(
       { _id: result.user },
