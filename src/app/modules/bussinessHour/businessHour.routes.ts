@@ -11,7 +11,7 @@ router.get('/get-available-dates', BusinessHourController.getAvailableDates);
 router.get('/get-available-slots', BusinessHourController.getAvailableSlots);
 router.get(
   '/get-business-hour',
-  auth(USER_ROLE.client),
+  auth(USER_ROLE.client, USER_ROLE.superAdmin, USER_ROLE.admin),
   // validateRequest(businessHourValidations.getBusinessHourValidationSchema),
   BusinessHourController.getBusinessHour,
 );

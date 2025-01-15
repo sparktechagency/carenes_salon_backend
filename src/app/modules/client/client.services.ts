@@ -118,7 +118,7 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
     ),
     query,
   )
-    .search(['name'])
+    .search(['shopName'])
     .fields()
     .filter()
     .paginate()

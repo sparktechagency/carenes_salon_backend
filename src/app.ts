@@ -193,7 +193,7 @@ app.post('/create-payment', async (req, res) => {
     ],
   };
 
-  paypal.payment.create(paymentJson, (error, payment) => {
+  paypal.payment.create(paymentJson, (error, payment: any) => {
     if (error) {
       console.error(error);
       res.status(500).json({ error: 'Payment creation failed' });
@@ -234,7 +234,7 @@ app.post('/execute-payment', async (req, res) => {
           ],
         };
 
-        paypal.payout.create(payoutJson, async (error, payout) => {
+        paypal.payout.create(payoutJson, async (error: any, payout: any) => {
           if (error) {
             console.error(error);
             res.status(500).json({ error: 'Payout failed' });

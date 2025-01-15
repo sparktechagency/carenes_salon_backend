@@ -124,6 +124,41 @@
             "date": 1736836116048,
             "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-14-12-error.log",
             "hash": "67127933e92d3758b108e67d16e72044d8b6d6cd10be69ea362b597176556983"
+        },
+        {
+            "date": 1736838422711,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-14-13-error.log",
+            "hash": "bfc420ef786431e5f894c729a789c2d55b14882147cde00c7fea87e86ea470f2"
+        },
+        {
+            "date": 1736841806909,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-14-14-error.log",
+            "hash": "36a6f97cf907c6ec99ba8cd1adccfe8ed5d9c7d62fb45759695b21caaca37098"
+        },
+        {
+            "date": 1736847641167,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-14-15-error.log",
+            "hash": "4afd74b8b5a3d486ff8a1e5c0eb517e4a16342ba9db2b1547f5ec858f938d598"
+        },
+        {
+            "date": 1736851753011,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-14-16-error.log",
+            "hash": "96d53b3d621d38f78b57bab72fc947689f3b5b3055c8e2ef5a08a1394bd57c87"
+        },
+        {
+            "date": 1736853879260,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-14-17-error.log",
+            "hash": "3951b1377f9419dff0f7887b5ef3f1772f5ea4a89762caa5f9c25e470c841715"
+        },
+        {
+            "date": 1736910966569,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-15-09-error.log",
+            "hash": "d1f5f993b8fc842b198afe25d66f596c9b5fcf59559dc90bd8cd58350a8545b5"
+        },
+        {
+            "date": 1736919061569,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-15-11-error.log",
+            "hash": "8761605f94208e0c6576735d307aa14decfb58555ca4a6778aa2e169693ffd6f"
         }
     ],
     "hashType": "sha256"

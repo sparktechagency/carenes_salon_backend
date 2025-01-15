@@ -50,10 +50,10 @@ async function main() {
     if (myServer) {
       myServer.close(() => {
         errorLogger.error('Unhandled Rejection:', error);
-        process.exit(1);
+        // process.exit(1);
       });
     } else {
-      process.exit(1);
+      // process.exit(1);
     }
   });
 }
