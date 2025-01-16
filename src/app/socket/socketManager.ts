@@ -20,13 +20,20 @@ const initializeSocket = (server: HTTPServer) => {
     io = new IOServer(server, {
       pingTimeout: 60000,
       cors: {
-        origin: ['http://localhost:3000', 'http://192.168.10.25:7585'],
+        origin: [
+          'http://localhost:3000',
+          'http://localhost:7585',
+          'http://192.168.10.25:7585',
+          'http://192.168.10.25:7585',
+          'http://192.168.10.25:7586',
+        ],
       },
     });
     // online user
     const onlineUser = new Set();
     io.on('connection', async (socket: Socket) => {
       const userId = socket.handshake.query.id as string;
+      console.log('a user connected', userId);
       if (!userId) {
         return;
       }
