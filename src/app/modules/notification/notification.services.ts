@@ -12,9 +12,9 @@ const getAllNotificationFromDB = async (
   query: Record<string, any>,
   user: JwtPayload,
 ) => {
-  if (user?.role === USER_ROLE.superAdmin) {
+  if (user?.role === USER_ROLE.superAdmin || user.role === USER_ROLE.admin) {
     const notificationQuery = new QueryBuilder(
-      Notification.find({ receiver: USER_ROLE.superAdmin }),
+      Notification.find({ receiver: USER_ROLE.admin }),
       query,
     )
       .search(['name'])

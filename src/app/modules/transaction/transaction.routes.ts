@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get(
   '/get-all-transaction',
-  auth(USER_ROLE.superAdmin),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   TransactionController.getAllTransaction,
 );
 router.get(

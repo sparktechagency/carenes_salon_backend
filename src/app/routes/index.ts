@@ -26,6 +26,7 @@ import { rescheduleRequestRoutes } from '../modules/booking_reschedule/booking_r
 import { paypalRoutes } from '../modules/paypal/paypal.routes';
 import { transactionRoutes } from '../modules/transaction/transaction.routes';
 import { superAdminRoutes } from '../modules/superAdmin/superAdmin.routes';
+import { notificationRoutes } from '../modules/notification/notification.routes';
 
 const router = Router();
 
@@ -137,6 +138,10 @@ const moduleRoutes = [
   {
     path: '/super-admin',
     router: superAdminRoutes,
+  },
+  {
+    path: '/notification',
+    router: notificationRoutes,
   },
 ];
 
