@@ -429,16 +429,18 @@ const payAdminFee = async (profileId: string, payload: any) => {
 // pay admin fee with stripe------------------------------
 
 const payAdminFeeWithStripe = async (shopId: string) => {
-  const shop = await Client.findById(shopId).select('payOnShopChargeDueAmount');
+  const shop = await Client.findById(shopId).select(
+    'payOnShopChargeDueAmount _id',
+  );
   const amountInCents = Math.round(shop.payOnShopChargeDueAmount * 100);
-
+  console.log('shop id', shop._id);
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     mode: 'payment',
     line_items: [
       {
         price_data: {
-          currency: 'usd',
+          currency: 'eur',
           product_data: {
             name: `Admin fee`,
           },
@@ -448,7 +450,7 @@ const payAdminFeeWithStripe = async (shopId: string) => {
       },
     ],
     metadata: {
-      shopId: shop._id,
+      shopId: shop._id.toString(),
       paymentPurpose: ENUM_PAYMENT_PURPOSE.ADMIN_FEE,
     },
     success_url: `${config.stripe.admin_fee_payment_success_url}`,

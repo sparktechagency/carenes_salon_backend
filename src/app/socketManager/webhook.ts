@@ -22,19 +22,19 @@ const handleWebhook = async (req: Request, res: Response) => {
 
     // Handle different event types
     switch (event.type) {
-      case 'payment_intent.succeeded': {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log(paymentIntent.metadata);
-        const { userId, paymentPurpose } = paymentIntent.metadata;
+      //   case 'payment_intent.succeeded': {
+      //     const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      //     console.log(paymentIntent.metadata);
+      //     const { userId, paymentPurpose } = paymentIntent.metadata;
 
-        console.log(
-          `Payment successful for user ${userId}, subscription ${userId}`,
-        );
-        // await handlePaymentSuccess(userId, paymentPurpose);
-        // Update subscription status in your database
+      //     console.log(
+      //       `Payment successful for user ${userId}, subscription ${userId}`,
+      //     );
+      //     // await handlePaymentSuccess(userId, paymentPurpose);
+      //     // Update subscription status in your database
 
-        break;
-      }
+      //     break;
+      //   }
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
 

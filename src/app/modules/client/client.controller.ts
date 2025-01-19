@@ -124,7 +124,7 @@ const payAdminFee = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Admin fee paid successfully',
+    message: 'Url for pay admin fee',
     data: result,
   });
 });
