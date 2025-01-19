@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 import httpStatus from 'http-status';
 import AppError from '../error/appError';
-import { ENUM_PAYMENT_PURPOSE } from '../utilities/enum';
+import { ENUM_PAYMENT_METHOD, ENUM_PAYMENT_PURPOSE } from '../utilities/enum';
 import Client from '../modules/client/client.model';
 import Transaction from '../modules/transaction/transaction.model';
 
@@ -40,6 +40,7 @@ const handleAdminFeePaymentSuccess = async (
     senderEntityType: 'Client',
     amount: amount,
     type: 'Shop Charge',
+    paymentMethod: ENUM_PAYMENT_METHOD.STRIPE,
   });
 };
 

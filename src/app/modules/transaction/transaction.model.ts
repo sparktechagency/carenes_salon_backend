@@ -1,5 +1,6 @@
 import { model, Schema } from 'mongoose';
 import { ITransaction } from './transaction.interface';
+import { ENUM_PAYMENT_METHOD } from '../../utilities/enum';
 
 const transactionSchema = new Schema<ITransaction>(
   {
@@ -26,6 +27,10 @@ const transactionSchema = new Schema<ITransaction>(
       type: String,
       enum: ['Booking', 'Refund', 'Shop Charge'],
       required: true,
+    },
+    paymentMethod: {
+      type: String,
+      enum: Object.values(ENUM_PAYMENT_METHOD),
     },
   },
   {
