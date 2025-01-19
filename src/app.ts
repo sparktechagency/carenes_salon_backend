@@ -111,27 +111,26 @@ app.use('/uploads', express.static('uploads'));
 // application routers ----------------
 app.use('/', router);
 
-// app.post('/connect-stipe',auth(USER_ROLE.client), createConnectedAccountAndOnboardingLink);
-
-app.post('/create-payment-intent', async (req: Request, res: Response) => {
+// onboarding refresh url
+router.get('/stripe/onboarding/refresh', async (req, res, next) => {
   try {
-    // const { amount, currency } = req.body; // Ensure these values are passed from the client.
-    const amount = 9000;
-    const currency = 'usd'; // Example: 'usd', 'eur', etc.
-    // Create a Payment Intent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount, // Amount in the smallest currency unit (e.g., cents for USD)
-      currency, // Example: 'usd', 'eur', etc.
-      payment_method_types: ['card'], // Specifies allowed payment methods
+    const { accountId } = req.query;
+
+    if (!accountId) {
+      return res.status(400).send('Missing accountId');
+    }
+
+    // Generate a new onboarding link
+    const accountLink = await stripe.accountLinks.create({
+      account: accountId as string,
+      refresh_url: `${config.stripe.onboarding_refresh_url}?accountId=${accountId}`,
+      return_url: config.stripe.onboarding_return_url,
+      type: 'account_onboarding',
     });
 
-    // Send the Payment Intent client secret to the client
-    res.send({
-      clientSecret: paymentIntent.client_secret,
-    });
+    res.redirect(accountLink.url);
   } catch (error) {
-    console.error('Error creating payment intent:', error);
-    res.status(500).json({ error: 'Failed to create payment intent' });
+    next(error);
   }
 });
 
@@ -165,88 +164,6 @@ const test = (req: Request, res: Response) => {
 };
 
 app.get('/', test);
-
-//play with paypal ==================================================
-
-// Constants for fees
-const PLATFORM_FEE_PERCENTAGE = 5;
-
-app.post('/create-payment', async (req, res) => {
-  const { amount, salonOwnerEmail } = req.body;
-
-  // Calculate admin fee and salon owner amount
-  const platformFee = (amount * PLATFORM_FEE_PERCENTAGE) / 100;
-  const salonOwnerAmount = amount - platformFee;
-
-  // Create the payment
-  const paymentJson = {
-    intent: 'sale',
-    payer: { payment_method: 'paypal' },
-    redirect_urls: {
-      return_url: 'http://localhost:3000/payment-success',
-      cancel_url: 'http://localhost:3000/payment-cancel',
-    },
-    transactions: [
-      {
-        amount: { total: amount.toFixed(2), currency: 'USD' },
-        description: 'Salon booking payment',
-      },
-    ],
-  };
-
-  paypal.payment.create(paymentJson, (error, payment: any) => {
-    if (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Payment creation failed' });
-    } else {
-      res.json({ id: payment.id, approvalUrl: payment.links[1].href });
-    }
-  });
-});
-
-// Execute Payment and Split Amount
-app.post('/execute-payment', async (req, res) => {
-  const { paymentId, payerId, amount, salonOwnerEmail } = req.body;
-
-  paypal.payment.execute(
-    paymentId,
-    { payer_id: payerId },
-    async (error, payment) => {
-      if (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Payment execution failed' });
-      } else {
-        // Use Payouts API to transfer to salon owner
-        const platformFee = (amount * PLATFORM_FEE_PERCENTAGE) / 100;
-        const salonOwnerAmount = amount - platformFee;
-
-        const payoutJson = {
-          sender_batch_header: {
-            sender_batch_id: `batch_${Date.now()}`,
-            email_subject: 'Payment from Platform',
-          },
-          items: [
-            {
-              recipient_type: 'EMAIL',
-              amount: { value: salonOwnerAmount.toFixed(2), currency: 'USD' },
-              receiver: salonOwnerEmail,
-              note: 'Your share from a salon booking payment.',
-            },
-          ],
-        };
-
-        paypal.payout.create(payoutJson, async (error: any, payout: any) => {
-          if (error) {
-            console.error(error);
-            res.status(500).json({ error: 'Payout failed' });
-          } else {
-            res.json({ success: true, payment, payout });
-          }
-        });
-      }
-    },
-  );
-});
 
 //===============================================================================
 
