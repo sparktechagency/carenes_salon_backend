@@ -9,7 +9,6 @@ import {
   ENUM_PAYMENT_STATUS,
 } from '../../utilities/enum';
 import Transaction from '../transaction/transaction.model';
-import { JwtPayload } from 'jsonwebtoken';
 
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 const createConnectedAccountAndOnboardingLink = async (
