@@ -419,32 +419,47 @@ const getPayOnShopData = async (query: Record<string, unknown>) => {
 const payAdminFee = async (profileId: string, payload: any) => {
   let result;
   if (payload?.paymentMethod === 'stripe') {
-    result = await payAdminFeeWithStripe(profileId, payload?.amount);
+    result = await payAdminFeeWithStripe(profileId);
   } else if (payload?.paymentMethod === 'paypal') {
-    result = await payAdminFeeWithPaypal(profileId, payload?.amount);
+    result = await payAdminFeeWithPaypal(profileId);
   }
   return result;
 };
 
 // pay admin fee with stripe------------------------------
 
-const payAdminFeeWithStripe = async (shopId: string, amount: number) => {
-  const amountInCents = Math.round(amount * 100);
+const payAdminFeeWithStripe = async (shopId: string) => {
+  const shop = await Client.findById(shopId).select('payOnShopChargeDueAmount');
+  const amountInCents = Math.round(shop.payOnShopChargeDueAmount * 100);
 
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: amountInCents,
-    currency: 'eur',
+  const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
+    mode: 'payment',
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: `Admin fee`,
+          },
+          unit_amount: amountInCents,
+        },
+        quantity: 1,
+      },
+    ],
     metadata: {
-      shopId,
-      purpose: ENUM_PAYMENT_PURPOSE.ADMIN_FEE,
+      shopId: shop._id,
+      paymentPurpose: ENUM_PAYMENT_PURPOSE.ADMIN_FEE,
     },
+    success_url: `${config.stripe.admin_fee_payment_success_url}`,
+    cancel_url: `${config.stripe.payment_cancel_url}`,
   });
-  return { client_secret: paymentIntent.client_secret };
+
+  return { url: session.url };
 };
 
-const payAdminFeeWithPaypal = async (shopId: string, amount: number) => {
-  console.log(shopId, amount);
+const payAdminFeeWithPaypal = async (shopId: string) => {
+  console.log(shopId);
 };
 
 // notify shops for admin fee
