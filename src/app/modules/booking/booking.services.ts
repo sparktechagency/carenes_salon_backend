@@ -11,6 +11,7 @@ import {
   ENUM_BOOKING_PAYMENT,
   ENUM_NOTIFICATION_TYPE,
   ENUM_PAYMENT_METHOD,
+  ENUM_PAYMENT_PURPOSE,
   ENUM_PAYMENT_STATUS,
 } from '../../utilities/enum';
 import Client from '../client/client.model';
@@ -312,25 +313,51 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     }
 
     // Create the payment intent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amountInCents,
-      currency: 'eur',
-      automatic_payment_methods: {
-        enabled: true, // Enable support for various payment methods
-      },
-      metadata: {
-        bookingId: result?._id.toString(),
-        shopId: shop?._id.toString(),
-      },
-    });
+    // const paymentIntent = await stripe.paymentIntents.create({
+    //   amount: amountInCents,
+    //   currency: 'eur',
+    //   automatic_payment_methods: {
+    //     enabled: true, // Enable support for various payment methods
+    //   },
+    //   metadata: {
+    //     bookingId: result?._id.toString(),
+    //     shopId: shop?._id.toString(),
+    //   },
+    // });
 
     // -------------------------------------
 
     // update booking--------------
-    await Booking.findByIdAndUpdate(result._id, {
-      paymentIntentId: paymentIntent.id,
+    // await Booking.findByIdAndUpdate(result._id, {
+    //   paymentIntentId: paymentIntent.id,
+    // });
+    // return paymentIntent.client_secret;
+
+    // with session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+      line_items: [
+        {
+          price_data: {
+            currency: 'eur',
+            product_data: {
+              name: `Salon Appointment`,
+            },
+            unit_amount: amountInCents,
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        bookingId: result._id.toString(),
+        paymentPurpose: ENUM_PAYMENT_PURPOSE.BOOKING,
+      },
+      success_url: `${config.stripe.booking_payment_success_url}`,
+      cancel_url: `${config.stripe.payment_cancel_url}`,
     });
-    return paymentIntent.client_secret;
+
+    return { url: session.url };
   } else if (payload.paymentMethod === ENUM_PAYMENT_METHOD.PAYPAL) {
     const result = await PaypalService.handlePaypalPayment(totalPrice);
     await Booking.create({

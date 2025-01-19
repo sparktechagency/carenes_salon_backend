@@ -9,4 +9,5 @@ export interface ITransaction {
   amount: number;
   type: 'Booking' | 'Refund' | 'Shop Charge';
   paymentMethod: (typeof ENUM_PAYMENT_METHOD)[keyof typeof ENUM_PAYMENT_METHOD];
+  transactionId: string;
 }

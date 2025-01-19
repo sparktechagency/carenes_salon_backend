@@ -26,6 +26,7 @@ export default {
     onboarding_refresh_url: process.env.ONBOARDING_REFRESH_URL,
     admin_fee_payment_success_url: process.env.ADMIN_FEE_PAYMENT_SUCCESS_URL,
     payment_cancel_url: process.env.PAYPAL_CANCEL_URL,
+    booking_payment_success_url: process.env.BOOKING_PAYMENT_SUCCESS_URL,
   },
   // twilio for sms -------------
   twilio: {

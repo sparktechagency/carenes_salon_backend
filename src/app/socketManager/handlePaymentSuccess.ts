@@ -2,9 +2,14 @@
 /* eslint-disable no-console */
 import httpStatus from 'http-status';
 import AppError from '../error/appError';
-import { ENUM_PAYMENT_METHOD, ENUM_PAYMENT_PURPOSE } from '../utilities/enum';
+import {
+  ENUM_PAYMENT_METHOD,
+  ENUM_PAYMENT_PURPOSE,
+  ENUM_PAYMENT_STATUS,
+} from '../utilities/enum';
 import Client from '../modules/client/client.model';
 import Transaction from '../modules/transaction/transaction.model';
+import Booking from '../modules/booking/booking.model';
 
 const handlePaymentSuccess = async (
   metaData: any,
@@ -14,7 +19,11 @@ const handlePaymentSuccess = async (
   if (metaData.paymentPurpose == ENUM_PAYMENT_PURPOSE.ADMIN_FEE) {
     await handleAdminFeePaymentSuccess(metaData.shopId, transactionId, amount);
   } else if (metaData.paymentPurpose == ENUM_PAYMENT_PURPOSE.BOOKING) {
-    await handleBookingPaymentSuccess(metaData.userid, transactionId, amount);
+    await handleBookingPaymentSuccess(
+      metaData.bookingId,
+      transactionId,
+      amount,
+    );
   }
 };
 
@@ -41,6 +50,7 @@ const handleAdminFeePaymentSuccess = async (
     amount: amount,
     type: 'Shop Charge',
     paymentMethod: ENUM_PAYMENT_METHOD.STRIPE,
+    transactionId,
   });
 };
 
@@ -49,7 +59,23 @@ const handleBookingPaymentSuccess = async (
   transactionId: string,
   amount: number,
 ) => {
-  console.log(bookingId, transactionId, amount);
+  const booking = await Booking.findById(bookingId);
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  await Booking.findByIdAndUpdate(bookingId, {
+    paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+  });
+  await Transaction.create({
+    senderEntityId: booking.customerId,
+    senderEntityType: 'Customer',
+    receiverEntityId: booking.shopId,
+    receiverEntityType: 'Client',
+    amount: amount,
+    type: 'Shop Charge',
+    paymentMethod: ENUM_PAYMENT_METHOD.STRIPE,
+    transactionId,
+  });
 };
 
 export default handlePaymentSuccess;

@@ -32,6 +32,9 @@ const transactionSchema = new Schema<ITransaction>(
       type: String,
       enum: Object.values(ENUM_PAYMENT_METHOD),
     },
+    transactionId: {
+      type: String,
+    },
   },
   {
     timestamps: true,
