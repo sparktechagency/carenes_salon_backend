@@ -2,124 +2,53 @@
 /* eslint-disable no-console */
 import httpStatus from 'http-status';
 import AppError from '../error/appError';
-import NormalUser from '../modules/normalUser/normalUser.model';
-import {
-  ENUM_COLLABORATION_STATUS,
-  ENUM_PAYMENT_PURPOSE,
-  ENUM_TRANSACTION_TYPE,
-} from '../utilities/enum';
-import Collaboration from '../modules/collaboration/collaboration.model';
+import { ENUM_PAYMENT_PURPOSE } from '../utilities/enum';
+import Client from '../modules/client/client.model';
 import Transaction from '../modules/transaction/transaction.model';
-import { INormalUser } from '../modules/normalUser/normalUser.interface';
 
 const handlePaymentSuccess = async (
   metaData: any,
   transactionId: string,
   amount: number,
 ) => {
-  if (metaData.paymentPurpose == ENUM_PAYMENT_PURPOSE.PURCHASE_SUBSCRIPTION) {
-    await handleSubcriptionPurchaseSuccess(
-      metaData.userId,
-      transactionId,
-      amount,
-    );
-  } else if (
-    metaData.paymentPurpose == ENUM_PAYMENT_PURPOSE.RENEW_SUBSCRIPTION
-  ) {
-    await handleSubscriptionRenewSuccess(
-      metaData.userid,
-      transactionId,
-      amount,
-    );
-  } else if (
-    metaData.paymentPurpose == ENUM_PAYMENT_PURPOSE.COLLABRATE_PAYMENT
-  ) {
-    await handleCollabratePaymentSuccess(
-      metaData?.collaborationId,
-      transactionId,
-      amount,
-    );
+  if (metaData.paymentPurpose == ENUM_PAYMENT_PURPOSE.ADMIN_FEE) {
+    await handleAdminFeePaymentSuccess(metaData.shopId, transactionId, amount);
+  } else if (metaData.paymentPurpose == ENUM_PAYMENT_PURPOSE.BOOKING) {
+    await handleBookingPaymentSuccess(metaData.userid, transactionId, amount);
   }
 };
 
-const handleSubcriptionPurchaseSuccess = async (
-  userId: string,
+const handleAdminFeePaymentSuccess = async (
+  shopId: string,
   transactionId: string,
   amount: number,
 ) => {
-  console.log(transactionId);
-  const normalUser = await NormalUser.findById(userId);
-  if (!normalUser) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  const shop = await Client.findById(shopId);
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
   }
 
-  await NormalUser.findByIdAndUpdate(
-    userId,
+  await Client.findByIdAndUpdate(
+    shopId,
     {
-      subscriptionPurchaseDate: new Date(),
-      subscriptionExpiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      isPremium: true,
+      $inc: { payOnShopChargeDueAmount: -amount },
     },
     { new: true, runValidators: true },
   );
   await Transaction.create({
-    user: normalUser?._id,
-    email: normalUser?.email,
-    type: ENUM_TRANSACTION_TYPE.PURCHASE_SUBSCRIPTION,
+    senderEntityId: shopId,
+    senderEntityType: 'Client',
     amount: amount,
+    type: 'Shop Charge',
   });
 };
 
-const handleSubscriptionRenewSuccess = async (
-  userId: string,
+const handleBookingPaymentSuccess = async (
+  bookingId: string,
   transactionId: string,
   amount: number,
 ) => {
-  console.log(transactionId);
-  const normalUser = await NormalUser.findById(userId);
-  if (!normalUser) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
-  }
-  await NormalUser.findByIdAndUpdate(
-    userId,
-    {
-      subscriptionExpiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      subscriptionRenewDate: new Date(),
-    },
-    { new: true, runValidators: true },
-  );
-  await Transaction.create({
-    user: normalUser?._id,
-    email: normalUser?.email,
-    type: ENUM_TRANSACTION_TYPE.RENEW_SUBSCRIPTION,
-    amount: amount,
-  });
-};
-
-const handleCollabratePaymentSuccess = async (
-  collaborationId: string,
-  transactionId: string,
-  amount: number,
-) => {
-  const collaboration = await Collaboration.findById(collaborationId).populate({
-    path: 'receiver',
-    select: 'email',
-  });
-  if (!collaboration) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Collaboration not found');
-  }
-  await Collaboration.findByIdAndUpdate(
-    collaborationId,
-    { status: ENUM_COLLABORATION_STATUS.UPCOMING },
-    { new: true, runValidators: true },
-  );
-  const receiver = collaboration.receiver as INormalUser;
-  await Transaction.create({
-    user: collaboration?.receiver,
-    email: receiver?.email,
-    type: ENUM_TRANSACTION_TYPE.COLLABORATION,
-    amount: amount,
-  });
+  console.log(bookingId, transactionId, amount);
 };
 
 export default handlePaymentSuccess;
