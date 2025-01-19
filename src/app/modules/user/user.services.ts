@@ -18,6 +18,7 @@ import cron from 'node-cron';
 import SuperAdmin from '../superAdmin/superAdmin.model';
 import { createToken } from './user.utils';
 import config from '../../config';
+import isAccountReady from '../../helper/isAccountReady';
 
 const generateVerifyCode = (): number => {
   return Math.floor(1000 + Math.random() * 9000);
@@ -222,7 +223,9 @@ const getMyProfile = async (email: string, role: string) => {
     result = await Customer.findOne({ email: email });
   }
   if (role === USER_ROLE.client) {
-    result = await Client.findOne({ email: email });
+    const data = await Client.findOne({ email: email });
+    const accountReady = await isAccountReady(data.stripAccountId);
+    result = { ...data.toObject(), isAccountReady: accountReady };
   }
   if (role === USER_ROLE.admin) {
     result = await Admin.findOne({ email: email });
