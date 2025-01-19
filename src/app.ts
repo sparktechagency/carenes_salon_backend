@@ -102,6 +102,7 @@ app.use(
       'http://localhost:7586',
       'http://192.168.10.25:7585',
       'http://192.168.10.25:7586',
+      'http://10.0.60.38:7585',
     ],
     credentials: true,
   }),

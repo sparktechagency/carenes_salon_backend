@@ -53,8 +53,8 @@ const createConnectedAccountAndOnboardingLink = async (
   // Step 2: Create the onboarding link
   const onboardingLink = await stripe.accountLinks.create({
     account: account.id,
-    refresh_url: 'https://yourapp.com/reauth',
-    return_url: 'https://yourapp.com/success',
+    refresh_url: `${config.stripe.onboarding_refresh_url}?accountId=${account?.id}`,
+    return_url: `${config.stripe.onboarding_return_url}`,
     type: 'account_onboarding',
   });
   return onboardingLink.url;

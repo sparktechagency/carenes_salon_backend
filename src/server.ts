@@ -11,7 +11,7 @@ import { initializeSocket } from './app/socket/socketManager';
 // some changes--------
 process.on('uncaughtException', (error) => {
   errorLogger.error('Uncaught Exception:', error);
-  process.exit(1);
+  // process.exit(1);
 });
 
 let myServer: HTTPServer | undefined;
