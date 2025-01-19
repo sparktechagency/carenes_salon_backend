@@ -23,6 +23,7 @@ import { USER_ROLE } from '../user/user.constant';
 import Notification from '../notification/notification.model';
 import PaypalService from '../paypal/paypal.service';
 import mongoose from 'mongoose';
+import isAccountReady from '../../helper/isAccountReady';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 
 const createPayOnShopBooking = async (customerId: string, payload: any) => {
@@ -170,6 +171,14 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     throw new AppError(
       httpStatus.FORBIDDEN,
       'This shop not add payment method please try again letter or make appointment in other shop',
+    );
+  }
+
+  const accountReady = await isAccountReady(shop.stripAccountId);
+  if (payload.paymentMethod === 'stripe' && !accountReady) {
+    throw new AppError(
+      httpStatus.NON_AUTHORITATIVE_INFORMATION,
+      "Shop owner doesn't provide payment info , contact with shop owner",
     );
   }
 
