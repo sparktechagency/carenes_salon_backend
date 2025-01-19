@@ -9,6 +9,7 @@ import {
   ENUM_PAYMENT_STATUS,
 } from '../../utilities/enum';
 import Transaction from '../transaction/transaction.model';
+import { JwtPayload } from 'jsonwebtoken';
 
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 const createConnectedAccountAndOnboardingLink = async (
@@ -189,10 +190,27 @@ const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
   }
 };
 
+const updateOnboardingLink = async (profileId: string) => {
+  const shop = await Client.findById(profileId);
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+
+  const accountLink = await stripe.accountLinks.create({
+    account: shop.stripAccountId as string,
+    refresh_url: `${config.stripe.onboarding_refresh_url}?accountId=${shop.stripAccountId}`,
+    return_url: config.stripe.onboarding_return_url,
+    type: 'account_onboarding',
+  });
+
+  return { link: accountLink.url };
+};
+
 const stripeServices = {
   createConnectedAccountAndOnboardingLink,
   updateClientStripeConnectionStatus,
   handlePaymentSuccess,
+  updateOnboardingLink,
 };
 
 export default stripeServices;
