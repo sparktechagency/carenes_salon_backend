@@ -435,7 +435,22 @@ const createCancelBookingRequest = async (
   userData: JwtPayload,
   bookingId: string,
 ) => {
-  const booking = await Booking.findById(bookingId);
+  let booking;
+  if (userData.role === USER_ROLE.client) {
+    booking = await Booking.findOne({
+      _id: bookingId,
+      shopId: userData?.profileId,
+      status: ENUM_BOOKING_STATUS.BOOKED,
+      paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+    });
+  } else if (userData?.role === USER_ROLE.customer) {
+    booking = await Booking.findOne({
+      _id: bookingId,
+      customerId: userData?.profileId,
+      status: ENUM_BOOKING_STATUS.BOOKED,
+      paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+    });
+  }
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
@@ -974,7 +989,6 @@ const markAsComplete = async (id: string) => {
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
-
   const shop = await Client.findById(booking?.shopId);
   if (!shop) {
     throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
@@ -997,7 +1011,6 @@ const markAsComplete = async (id: string) => {
     const payout = await stripe.payouts.create(
       {
         amount: amountInCent,
-        // amount: Math.round(amountInCent),
         currency: 'eur',
       },
       {
@@ -1006,7 +1019,7 @@ const markAsComplete = async (id: string) => {
     );
     console.log('payout', payout);
 
-    // Update collaboration data
+    // Update booking data
     await Booking.findByIdAndUpdate(
       id,
       { status: ENUM_BOOKING_STATUS.COMPLETED },

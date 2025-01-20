@@ -68,6 +68,7 @@ const handleBookingPaymentSuccess = async (
     bookingId,
     {
       paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+      paymentIntentId: transactionId,
     },
     { new: true, runValidators: true },
   );
