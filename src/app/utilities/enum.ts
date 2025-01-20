@@ -75,3 +75,9 @@ export const ENUM_NOTIFICATION_RECEIVER = {
   ADMIN: 'admin',
   SUPER_ADMIN: 'super-admin',
 };
+
+export const ENUM_BOOKING_STATUS = {
+  BOOKED: 'booked',
+  COMPLETED: 'completed',
+  CANCELED: 'canceled',
+};

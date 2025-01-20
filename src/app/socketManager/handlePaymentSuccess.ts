@@ -72,7 +72,7 @@ const handleBookingPaymentSuccess = async (
     receiverEntityId: booking.shopId,
     receiverEntityType: 'Client',
     amount: amount,
-    type: 'Shop Charge',
+    type: 'Booking',
     paymentMethod: ENUM_PAYMENT_METHOD.STRIPE,
     transactionId,
   });

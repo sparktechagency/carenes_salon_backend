@@ -10,6 +10,7 @@ const servicesSchema = new Schema({
   serviceId: {
     type: Schema.Types.ObjectId,
     required: true,
+    ref: 'Service',
   },
   price: {
     type: Number,
@@ -22,7 +23,8 @@ const BookingSchema = new Schema<IBooking>(
     customerId: {
       type: Schema.Types.ObjectId,
       ref: 'Customer',
-      required: true,
+      // required: true,
+      default: null,
     },
     shopId: { type: Schema.Types.ObjectId, ref: 'Client', required: true },
     staffId: { type: Schema.Types.ObjectId, ref: 'Staff', required: true },

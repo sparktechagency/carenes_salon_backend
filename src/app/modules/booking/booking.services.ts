@@ -9,6 +9,7 @@ import Service from '../service/service.model';
 import Booking from './booking.model';
 import {
   ENUM_BOOKING_PAYMENT,
+  ENUM_BOOKING_STATUS,
   ENUM_NOTIFICATION_TYPE,
   ENUM_PAYMENT_METHOD,
   ENUM_PAYMENT_PURPOSE,
@@ -162,6 +163,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
 };
 
 const createOnlineBooking = async (customerId: string, payload: any) => {
+  console.log('nice to meet you online booking');
   const { serviceIds, date, startTime, shopId } = payload;
   const shop = await Client.findById(shopId);
   if (!shop) {
@@ -334,6 +336,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     // return paymentIntent.client_secret;
 
     // with session
+    console.log('cerate session');
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -356,6 +359,8 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       success_url: `${config.stripe.booking_payment_success_url}`,
       cancel_url: `${config.stripe.payment_cancel_url}`,
     });
+
+    console.log('url', session.url);
 
     return { url: session.url };
   } else if (payload.paymentMethod === ENUM_PAYMENT_METHOD.PAYPAL) {
@@ -877,55 +882,49 @@ const getSingleBooking = async (id: string) => {
   return booking;
 };
 
-const makeCompleteWork = async (id: string) => {
-  // 1. Retrieve the booking information
+const markAsComplete = async (id: string) => {
   const booking = await Booking.findById(id);
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
 
-  // 2. Retrieve the shop (salon) information
   const shop = await Client.findById(booking?.shopId);
   if (!shop) {
     throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
   }
-
-  // 3. Retrieve the paymentIntentId from the booking
-  const paymentIntentId = booking.paymentIntentId;
-  if (!paymentIntentId) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Payment intent not found');
-  }
-
-  // 4. Retrieve the payment intent from Stripe
-  const paymentIntent = await stripe.paymentIntents.retrieve(
-    booking?.paymentIntentId,
-    { expand: ['charges'] },
-  );
-  // console.log('paymetn  intent', paymentIntent);
-  // Retrieve the charge
-  const charge = await stripe.charges.retrieve(paymentIntent.latest_charge);
-  // console.log('charges', charge);
-  // Extract the application fee ID and charge ID
-
-  const chargeId = charge?.id;
-  console.log('charged id', chargeId);
-  // 5. Check if the payment was successful
-  if (paymentIntent.status === 'succeeded') {
-    // 6. Calculate the transfer amounts
-    const transferAmount = Math.floor(paymentIntent.amount_received * 0.95); // 95% to salon
-    console.log('stripe acocunt id', shop.stripAccountId);
-    // 7. Transfer 95% to the salon's connected Stripe account
-    const transferToSalon = await stripe.transfers.create({
-      amount: transferAmount,
-      currency: paymentIntent.currency,
-      destination: shop.stripAccountId, // Salon's connected Stripe account ID
-      source_transaction: chargeId,
-      description: 'Payment for completed work',
+  const bookingAmount = booking.totalPrice;
+  const adminFee = bookingAmount * 0.05;
+  const amountInCent = (bookingAmount - adminFee) * 100;
+  try {
+    // Transfer funds
+    const transfer: any = await stripe.transfers.create({
+      amount: amountInCent,
+      currency: 'eur',
+      destination: shop.stripAccountId as string,
     });
+    console.log('transfer', transfer);
 
-    return { transferToSalon };
-  } else {
-    throw new Error('Payment was not successful');
+    // Payout to bank
+    const payout = await stripe.payouts.create(
+      {
+        amount: amountInCent,
+        currency: 'eur',
+      },
+      {
+        stripeAccount: shop.stripAccountId as string,
+      },
+    );
+    console.log('payout', payout);
+
+    // Update collaboration data
+    await Booking.findByIdAndUpdate(
+      id,
+      { status: ENUM_BOOKING_STATUS.COMPLETED },
+      { new: true, runValidators: true },
+    );
+  } catch (error) {
+    console.error('Error during transfer or payout:', error);
+    throw error;
   }
 };
 
@@ -939,7 +938,7 @@ const BookingService = {
   getSalesAndServiceData,
   markNoShow,
   getSingleBooking,
-  makeCompleteWork,
+  markAsComplete,
 };
 
 export default BookingService;

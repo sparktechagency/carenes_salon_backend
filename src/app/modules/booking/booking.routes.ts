@@ -2,14 +2,17 @@ import express from 'express';
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from '../user/user.constant';
 import BookingController from './booking.controller';
-import { changeCancelRequestStatusValidationsSchema } from './booking.validation';
+import bookingValidationSchema, {
+  changeCancelRequestStatusValidationsSchema,
+} from './booking.validation';
 import validateRequest from '../../middlewares/validateRequest';
 
 const router = express.Router();
 
 router.post(
   '/create-booking',
-  // auth(USER_ROLE.customer),
+  auth(USER_ROLE.customer, USER_ROLE.client),
+  validateRequest(bookingValidationSchema),
   BookingController.createBooking,
 );
 router.get(
@@ -48,10 +51,10 @@ router.patch(
   auth(USER_ROLE.client),
   BookingController.markNoShow,
 );
-// router.patch(
-//   '/make-complete/:id',
-//   auth(USER_ROLE.client),
-//   BookingController.makeCompleteWork,
-// );
+router.patch(
+  '/mark-as-complete/:id',
+  auth(USER_ROLE.client, USER_ROLE.customer),
+  BookingController.markAsComplete,
+);
 
 export const bookingRoutes = router;

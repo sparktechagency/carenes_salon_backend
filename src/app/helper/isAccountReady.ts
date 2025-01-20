@@ -7,12 +7,16 @@ const isAccountReady = async (accountId: string): Promise<boolean> => {
   try {
     const account = await stripe.accounts.retrieve(accountId);
 
-    const { capabilities } = account;
+    const { capabilities, requirements } = account;
 
     const isCardPaymentsActive = capabilities?.card_payments === 'active';
     const isTransfersActive = capabilities?.transfers === 'active';
 
-    const isReady = isCardPaymentsActive && isTransfersActive;
+    const currentlyDue = requirements?.currently_due || [];
+    console.log('currently due', currentlyDue);
+    const isReady =
+      //   isCardPaymentsActive && isTransfersActive && currentlyDue.length === 0;
+      isCardPaymentsActive && isTransfersActive;
 
     return isReady;
   } catch (error: any) {

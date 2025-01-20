@@ -12,8 +12,10 @@ import cron from 'node-cron';
 
 import {
   ENUM_BOOKING_PAYMENT,
+  ENUM_BOOKING_STATUS,
   ENUM_NOTIFICATION_TYPE,
   ENUM_PAYMENT_METHOD,
+  ENUM_PAYMENT_PURPOSE,
   ENUM_PAYMENT_STATUS,
 } from '../../utilities/enum';
 import Client from '../client/client.model';
@@ -26,6 +28,7 @@ import { USER_ROLE } from '../user/user.constant';
 import Notification from '../notification/notification.model';
 import PaypalService from '../paypal/paypal.service';
 import mongoose from 'mongoose';
+import isAccountReady from '../../helper/isAccountReady';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 
 const createPayOnShopBooking = async (customerId: string, payload: any) => {
@@ -171,6 +174,13 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       'This shop not add payment method please try again letter or make appointment in other shop',
     );
   }
+  const accountReady = await isAccountReady(shop.stripAccountId);
+  if (payload.paymentMethod === 'stripe' && !accountReady) {
+    throw new AppError(
+      httpStatus.NON_AUTHORITATIVE_INFORMATION,
+      "Shop owner doesn't provide payment info , contact with shop owner",
+    );
+  }
   if (payload.paymentMethod === 'paypal' && !shop?.paypalEmail) {
     throw new AppError(
       httpStatus.FORBIDDEN,
@@ -309,31 +319,58 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     }
 
     // Create the payment intent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amountInCents,
-      currency: 'eur',
-      automatic_payment_methods: {
-        enabled: true,
-      },
-      application_fee_amount: amountInCents * 0.2,
-      transfer_data: {
-        destination: shop?.stripAccountId as string,
-      },
-      metadata: {
-        bookingId: result?._id.toString(),
-        shopId: shop?._id.toString(),
-      },
+    // const paymentIntent = await stripe.paymentIntents.create({
+    //   amount: amountInCents,
+    //   currency: 'eur',
+    //   automatic_payment_methods: {
+    //     enabled: true,
+    //   },
+    //   application_fee_amount: amountInCents * 0.2,
+    //   transfer_data: {
+    //     destination: shop?.stripAccountId as string,
+    //   },
+    //   metadata: {
+    //     bookingId: result?._id.toString(),
+    //     shopId: shop?._id.toString(),
+    //   },
 
-      on_behalf_of: shop?.stripAccountId,
-    });
+    //   on_behalf_of: shop?.stripAccountId,
+    // });
 
     // -------------------------------------
 
     // update booking--------------
-    await Booking.findByIdAndUpdate(result._id, {
-      paymentIntentId: paymentIntent.id,
+    // await Booking.findByIdAndUpdate(result._id, {
+    //   paymentIntentId: paymentIntent.id,
+    // });
+    // return paymentIntent.client_secret;
+
+    // with session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+      line_items: [
+        {
+          price_data: {
+            currency: 'eur',
+            product_data: {
+              name: `Salon Appointment`,
+            },
+            unit_amount: amountInCents,
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        bookingId: result._id.toString(),
+        paymentPurpose: ENUM_PAYMENT_PURPOSE.BOOKING,
+      },
+      success_url: `${config.stripe.booking_payment_success_url}`,
+      cancel_url: `${config.stripe.payment_cancel_url}`,
     });
-    return paymentIntent.client_secret;
+
+    console.log('return url', session.url);
+    return { url: session.url };
   } else if (payload.paymentMethod === ENUM_PAYMENT_METHOD.PAYPAL) {
     const result = await PaypalService.handlePaypalPayment(totalPrice);
 
@@ -362,9 +399,10 @@ const createBooking = async (customerId: string, payload: any) => {
   if (payload.bookingPaymentType === ENUM_BOOKING_PAYMENT.PAY_ON_SHOP) {
     result = await createPayOnShopBooking(customerId, payload);
   } else {
+    console.log('okey');
     result = await createOnlineBooking(customerId, payload);
   }
-
+  console.log('result', result);
   return result;
 };
 
@@ -743,6 +781,7 @@ const getSalesAndServiceData = async (
   shopId: string,
   query: Record<string, unknown>,
 ) => {
+  //!TODO: need to make changes
   const matchQuery: any = {
     shopId: new mongoose.Types.ObjectId(shopId),
     $or: [
@@ -792,6 +831,57 @@ const getSalesAndServiceData = async (
     matchQuery.startTime = dateFilter.startTime;
   }
 
+  // const result = await Booking.aggregate([
+  //   {
+  //     $match: matchQuery,
+  //   },
+  //   {
+  //     $facet: {
+  //       totalSales: [
+  //         {
+  //           $group: {
+  //             _id: null,
+  //             totalSales: { $sum: '$totalPrice' },
+  //           },
+  //         },
+  //       ],
+  //       serviceDetails: [
+  //         {
+  //           $unwind: '$services',
+  //         },
+  //         {
+  //           $group: {
+  //             _id: '$services.serviceId',
+  //             serviceCount: { $sum: 1 },
+  //             totalSales: { $sum: '$services.price' },
+  //           },
+  //         },
+  //         {
+  //           $lookup: {
+  //             from: 'services',
+  //             localField: '_id',
+  //             foreignField: '_id',
+  //             as: 'serviceDetails',
+  //           },
+  //         },
+  //         {
+  //           $unwind: '$serviceDetails',
+  //         },
+  //         {
+  //           $project: {
+  //             serviceName: '$serviceDetails.name',
+  //             serviceCount: 1,
+  //             totalSales: 1,
+  //           },
+  //         },
+  //       ],
+  //     },
+  //   },
+  //   {
+  //     $unwind: '$totalSales',
+  //   },
+  // ]);
+
   const result = await Booking.aggregate([
     {
       $match: matchQuery,
@@ -812,7 +902,7 @@ const getSalesAndServiceData = async (
           },
           {
             $group: {
-              _id: '$services.serviceId',
+              _id: '$services.serviceId', // Group by serviceId
               serviceCount: { $sum: 1 },
               totalSales: { $sum: '$services.price' },
             },
@@ -820,17 +910,18 @@ const getSalesAndServiceData = async (
           {
             $lookup: {
               from: 'services',
-              localField: '_id',
-              foreignField: '_id',
+              localField: '_id', // serviceId in Booking
+              foreignField: '_id', // _id in services
               as: 'serviceDetails',
             },
           },
           {
-            $unwind: '$serviceDetails',
+            $unwind: '$serviceDetails', // Convert array to object
           },
           {
             $project: {
-              serviceName: '$serviceDetails.name',
+              serviceId: '$_id',
+              serviceName: '$serviceDetails.serviceName',
               serviceCount: 1,
               totalSales: 1,
             },
@@ -842,7 +933,6 @@ const getSalesAndServiceData = async (
       $unwind: '$totalSales',
     },
   ]);
-
   const totalSales = result[0]?.totalSales?.totalSales || 0;
   const serviceDetails = result[0]?.serviceDetails || [];
 
@@ -875,6 +965,52 @@ const getSingleBooking = async (id: string) => {
   return booking;
 };
 
+const markAsComplete = async (id: string) => {
+  const booking = await Booking.findById(id);
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+
+  const shop = await Client.findById(booking?.shopId);
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+  const bookingAmount = booking.totalPrice;
+  const adminFee = bookingAmount * 0.05;
+  const amountInCent = (bookingAmount - adminFee) * 100;
+  try {
+    // Transfer funds
+    const transfer: any = await stripe.transfers.create({
+      amount: amountInCent,
+      currency: 'eur',
+      destination: shop.stripAccountId as string,
+    });
+    console.log('transfer', transfer);
+
+    // Payout to bank
+    const payout = await stripe.payouts.create(
+      {
+        amount: amountInCent,
+        currency: 'eur',
+      },
+      {
+        stripeAccount: shop.stripAccountId as string,
+      },
+    );
+    console.log('payout', payout);
+
+    // Update collaboration data
+    await Booking.findByIdAndUpdate(
+      id,
+      { status: ENUM_BOOKING_STATUS.COMPLETED },
+      { new: true, runValidators: true },
+    );
+  } catch (error) {
+    console.error('Error during transfer or payout:', error);
+    throw error;
+  }
+};
+
 // crone job-----------------------------------
 cron.schedule('*/10 * * * *', async () => {
   try {
@@ -899,6 +1035,7 @@ const BookingService = {
   getSalesAndServiceData,
   markNoShow,
   getSingleBooking,
+  markAsComplete,
 };
 
 export default BookingService;

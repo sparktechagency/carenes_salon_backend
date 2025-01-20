@@ -5,7 +5,7 @@ import sendResponse from '../../utilities/sendResponse';
 
 const createBooking = catchAsync(async (req, res) => {
   const result = await BookingService.createBooking(
-    req.body.profileId,
+    req.body.customerId,
     req.body,
   );
 
@@ -107,15 +107,15 @@ const markNoShow = catchAsync(async (req, res) => {
   });
 });
 
-// const makeCompleteWork = catchAsync(async (req, res) => {
-//   const result = await BookingService.makeCompleteWork(req.params.id);
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Successfully marked as complete',
-//     data: result,
-//   });
-// });
+const markAsComplete = catchAsync(async (req, res) => {
+  const result = await BookingService.markAsComplete(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Successfully marked as complete',
+    data: result,
+  });
+});
 
 const BookingController = {
   createBooking,
@@ -126,7 +126,7 @@ const BookingController = {
   getPayOnShopBookingHistory,
   getSalesAndServiceData,
   markNoShow,
-  // makeCompleteWork,
+  markAsComplete,
 };
 
 export default BookingController;
