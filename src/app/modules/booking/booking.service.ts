@@ -539,8 +539,8 @@ const acceptCancelBookingRequest = async (
     'firstName lastName profile_image',
   );
 
-  await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
-  await Notification.findByIdAndDelete(notificationId);
+  // await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
+  // await Notification.findByIdAndDelete(notificationId);
 
   const requestReceiver =
     userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
@@ -556,6 +556,9 @@ const acceptCancelBookingRequest = async (
           payment_intent: booking.paymentIntentId,
           amount: refundAmountInCents,
         });
+
+        await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
+        await Notification.findByIdAndDelete(notificationId);
         return refund;
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -588,7 +591,7 @@ const acceptCancelBookingRequest = async (
     const timeDifferenceInHours = timeDifferenceInMs / (1000 * 60 * 60);
     let refundPercentage = 50;
     if (timeDifferenceInHours >= 24) {
-      refundPercentage = 80;
+      refundPercentage = 100;
     }
     // for stripe payment-----------------
     if (booking?.paymentMethod === 'stripe') {
@@ -597,29 +600,65 @@ const acceptCancelBookingRequest = async (
         booking.totalPrice * refundPercentage,
       );
 
-      const paymentIntent = await stripe.paymentIntents.retrieve(
-        booking?.paymentIntentId,
-        { expand: ['charges'] },
-      );
-      // Retrieve the charge
-      const charge = await stripe.charges.retrieve(
-        paymentIntent.latest_charge as any,
-      );
-      const applicationFeeId = charge.application_fee;
-      // Extract the application fee ID and charge ID
-      const chargeId = charge?.id;
+      // those are previous work
+      // const paymentIntent = await stripe.paymentIntents.retrieve(
+      //   booking?.paymentIntentId,
+      //   { expand: ['charges'] },
+      // );
+      // // Retrieve the charge
+      // const charge = await stripe.charges.retrieve(
+      //   paymentIntent.latest_charge as any,
+      // );
+      // const applicationFeeId = charge.application_fee;
+      // // Extract the application fee ID and charge ID
+      // const chargeId = charge?.id;
 
       try {
         const refund = await stripe.refunds.create({
           payment_intent: booking.paymentIntentId,
           amount: refundAmountInCents,
         });
-        if (applicationFeeId && chargeId) {
-          await stripe.refunds.create({
-            charge: chargeId,
-            amount: Math.min(refundAmountInCents, charge.amount),
-          });
+
+        if (refundPercentage == 50) {
+          const transferAmountInCent = booking.totalPrice * refundPercentage;
+          try {
+            // Transfer funds
+            const transfer: any = await stripe.transfers.create({
+              amount: transferAmountInCent,
+              currency: 'eur',
+              destination: shop.stripAccountId as string,
+            });
+            console.log('transfer', transfer);
+
+            // Payout to bank
+            console.log('nice to pyaout');
+            const payout = await stripe.payouts.create(
+              {
+                amount: transferAmountInCent,
+                currency: 'eur',
+              },
+              {
+                stripeAccount: shop.stripAccountId as string,
+              },
+            );
+            console.log('payout', payout);
+
+            await Booking.findByIdAndUpdate(booking._id, {
+              status: 'canceled',
+            });
+            await Notification.findByIdAndDelete(notificationId);
+          } catch (error) {
+            console.error('Error during transfer or payout:', error);
+            throw error;
+          }
         }
+        // this is previous work ---------
+        // if (applicationFeeId && chargeId) {
+        //   await stripe.refunds.create({
+        //     charge: chargeId,
+        //     amount: Math.min(refundAmountInCents, charge.amount),
+        //   });
+        // }
         return refund;
       } catch (error: unknown) {
         if (error instanceof Error) {
