@@ -14,9 +14,10 @@ const isAccountReady = async (accountId: string): Promise<boolean> => {
 
     const currentlyDue = requirements?.currently_due || [];
     console.log('currently due', currentlyDue);
-    const isReady =
-      //   isCardPaymentsActive && isTransfersActive && currentlyDue.length === 0;
-      isCardPaymentsActive && isTransfersActive;
+    // const isReady =
+    //   //   isCardPaymentsActive && isTransfersActive && currentlyDue.length === 0;
+    //   isCardPaymentsActive && isTransfersActive;
+    const isReady = isTransfersActive;
 
     return isReady;
   } catch (error: any) {

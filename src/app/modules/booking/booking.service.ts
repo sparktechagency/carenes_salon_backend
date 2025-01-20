@@ -163,6 +163,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
 
 const createOnlineBooking = async (customerId: string, payload: any) => {
   const { serviceIds, date, startTime, shopId } = payload;
+  console.log('payload', payload);
   const shop = await Client.findById(shopId);
   if (!shop) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Shop not found');
@@ -227,13 +228,14 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   // Create the end date based on total duration
   const endDate = new Date(startDate);
   endDate.setMinutes(startDate.getMinutes() + totalDuration);
-
+  console.log('start', startDate, 'end', endDate);
   // Check for conflicting bookings----------------
   const existingBookings = await Booking.find({
     staffId: payload.staffId,
     $and: [{ startTime: { $lt: endDate }, endTime: { $gt: startDate } }],
     status: 'booked',
   });
+  console.log('existing booking', existingBookings);
   //check operation-------------
   if (existingBookings.length > 0) {
     throw new AppError(
@@ -369,7 +371,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       cancel_url: `${config.stripe.payment_cancel_url}`,
     });
 
-    console.log('return url', session.url);
+    // console.log('return url', session.url);
     return { url: session.url };
   } else if (payload.paymentMethod === ENUM_PAYMENT_METHOD.PAYPAL) {
     const result = await PaypalService.handlePaypalPayment(totalPrice);
@@ -920,7 +922,6 @@ const getSalesAndServiceData = async (
           },
           {
             $project: {
-              serviceId: '$_id',
               serviceName: '$serviceDetails.serviceName',
               serviceCount: 1,
               totalSales: 1,
@@ -978,6 +979,7 @@ const markAsComplete = async (id: string) => {
   const bookingAmount = booking.totalPrice;
   const adminFee = bookingAmount * 0.05;
   const amountInCent = (bookingAmount - adminFee) * 100;
+  console.log('amunt in sent', amountInCent);
   try {
     // Transfer funds
     const transfer: any = await stripe.transfers.create({
@@ -988,9 +990,11 @@ const markAsComplete = async (id: string) => {
     console.log('transfer', transfer);
 
     // Payout to bank
+    console.log('nice to pyaout');
     const payout = await stripe.payouts.create(
       {
         amount: amountInCent,
+        // amount: Math.round(amountInCent),
         currency: 'eur',
       },
       {

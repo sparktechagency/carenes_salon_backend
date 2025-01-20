@@ -17,10 +17,8 @@ const bookingValidationSchema = z.object({
   shopId: z.string().nonempty('Shop ID is required'),
   staffId: z.string().nonempty('Staff ID is required'),
   services: z.array(serviceSchema).nonempty('Services array cannot be empty'),
-  endTime: z.string({ required_error: 'End time is required' }),
-  status: z.enum(['booked', 'completed', 'canceled'], {
-    required_error: 'Status is required',
-  }),
+  date: z.string({ required_error: 'Date is required' }),
+  startTime: z.string({ required_error: 'Start time is required' }),
   totalPrice: z.number().positive('Total price must be a positive number'),
   bookingPaymentType: z.enum(
     Object.values(ENUM_BOOKING_PAYMENT) as [string, ...string[]],

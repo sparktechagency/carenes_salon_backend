@@ -25,13 +25,24 @@ const createConnectedAccountAndOnboardingLink = async (
     throw new AppError(httpStatus.BAD_REQUEST, 'Stripe is already connected');
   }
   // Step 1: Create a connected account
+  // const account = await stripe.accounts.create({
+  //   type: 'express',
+  //   email: salonEmail,
+  //   country: 'DE', // Example country
+  //   capabilities: {
+  //     card_payments: { requested: true }, // Enable card payments (includes Apple Pay / Google Pay)
+  //     transfers: { requested: true },
+  //   },
+  // });
   const account = await stripe.accounts.create({
     type: 'express',
     email: salonEmail,
-    country: 'DE', // Example country
+    country: 'DE', // Germany
     capabilities: {
-      card_payments: { requested: true }, // Enable card payments (includes Apple Pay / Google Pay)
-      transfers: { requested: true },
+      transfers: { requested: true }, // Only request transfer capability
+    },
+    tos_acceptance: {
+      service_agreement: 'recipient', // Use recipient service agreement
     },
   });
 
