@@ -532,7 +532,7 @@ const acceptCancelBookingRequest = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
   const shop = await Client.findById(booking.shopId).select(
-    'shopName shopImages',
+    'shopName shopImages stripAccountId',
   );
 
   const customer = await Customer.findById(booking.customerId).select(
@@ -618,18 +618,19 @@ const acceptCancelBookingRequest = async (
           payment_intent: booking.paymentIntentId,
           amount: refundAmountInCents,
         });
-
+        console.log('refund is =-----------', refund);
         if (refundPercentage == 50) {
           const transferAmountInCent = booking.totalPrice * refundPercentage;
           try {
             // Transfer funds
+            console.log('start tranfer');
             const transfer: any = await stripe.transfers.create({
               amount: transferAmountInCent,
               currency: 'eur',
               destination: shop.stripAccountId as string,
             });
             console.log('transfer', transfer);
-
+            console.log('start payouts');
             // Payout to bank
             console.log('nice to pyaout');
             const payout = await stripe.payouts.create(
