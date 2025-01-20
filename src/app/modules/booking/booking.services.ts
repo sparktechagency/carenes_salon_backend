@@ -336,7 +336,6 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     // return paymentIntent.client_secret;
 
     // with session
-    console.log('cerate session');
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -359,8 +358,6 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
       success_url: `${config.stripe.booking_payment_success_url}`,
       cancel_url: `${config.stripe.payment_cancel_url}`,
     });
-
-    console.log('url', session.url);
 
     return { url: session.url };
   } else if (payload.paymentMethod === ENUM_PAYMENT_METHOD.PAYPAL) {
