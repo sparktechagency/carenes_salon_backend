@@ -63,9 +63,14 @@ const handleBookingPaymentSuccess = async (
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
-  await Booking.findByIdAndUpdate(bookingId, {
-    paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
-  });
+  console.log('pdatedkfjdk');
+  await Booking.findByIdAndUpdate(
+    bookingId,
+    {
+      paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+    },
+    { new: true, runValidators: true },
+  );
   await Transaction.create({
     senderEntityId: booking.customerId,
     senderEntityType: 'Customer',

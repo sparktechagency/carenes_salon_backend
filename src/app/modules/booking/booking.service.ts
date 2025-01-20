@@ -541,7 +541,6 @@ const acceptCancelBookingRequest = async (
           payment_intent: booking.paymentIntentId,
           amount: refundAmountInCents,
         });
-
         return refund;
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -967,7 +966,11 @@ const getSingleBooking = async (id: string) => {
 };
 
 const markAsComplete = async (id: string) => {
-  const booking = await Booking.findById(id);
+  const booking = await Booking.findOne({
+    _id: id,
+    status: ENUM_BOOKING_STATUS.BOOKED,
+    paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+  });
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
