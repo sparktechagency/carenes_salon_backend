@@ -1033,7 +1033,29 @@ const markAsComplete = async (bookingId: string) => {
   }
   if (booking.bookingPaymentType === 'online') {
     result = await completeOnlineBooking(bookingId);
+  } else if (booking.bookingPaymentType === 'pay-on-shop') {
+    result = await completePayOnShopBooking(bookingId);
   }
+  return result;
+};
+
+const completePayOnShopBooking = async (bookingId: string) => {
+  const booking = await Booking.findOne({
+    _id: bookingId,
+    status: ENUM_BOOKING_STATUS.BOOKED,
+    paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+  });
+
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  const result = await Booking.findByIdAndUpdate(
+    bookingId,
+    {
+      status: ENUM_BOOKING_STATUS.COMPLETED,
+    },
+    { new: true, runValidators: true },
+  );
   return result;
 };
 
