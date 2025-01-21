@@ -1031,7 +1031,10 @@ const markAsComplete = async (bookingId: string) => {
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
-  if (booking.bookingPaymentType === 'online') {
+  if (
+    booking.bookingPaymentType === 'online' &&
+    booking.paymentMethod === ENUM_PAYMENT_METHOD.STRIPE
+  ) {
     result = await completeOnlineBooking(bookingId);
   } else if (booking.bookingPaymentType === 'pay-on-shop') {
     result = await completePayOnShopBooking(bookingId);
