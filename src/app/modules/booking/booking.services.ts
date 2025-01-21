@@ -878,7 +878,7 @@ const getSingleBooking = async (id: string) => {
   }
   return booking;
 };
-
+// make some changes'
 const markAsComplete = async (id: string) => {
   const booking = await Booking.findById(id);
   if (!booking) {
