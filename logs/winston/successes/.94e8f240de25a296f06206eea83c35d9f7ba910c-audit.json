@@ -294,6 +294,21 @@
             "date": 1737363670136,
             "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\successes\\um-2025-01-20-15-success.log",
             "hash": "f51e31cbcff648d0e223637254f16f2e5d0e81ab0f673695e549740a882e0828"
+        },
+        {
+            "date": 1737369230280,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\successes\\um-2025-01-20-16-success.log",
+            "hash": "24655ab0a826c7457d79b5c836e623dea04ebbdd6871c343bae66dc181c5e73c"
+        },
+        {
+            "date": 1737431808573,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\successes\\um-2025-01-21-09-success.log",
+            "hash": "5ab0136e8a3d5a36558c18f82d53e12e2b61085c7083068398f10babbbb10e02"
+        },
+        {
+            "date": 1737432177073,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\successes\\um-2025-01-21-10-success.log",
+            "hash": "48029fbbdf92b318429908eb7bd7e20718b1ae58ade8446c110594459eb611df"
         }
     ],
     "hashType": "sha256"

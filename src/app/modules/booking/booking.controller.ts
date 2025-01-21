@@ -2,10 +2,16 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utilities/catchasync';
 import BookingService from './booking.service';
 import sendResponse from '../../utilities/sendResponse';
+import { USER_ROLE } from '../user/user.constant';
 
 const createBooking = catchAsync(async (req, res) => {
+  let customerId;
+  if (req.user.role === USER_ROLE.customer) {
+    customerId = req.user.profileId;
+  }
   const result = await BookingService.createBooking(
-    req.body.customerId,
+    // req.body.customerId,
+    customerId,
     req.body,
   );
 

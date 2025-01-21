@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import AppError from '../../error/appError';
 import ShopBookmark from './shop.bookmark.model';
 import Client from '../client/client.model';
+import Discount from '../discount/discount.model';
 
 const shopBookmarkAddAndDelete = async (profileId: string, shopId: string) => {
   // check if article exists
@@ -29,9 +30,46 @@ const shopBookmarkAddAndDelete = async (profileId: string, shopId: string) => {
 };
 
 // get bookmark from db
+// const getMyBookmarkFromDB = async (costumerId: string) => {
+//   const result = await ShopBookmark.find({ costumer: costumerId }).populate({
+//     path: 'shop',
+//     select: 'shopName shopImages totalRatingCount totalRating location',
+//   });
+//   console.log('result', result);
+//   const currentDate = new Date();
+//   const discount = await Discount.findOne({
+//     shop: result?.shop?._id,
+//     discountEndDate: { $gt: currentDate },
+//   });
+//   console.log('discound', discount);
+//   const updatedResult = {
+//     ...result.toObject(),
+//     discountParcentage: discount?.discountPercentage || 0,
+//   };
+//   return updatedResult;
+// };
 const getMyBookmarkFromDB = async (costumerId: string) => {
-  const result = await ShopBookmark.find({ costumer: costumerId });
-  return result;
+  const results = await ShopBookmark.find({ costumer: costumerId }).populate({
+    path: 'shop',
+    select: 'shopName shopImages totalRatingCount totalRating location',
+  });
+  const currentDate = new Date();
+
+  const updatedResults = await Promise.all(
+    results.map(async (bookmark) => {
+      const discount = await Discount.findOne({
+        shop: bookmark.shop._id,
+        discountEndDate: { $gt: currentDate },
+      });
+
+      return {
+        ...bookmark.toObject(),
+        discountPercentage: discount?.discountPercentage || 0,
+      };
+    }),
+  );
+
+  return updatedResults;
 };
 
 // delete bookmark

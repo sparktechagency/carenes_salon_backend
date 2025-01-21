@@ -61,7 +61,7 @@ router.get(
 router.get(
   '/get-nearby-shop',
   simpleAuth,
-  validateRequest(ClientValidations.getNearbyShopValidationSchema),
+  // validateRequest(ClientValidations.getNearbyShopValidationSchema),
   ClientController.getNearbyShop,
 );
 router.get(

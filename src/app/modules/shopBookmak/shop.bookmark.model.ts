@@ -6,7 +6,7 @@ const shopBookmarkSchema = new Schema<IShopBookmark>(
     shop: {
       type: Schema.Types.ObjectId,
       default: null,
-      ref: 'Admin',
+      ref: 'Client',
     },
     costumer: {
       type: Schema.Types.ObjectId,

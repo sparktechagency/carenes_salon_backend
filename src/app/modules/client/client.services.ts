@@ -199,10 +199,6 @@ const updateClientStatus = async (id: string, status: string) => {
 
 const getNearbyShopWithTime = async (
   customerId: string,
-  payload: {
-    latitude: number;
-    longitude: number;
-  },
   query: Record<string, any>,
 ) => {
   const matchStage: any[] = [
@@ -235,7 +231,7 @@ const getNearbyShopWithTime = async (
       $geoNear: {
         near: {
           type: 'Point',
-          coordinates: [payload.longitude, payload.latitude],
+          coordinates: [query.longitude, query.latitude],
         },
         // This will store the distance in meters
         distanceField: 'distance',

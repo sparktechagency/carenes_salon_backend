@@ -51,7 +51,7 @@ const updateClientStatus = catchAsync(async (req, res) => {
 const getNearbyShop = catchAsync(async (req, res) => {
   const result = await ClientServices.getNearbyShopWithTime(
     req?.user?.profileId,
-    req?.body,
+    // req?.body,
     req.query,
   );
   sendResponse(res, {

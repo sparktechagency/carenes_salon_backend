@@ -1020,14 +1020,40 @@ const getSingleBooking = async (id: string) => {
   return booking;
 };
 
-const markAsComplete = async (id: string) => {
+const markAsComplete = async (bookingId: string) => {
+  let result;
   const booking = await Booking.findOne({
-    _id: id,
+    _id: bookingId,
     status: ENUM_BOOKING_STATUS.BOOKED,
     paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
   });
+
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  if (booking.bookingPaymentType === 'online') {
+    result = await completeOnlineBooking(bookingId);
+  }
+  return result;
+};
+
+const completeOnlineBooking = async (bookingId: string) => {
+  const booking = await Booking.findOne({
+    _id: bookingId,
+    status: ENUM_BOOKING_STATUS.BOOKED,
+    paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+  });
+
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  // Compare current datetime with startTime
+  const currentDateTime = new Date();
+  if (currentDateTime < booking.startTime) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Cannot complete booking before start time',
+    );
   }
   const shop = await Client.findById(booking?.shopId);
   if (!shop) {
@@ -1036,7 +1062,6 @@ const markAsComplete = async (id: string) => {
   const bookingAmount = booking.totalPrice;
   const adminFee = bookingAmount * 0.05;
   const amountInCent = (bookingAmount - adminFee) * 100;
-  console.log('amunt in sent', amountInCent);
   try {
     // Transfer funds
     const transfer: any = await stripe.transfers.create({
@@ -1061,7 +1086,7 @@ const markAsComplete = async (id: string) => {
 
     // Update booking data
     await Booking.findByIdAndUpdate(
-      id,
+      bookingId,
       { status: ENUM_BOOKING_STATUS.COMPLETED },
       { new: true, runValidators: true },
     );
