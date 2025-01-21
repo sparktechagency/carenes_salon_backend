@@ -145,29 +145,17 @@ const getMyStaff = async (shopId: string) => {
       'name specialty profile_image totalRating totalRatingCount',
     );
 
-    // Resolve services for each staff member
-    // const resolvedStaffList = await Promise.all(
-    //   staffList.map(async (staff) => {
-    //     if (staff.services === 'all-services') {
-    //       // Return 'all-services' as is
-    //       return {
-    //         ...staff.toObject(),
-    //         services: 'all-services',
-    //       };
-    //     } else if (Array.isArray(staff.services)) {
-    //       // Populate specific services
-    //       const specificServices = await Service.find({
-    //         _id: { $in: staff.services },
-    //       }).select('serviceName');
-    //       return {
-    //         ...staff.toObject(),
-    //         services: specificServices,
-    //       };
-    //     } else {
-    //       return staff.toObject(); // Return as is for unexpected cases
-    //     }
-    //   }),
-    // );
+    return staffList;
+  } catch (error) {
+    throw new Error('Unable to fetch staff information.');
+  }
+};
+const getShopStaffs = async (shopId: string) => {
+  try {
+    // Fetch staff for the given shop
+    const staffList = await Staff.find({ shop: shopId }).select(
+      'name specialty profile_image totalRating totalRatingCount',
+    );
 
     return staffList;
   } catch (error) {
@@ -224,6 +212,7 @@ const StaffServices = {
   getMyStaff,
   getAvailableStaff,
   getSingleStaff,
+  getShopStaffs,
 };
 
 export default StaffServices;

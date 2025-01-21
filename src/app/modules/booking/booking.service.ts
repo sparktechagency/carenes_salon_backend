@@ -413,7 +413,10 @@ const getCustomerBookings = async (
   query: Record<string, unknown>,
 ) => {
   const bookingQuery = new QueryBuilder(
-    Booking.find({ customerId: customerId, status: { $ne: 'canceled' } }),
+    Booking.find({
+      customerId: customerId,
+      status: { $ne: 'canceled' },
+    }).populate({ path: 'shopId', select: 'shopName shopImages location' }),
     query,
   )
     .search(['customerId'])
@@ -428,6 +431,28 @@ const getCustomerBookings = async (
     meta,
     result,
   };
+};
+
+// get single booking
+const getSingleBooking = async (id: string) => {
+  const result = await Booking.findById(id)
+    .populate({
+      path: 'shopId',
+      select: 'shopImages shopName location',
+    })
+    .populate({
+      path: 'services.serviceId',
+      select: 'serviceName price durationMinutes',
+    })
+    .populate({
+      path: 'customerId',
+      select: 'firstName lastName profile_image',
+    })
+    .populate({ path: 'staffId', select: 'name' });
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  return result;
 };
 
 // cancel reschedule request
@@ -1012,13 +1037,13 @@ const markNoShow = async (shopId: string, id: string) => {
   return result;
 };
 
-const getSingleBooking = async (id: string) => {
-  const booking = await Booking.findById(id).populate('services.serviceId');
-  if (!booking) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
-  }
-  return booking;
-};
+// const getSingleBooking = async (id: string) => {
+//   const booking = await Booking.findById(id).populate('services.serviceId');
+//   if (!booking) {
+//     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+//   }
+//   return booking;
+// };
 
 const markAsComplete = async (bookingId: string) => {
   let result;

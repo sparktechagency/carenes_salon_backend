@@ -122,6 +122,15 @@ const markAsComplete = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getSingleBooking = catchAsync(async (req, res) => {
+  const result = await BookingService.getSingleBooking(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Booking retrieved successfully',
+    data: result,
+  });
+});
 
 const BookingController = {
   createBooking,
@@ -133,6 +142,7 @@ const BookingController = {
   getSalesAndServiceData,
   markNoShow,
   markAsComplete,
+  getSingleBooking,
 };
 
 export default BookingController;

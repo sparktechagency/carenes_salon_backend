@@ -54,5 +54,10 @@ router.patch(
   auth(USER_ROLE.client, USER_ROLE.customer),
   BookingController.markAsComplete,
 );
+router.get(
+  '/get-single-booking/:id',
+  auth(USER_ROLE.customer, USER_ROLE.client),
+  BookingController.getSingleBooking,
+);
 
 export const bookingRoutes = router;

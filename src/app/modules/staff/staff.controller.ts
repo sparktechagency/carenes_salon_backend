@@ -9,7 +9,10 @@ const createStaff = catchAsync(async (req, res) => {
     req.body.profile_image = files['profile_image'][0].path;
   }
 
-  const result = await StaffServices.createStaffIntoDB(req.user.profileId,req.body);
+  const result = await StaffServices.createStaffIntoDB(
+    req.user.profileId,
+    req.body,
+  );
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -23,7 +26,7 @@ const updateStaff = catchAsync(async (req, res) => {
     req.body.profile_image = files['profile_image'][0].path;
   }
 
-  const result = await StaffServices.updateStaffIntoDB(req.params.id,req.body);
+  const result = await StaffServices.updateStaffIntoDB(req.params.id, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -61,6 +64,16 @@ const getMyStaff = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+const getShopStaffs = catchAsync(async (req, res) => {
+  const result = await StaffServices.getShopStaffs(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Staff retrieved successfully',
+    data: result,
+  });
+});
 // get single staff
 const getSingleStaff = catchAsync(async (req, res) => {
   const result = await StaffServices.getSingleStaff(req.params.id);
@@ -89,7 +102,8 @@ const StaffController = {
   getAllStaff,
   getMyStaff,
   getAvailableStaff,
-  getSingleStaff
+  getSingleStaff,
+  getShopStaffs,
 };
 
 export default StaffController;

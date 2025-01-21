@@ -26,6 +26,11 @@ router.get(
   StaffController.getAllStaff,
 );
 router.get('/my-staff', auth(USER_ROLE.client), StaffController.getMyStaff);
+router.get(
+  '/shop-staff/:id',
+  auth(USER_ROLE.customer),
+  StaffController.getShopStaffs,
+);
 router.patch(
   '/update/:id',
   auth(USER_ROLE.client),
@@ -45,7 +50,7 @@ router.delete(
   auth(USER_ROLE.client),
   StaffController.deleteStaff,
 );
-router.get(
+router.post(
   '/get-available-staff',
   validateRequest(staffValidations.getAvailableStaffValidationSchema),
   StaffController.getAvailableStaff,
