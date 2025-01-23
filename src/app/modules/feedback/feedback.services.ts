@@ -26,7 +26,7 @@ const getAllFeedback = async (query: Record<string, any>) => {
   };
 };
 
-// reply feed back
+// reply feed back-----------
 const replyFeedback = async (id: string, replyMessage: string) => {
   const feedback = await Feedback.findById(id);
   if (!feedback) {
