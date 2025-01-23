@@ -9,7 +9,7 @@ const isAccountReady = async (accountId: string): Promise<boolean> => {
 
     const { capabilities, requirements } = account;
 
-    const isCardPaymentsActive = capabilities?.card_payments === 'active';
+    // const isCardPaymentsActive = capabilities?.card_payments === 'active';
     const isTransfersActive = capabilities?.transfers === 'active';
 
     const currentlyDue = requirements?.currently_due || [];
