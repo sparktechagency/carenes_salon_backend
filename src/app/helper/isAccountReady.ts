@@ -18,7 +18,6 @@ const isAccountReady = async (accountId: string): Promise<boolean> => {
     //   //   isCardPaymentsActive && isTransfersActive && currentlyDue.length === 0;
     //   isCardPaymentsActive && isTransfersActive;
     const isReady = isTransfersActive;
-
     return isReady;
   } catch (error: any) {
     console.error(`Failed to check account ${accountId}:`, error.message);
