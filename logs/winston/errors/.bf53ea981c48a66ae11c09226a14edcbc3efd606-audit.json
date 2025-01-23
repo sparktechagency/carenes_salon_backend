@@ -344,6 +344,56 @@
             "date": 1737453669718,
             "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-21-16-error.log",
             "hash": "34a8a216837b1f8c1137652aa0ab6fade8a821a039d041d007765dbe9e742b73"
+        },
+        {
+            "date": 1737459362334,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-21-17-error.log",
+            "hash": "7fe05e8a8cdc3a4390e72d1ee03d90670242d48ca98d792685957e5363fe6377"
+        },
+        {
+            "date": 1737462438309,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-21-18-error.log",
+            "hash": "a7a7af8597fcfd172fa010c4f571d5516bc6c4b31ada2241b443feada01ecacd"
+        },
+        {
+            "date": 1737517044599,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-22-09-error.log",
+            "hash": "111e3eb0616a4dbad96eb8b72117226eabcbee32dc530df9a75747b915ebcb55"
+        },
+        {
+            "date": 1737520557187,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-22-10-error.log",
+            "hash": "c15fef1d52c4194f875eaef284466cb0c9b67ec0c171d8713a3c8d96d8c0a03c"
+        },
+        {
+            "date": 1737525245023,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-22-11-error.log",
+            "hash": "0bf44255855846e0f0b8203ca998ba1ceba003095c484ea2fc595468d65cd007"
+        },
+        {
+            "date": 1737526204161,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-22-12-error.log",
+            "hash": "a99fb76ea8c5ccc8555f2de1085870863dd88625498a794504a6ebee7e51fe77"
+        },
+        {
+            "date": 1737536172064,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-22-14-error.log",
+            "hash": "bbef2f462cd234ef368dbc47c21873e53eee89c8660f9552ac44fb4aa0206f75"
+        },
+        {
+            "date": 1737536414768,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-22-15-error.log",
+            "hash": "a1f613622e94f05927ef89223fdbe76438134e314a5ec276aa66c97be0319145"
+        },
+        {
+            "date": 1737545226243,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-22-17-error.log",
+            "hash": "8114a0827a08f779f79fae58b0d78734a9378db85f6bfc1fc79ab6861a43a1d1"
+        },
+        {
+            "date": 1737601324597,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-23-09-error.log",
+            "hash": "39acd278c7811dec15ed365bad2ba89e5ea4d7e4bccf4a7d7d4079b745ca32da"
         }
     ],
     "hashType": "sha256"

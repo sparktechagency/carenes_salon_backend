@@ -4,7 +4,9 @@ import sendResponse from '../../utilities/sendResponse';
 import BusinessHourServices from './businessHour.services';
 
 const getAvailableDates = catchAsync(async (req, res) => {
-  const result = await BusinessHourServices.getAvailableDates(req.body.staffId);
+  const result = await BusinessHourServices.getAvailableDates(
+    req.query.staffId as string,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -14,8 +16,8 @@ const getAvailableDates = catchAsync(async (req, res) => {
 });
 const getAvailableSlots = catchAsync(async (req, res) => {
   const result = await BusinessHourServices.getAvailableTimeSlots(
-    req.body.staffId,
-    req.body.date,
+    req.query.staffId as string,
+    req.query.date as string,
   );
   sendResponse(res, {
     statusCode: httpStatus.OK,

@@ -13,7 +13,9 @@ const getAvailableDates = async (staffId: string) => {
   const nextFiveDays = [];
 
   const staff = await Staff.findById(staffId);
-  if (!staff) throw new Error('Staff not found');
+  if (!staff) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Staff not found');
+  }
 
   const shopHours = await BusinessHour.find({
     entityId: staff.shop,
@@ -60,6 +62,9 @@ const getAvailableDates = async (staffId: string) => {
 
 const getAvailableTimeSlots = async (staffId: string, date: string) => {
   const staff = await Staff.findById(staffId);
+  if (!staff) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Staff not found');
+  }
   // const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
   const day = new Date(date).toLocaleDateString('en-US', {
     weekday: 'long',

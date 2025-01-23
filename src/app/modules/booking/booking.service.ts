@@ -448,7 +448,7 @@ const getSingleBooking = async (id: string) => {
       path: 'customerId',
       select: 'firstName lastName profile_image',
     })
-    .populate({ path: 'staffId', select: 'name' });
+    .populate({ path: 'staffId', select: 'name appointmentColor' });
   if (!result) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
@@ -466,14 +466,20 @@ const createCancelBookingRequest = async (
       _id: bookingId,
       shopId: userData?.profileId,
       status: ENUM_BOOKING_STATUS.BOOKED,
-      paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+      $or: [
+        { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS },
+        { paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP },
+      ],
     });
   } else if (userData?.role === USER_ROLE.customer) {
     booking = await Booking.findOne({
       _id: bookingId,
       customerId: userData?.profileId,
       status: ENUM_BOOKING_STATUS.BOOKED,
-      paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+      $or: [
+        { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS },
+        { paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP },
+      ],
     });
   }
   if (!booking) {
@@ -796,12 +802,20 @@ const getShopBookings = async (
   }
 
   // Check for service filter in query
-  if (query.serviceId) {
-    query['services.serviceId'] = query.serviceId;
-    delete query.serviceId;
-  }
+  // if (query.serviceId) {
+  //   query['services.serviceId'] = query.serviceId;
+  //   delete query.serviceId;
+  // }
+  // if (query.staffId) {
+  //   query['staffId'] = query.staffId;
+  // }
   const bookingQuery = new QueryBuilder(
-    Booking.find({ shopId, status: { $ne: 'canceled' } }),
+    Booking.find({ shopId, status: { $ne: 'canceled' } })
+      .populate({
+        path: 'staffId',
+        select: 'name appointmentColor',
+      })
+      .populate({ path: 'shopId', select: 'shopName' }),
     query,
   )
     .search(['name'])
@@ -814,7 +828,7 @@ const getShopBookings = async (
   bookingQuery.modelQuery = bookingQuery.modelQuery.populate({
     path: 'services.serviceId',
     model: 'Service',
-    select: 'serviceName',
+    select: 'serviceName durationMinutes price',
   });
   const meta = await bookingQuery.countTotal();
   const result = await bookingQuery.modelQuery;
@@ -1023,7 +1037,12 @@ const getSalesAndServiceData = async (
 };
 
 const markNoShow = async (shopId: string, id: string) => {
-  const booking = await Booking.findOne({ _id: id, shopId: shopId });
+  const currentTime = new Date();
+  const booking = await Booking.findOne({
+    _id: id,
+    shopId: shopId,
+    endTime: { $lt: currentTime },
+  });
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
@@ -1050,9 +1069,11 @@ const markAsComplete = async (bookingId: string) => {
   const booking = await Booking.findOne({
     _id: bookingId,
     status: ENUM_BOOKING_STATUS.BOOKED,
-    paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+    $or: [
+      { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS },
+      { paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP },
+    ],
   });
-
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
@@ -1071,7 +1092,10 @@ const completePayOnShopBooking = async (bookingId: string) => {
   const booking = await Booking.findOne({
     _id: bookingId,
     status: ENUM_BOOKING_STATUS.BOOKED,
-    paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+    $or: [
+      { paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS },
+      { paymentStatus: ENUM_PAYMENT_STATUS.PAY_ON_SHOP },
+    ],
   });
 
   if (!booking) {
