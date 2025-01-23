@@ -1,6 +1,5 @@
 import Stripe from 'stripe';
 import config from '../config';
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 const isAccountReady = async (accountId: string): Promise<boolean> => {
