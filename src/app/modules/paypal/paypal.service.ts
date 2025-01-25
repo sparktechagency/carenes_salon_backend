@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import paypal from '@paypal/checkout-server-sdk';
 import paypalClient from '../../utilities/paypalClient';
+import * as payoutsSdk from '@paypal/payouts-sdk';
 import AppError from '../../error/appError';
 import httpStatus from 'http-status';
 import Booking from '../booking/booking.model';
@@ -114,11 +115,46 @@ const getOrderDetails = async (token: string) => {
   }
 };
 
+const transferMoneyToSalonOwner = async (
+  salonAmount: number,
+  salonOwnerEmail: string,
+) => {
+  const payoutRequest = new payoutsSdk.payouts.PayoutsPostRequest();
+  payoutRequest.requestBody({
+    sender_batch_header: {
+      sender_batch_id: `Payout-${Date.now()}`,
+      email_subject: 'You have received a payment!',
+      email_message: 'Thank you for using our service!',
+    },
+    items: [
+      {
+        recipient_type: 'EMAIL',
+        amount: {
+          value: salonAmount.toFixed(2),
+          currency: 'EUR',
+        },
+        receiver: salonOwnerEmail,
+        note: 'Payment for your appointment',
+      },
+    ],
+  });
+
+  try {
+    const payoutResponse = await payoutsClient.execute(payoutRequest);
+    console.log('Payout successful:', payoutResponse.result);
+    return payoutResponse.result;
+  } catch (error) {
+    console.error('Failed to process payout:', error);
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Failed to process payout to salon owner.',
+    );
+  }
+};
+
 interface RefundPayload {
   captureId: string;
 }
-
-// another try--------------------
 
 const refundPayment = async (payload: RefundPayload) => {
   const { captureId } = payload;
@@ -222,6 +258,7 @@ const PaypalService = {
   handlePaypalPayment,
   capturePaymentForAppointment,
   refundPayment,
+  transferMoneyToSalonOwner,
 };
 
 export default PaypalService;

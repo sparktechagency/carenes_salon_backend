@@ -1081,7 +1081,12 @@ const markAsComplete = async (bookingId: string) => {
     booking.bookingPaymentType === 'online' &&
     booking.paymentMethod === ENUM_PAYMENT_METHOD.STRIPE
   ) {
-    result = await completeOnlineBooking(bookingId);
+    result = await completeStripeBooking(bookingId);
+  } else if (
+    booking.bookingPaymentType === 'online' &&
+    booking.paymentMethod === ENUM_PAYMENT_METHOD.PAYPAL
+  ) {
+    result = await completePaypalBooking(bookingId);
   } else if (booking.bookingPaymentType === 'pay-on-shop') {
     result = await completePayOnShopBooking(bookingId);
   }
@@ -1111,7 +1116,7 @@ const completePayOnShopBooking = async (bookingId: string) => {
   return result;
 };
 
-const completeOnlineBooking = async (bookingId: string) => {
+const completeStripeBooking = async (bookingId: string) => {
   const booking = await Booking.findOne({
     _id: bookingId,
     status: ENUM_BOOKING_STATUS.BOOKED,
@@ -1168,6 +1173,38 @@ const completeOnlineBooking = async (bookingId: string) => {
     console.error('Error during transfer or payout:', error);
     throw error;
   }
+};
+
+const completePaypalBooking = async (bookingId: string) => {
+  const booking = await Booking.findOne({
+    _id: bookingId,
+    status: ENUM_BOOKING_STATUS.BOOKED,
+    paymentStatus: ENUM_PAYMENT_STATUS.SUCCESS,
+  });
+
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+  }
+  // Compare current datetime with startTime
+  const currentDateTime = new Date();
+  if (currentDateTime < booking.startTime) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Cannot complete booking before start time',
+    );
+  }
+  const shop = await Client.findById(booking?.shopId);
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+  const bookingAmount = booking.totalPrice;
+  const adminFee = bookingAmount * 0.05;
+  const shopAmount = bookingAmount - adminFee;
+  const result = await PaypalService.transferMoneyToSalonOwner(
+    shopAmount,
+    shop.paypalEmail,
+  );
+  return result;
 };
 
 // crone job-----------------------------------
