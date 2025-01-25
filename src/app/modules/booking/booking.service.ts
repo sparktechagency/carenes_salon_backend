@@ -609,10 +609,11 @@ const acceptCancelBookingRequest = async (
         );
       }
     } else if (booking?.paymentMethod === 'paypal') {
-      const refund = await PaypalService.refundPayment({
-        captureId: booking?.orderId,
-      });
-      console.log('refund:', refund);
+      const refund = await PaypalService.refundPayment(
+        booking.captureId as string,
+        booking.totalPrice,
+      );
+      return refund;
     }
   } else if (userData?.role === USER_ROLE.client) {
     const currentTime = notification?.createdAt;
@@ -710,10 +711,24 @@ const acceptCancelBookingRequest = async (
         );
       }
     } else if (booking?.paymentMethod === 'paypal') {
-      const refund = await PaypalService.refundPayment({
-        captureId: booking?.orderId,
-      });
-      console.log('refund:', refund);
+      try {
+        const refundAmount = (booking.totalPrice * refundPercentage) / 100;
+        const refund = await PaypalService.refundPayment(
+          booking.captureId as string,
+          refundAmount,
+        );
+        console.log('refund paypal', refund);
+        if (refundPercentage == 50) {
+          const tranferAmount = booking.totalPrice - refundAmount;
+          const tranfer = PaypalService.transferMoneyToSalonOwner(
+            tranferAmount,
+            shop.paypalEmail,
+          );
+          console.log('tranfer paypal', tranfer);
+        }
+      } catch (error) {
+        console.log('error in tranfer or refund', error);
+      }
     }
   }
 

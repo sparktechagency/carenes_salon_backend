@@ -424,6 +424,11 @@
             "date": 1737777833228,
             "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-25-10-error.log",
             "hash": "14f4624785b633d16ae8dc9f80a9d2ffc36a01eeb3f8e404259b1ef25698b2e1"
+        },
+        {
+            "date": 1737781451077,
+            "name": "D:\\Solution Squad Projects\\carenes_salon_backend\\logs\\winston\\errors\\um-2025-01-25-11-error.log",
+            "hash": "58e655a27c7198606313935cbf1307b037eaff2bb5919093c6a6e75021d2aacb"
         }
     ],
     "hashType": "sha256"
