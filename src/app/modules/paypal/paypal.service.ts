@@ -152,9 +152,9 @@ const transferMoneyToSalonOwner = async (
   }
 };
 
-interface RefundPayload {
-  captureId: string;
-}
+// interface RefundPayload {
+//   captureId: string;
+// }
 
 // const refundPayment = async (payload: RefundPayload) => {
 //   const { captureId } = payload;
