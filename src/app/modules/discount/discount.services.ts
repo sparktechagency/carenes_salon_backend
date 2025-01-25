@@ -25,10 +25,7 @@ const getDiscount = async (shopId: string) => {
   const discount = await Discount.findOne({ shop: shopId }).exec();
 
   if (!discount) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "You don't have any discount added",
-    );
+    return null;
   }
 
   // if (discount.products !== 'all-products') {
@@ -57,12 +54,8 @@ const getDiscount = async (shopId: string) => {
 
   return discount;
 };
-const updateDiscount = async (
-  shopId: string,
-  id: string,
-  payload: Partial<IDiscount>,
-) => {
-  const discount = await Discount.findOne({ _id: id, shop: shopId });
+const updateDiscount = async (shopId: string, payload: Partial<IDiscount>) => {
+  const discount = await Discount.findOne({ shop: shopId });
 
   if (!discount) {
     throw new AppError(
@@ -70,14 +63,10 @@ const updateDiscount = async (
       "You don't have any discount schedule",
     );
   }
-  const result = await Discount.findOneAndUpdate(
-    { _id: id, shop: shopId },
-    payload,
-    {
-      new: true,
-      runValidators: true,
-    },
-  );
+  const result = await Discount.findOneAndUpdate({ shop: shopId }, payload, {
+    new: true,
+    runValidators: true,
+  });
   return result;
 };
 
