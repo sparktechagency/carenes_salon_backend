@@ -28,8 +28,8 @@ const handlePaypalPayment = async (amount: number) => {
     purchase_units: [
       {
         amount: {
-          value: amount.toFixed(2), // Format amount to two decimals
-          currency_code: 'USD', // Currency (change as per your need)
+          value: amount.toFixed(2),
+          currency_code: 'USD',
         },
       },
     ],
@@ -76,12 +76,7 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
         'Invalid payment data in capture response.',
       );
     }
-    const totalAmount = parseFloat(
-      captureResponse.result.purchase_units[0].payments.captures[0].amount
-        .value,
-    );
-    const adminFee = +(totalAmount * 0.05).toFixed(2);
-    const salonAmount = +(totalAmount - adminFee).toFixed(2);
+
     const bookingInfo = await Booking.findOne({ orderId: orderId });
     if (!bookingInfo) {
       throw new AppError(httpStatus.NOT_FOUND, 'Booking not found.');
@@ -91,9 +86,6 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
     if (!shopInfo) {
       throw new AppError(httpStatus.NOT_FOUND, 'Shop not found.');
     }
-    const salonOwnerEmail = shopInfo?.paypalEmail;
-    // process payouts
-    await processPayout(salonAmount, salonOwnerEmail);
     // update booking
     await Booking.findByIdAndUpdate(
       bookingInfo._id,
@@ -105,8 +97,6 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
     );
     return {
       captureId: captureResponse.result.id,
-      salonAmount,
-      adminFee,
     };
   } catch (captureError) {
     throw new Error('Failed to capture payment.');

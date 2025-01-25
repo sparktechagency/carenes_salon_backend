@@ -25,7 +25,10 @@ const getDiscount = async (shopId: string) => {
   const discount = await Discount.findOne({ shop: shopId }).exec();
 
   if (!discount) {
-    return null;
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Your don't have any discount schedule",
+    );
   }
 
   // if (discount.products !== 'all-products') {
@@ -70,10 +73,16 @@ const updateDiscount = async (shopId: string, payload: Partial<IDiscount>) => {
   return result;
 };
 
+const deleteDiscount = async (shopId: string) => {
+  const result = await Discount.findOneAndDelete({ shop: shopId });
+  return result;
+};
+
 const DiscountService = {
   createDiscount,
   getDiscount,
   updateDiscount,
+  deleteDiscount,
 };
 
 export default DiscountService;
