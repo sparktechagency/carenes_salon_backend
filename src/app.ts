@@ -13,9 +13,7 @@ const app: Application = express();
 // for stripe----
 import Stripe from 'stripe'; // Import Stripe using ES module syntax
 import config from './app/config';
-import stripeServices from './app/modules/stripe/stripe.services';
-import paypal from './app/utilities/paypalConfig';
-import handleWebhook from './app/socketManager/webhook';
+import handleWebhook from './app/handleWebhook/webhook';
 const endpointSecret =
   'whsec_f05875eb42dd8051fbc20bcdb538e22c499ecd114bde7eea65bb0602b1730562';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
