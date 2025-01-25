@@ -9,6 +9,7 @@ import Booking from '../booking/booking.model';
 import payoutsClient from '../../utilities/payoutClient';
 import Client from '../client/client.model';
 import { ENUM_PAYMENT_STATUS } from '../../utilities/enum';
+import config from '../../config';
 
 interface CapturePayload {
   token: string;
@@ -20,8 +21,8 @@ const handlePaypalPayment = async (amount: number) => {
   const request = new paypal.orders.OrdersCreateRequest();
   request.prefer('return=representation');
 
-  const returnUrl = 'https://your-site.com/payment-success';
-  const cancelUrl = 'https://your-site.com/payment-cancel';
+  const returnUrl = config.paypal.paypal_return_url;
+  const cancelUrl = config.paypal.paypal_cancel_url;
 
   request.requestBody({
     intent: 'CAPTURE',

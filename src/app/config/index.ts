@@ -48,5 +48,7 @@ export default {
     platform_email: process.env.PAYPAL_PLATFORM_EMAIL,
     client_id: process.env.PAYPAL_CLIENT_ID,
     client_secret: process.env.PAYPAL_CLIENT_SECRET,
+    paypal_return_url: process.env.PAYPAL_RETURN_URL,
+    paypal_cancel_url: process.env.PAYPAL_CANCEL_URL,
   },
 };
