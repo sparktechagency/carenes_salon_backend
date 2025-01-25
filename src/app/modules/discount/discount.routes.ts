@@ -24,5 +24,10 @@ router.patch(
   validateRequest(discountValidations.updateDiscountSchema),
   DiscountController.updateDiscount,
 );
+router.delete(
+  '/delete-discount',
+  auth(USER_ROLE.client),
+  DiscountController.deleteDiscount,
+);
 
 export const discountRoutes = router;

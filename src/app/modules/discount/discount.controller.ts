@@ -36,11 +36,21 @@ const updateDiscount = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const deleteDiscount = catchAsync(async (req, res) => {
+  const result = await DiscountService.deleteDiscount(req.user.profileId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Discount deleted successfully',
+    data: result,
+  });
+});
 
 const DiscountController = {
   createDiscount,
   getDiscount,
   updateDiscount,
+  deleteDiscount,
 };
 
 export default DiscountController;
