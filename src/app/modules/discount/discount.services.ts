@@ -3,8 +3,8 @@ import httpStatus from 'http-status';
 import AppError from '../../error/appError';
 import { IDiscount } from './discount.interface';
 import Discount from './discount.model';
-import { Product } from '../product/product.model';
 import { Types } from 'mongoose';
+import Service from '../service/service.model';
 
 const createDiscount = async (shopId: string, payload: IDiscount) => {
   const discount = await Discount.findOne({ shop: shopId });
@@ -23,7 +23,7 @@ const createDiscount = async (shopId: string, payload: IDiscount) => {
 
 const getDiscount = async (shopId: string) => {
   const discount = await Discount.findOne({ shop: shopId }).exec();
-
+  console.log('discount', discount);
   if (!discount) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -46,7 +46,7 @@ const getDiscount = async (shopId: string) => {
   if (discount.services !== 'all-services') {
     const products = await Promise.all(
       discount.services.map((serviceId: Types.ObjectId) =>
-        Product.findById(serviceId),
+        Service.findById(serviceId),
       ),
     );
     //   discount.products  = products;
