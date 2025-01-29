@@ -46,7 +46,7 @@ const getDiscount = async (shopId: string) => {
   if (discount.services !== 'all-services') {
     const products = await Promise.all(
       discount.services.map((serviceId: Types.ObjectId) =>
-        Service.findById(serviceId),
+        Service.findById(serviceId).select('serviceName'),
       ),
     );
     //   discount.products  = products;

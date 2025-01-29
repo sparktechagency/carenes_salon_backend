@@ -29,6 +29,7 @@ import Notification from '../notification/notification.model';
 import PaypalService from '../paypal/paypal.service';
 import mongoose from 'mongoose';
 import isAccountReady from '../../helper/isAccountReady';
+import { payonShopChargePerBooking } from '../../constant';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 
 const createPayOnShopBooking = async (customerId: string, payload: any) => {
@@ -154,7 +155,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
 
   await Client.findByIdAndUpdate(
     shopId,
-    { $inc: { payOnShopChargeDueAmount: 0.1 } },
+    { $inc: { payOnShopChargeDueAmount: payonShopChargePerBooking } },
     { new: true, runValidators: true },
   );
 

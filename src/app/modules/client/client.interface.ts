@@ -20,6 +20,7 @@ export interface IClient {
   shopGenderCategory: 'male' | 'female';
   shopImages: [string];
   location: ILocation;
+  address: string;
   profile_image: string;
   bankName: string;
   bankAccountName: string;

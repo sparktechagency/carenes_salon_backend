@@ -49,6 +49,7 @@ const addShopDetailsValidationSchema = z.object({
       Object.values(ENUM_PAYMENT_PREFERENCES) as [string, ...string[]],
     ),
     location: locationSchema,
+    address: z.string({ required_error: 'Address is required' }),
   }),
 });
 

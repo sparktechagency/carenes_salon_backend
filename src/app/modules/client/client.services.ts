@@ -226,17 +226,32 @@ const getNearbyShopWithTime = async (
   const pipeline: any[] = [];
 
   // Conditionally add $geoNear if nearby is true
-  if (query.nearby) {
+  // if (query.latitude && query.longitude) {
+  //   pipeline.push({
+  //     $geoNear: {
+  //       near: {
+  //         type: 'Point',
+  //         coordinates: [query.longitude, query.latitude],
+  //       },
+  //       distanceField: 'distance',
+  //       maxDistance: maxDistanceForShop,
+  //       spherical: true,
+  //     },
+  //   });
+  // }
+  if (query.latitude && query.longitude) {
     pipeline.push({
       $geoNear: {
         near: {
           type: 'Point',
-          coordinates: [query.longitude, query.latitude],
+          coordinates: [
+            parseFloat(query.longitude),
+            parseFloat(query.latitude),
+          ],
         },
-        // This will store the distance in meters
         distanceField: 'distance',
         maxDistance: maxDistanceForShop,
-        spherical: true, // Use spherical geometry for Earth-like distances
+        spherical: true,
       },
     });
   }
@@ -294,6 +309,7 @@ const getNearbyShopWithTime = async (
       totalRating: 1,
       totalRatingCount: 1,
       shopGenderCategory: 1,
+      address: 1,
     },
   });
   const result = await Client.aggregate(pipeline);

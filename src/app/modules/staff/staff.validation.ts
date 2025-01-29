@@ -33,10 +33,7 @@ const updateStaffValidationSchema = z.object({
       .string()
       .min(1, { message: 'Specialty is required.' })
       .optional(),
-    phoneNumber: z
-      .string()
-      .regex(/^\+?[1-9]\d{1,14}$/, { message: 'Invalid phone number format.' })
-      .optional(),
+    phoneNumber: z.string().optional(),
     email: z.string().email({ message: 'Invalid email format.' }).optional(),
     employmentStartDate: z
       .string()
