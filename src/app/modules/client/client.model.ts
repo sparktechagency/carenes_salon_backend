@@ -66,7 +66,7 @@ const clientSchema = new Schema<IClient>(
     payOnShopChargeDueAmount: { type: Number, default: 0 },
     address: {
       type: String,
-      required: true,
+      default: null,
     },
     status: {
       type: String,

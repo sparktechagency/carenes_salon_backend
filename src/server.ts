@@ -46,25 +46,40 @@ async function main() {
     throw error;
   }
 
-  process.on('unhandledRejection', (error) => {
-    if (myServer) {
-      myServer.close(() => {
-        errorLogger.error('Unhandled Rejection:', error);
-        // process.exit(1);
-      });
-    } else {
-      // process.exit(1);
-    }
-  });
+  // process.on('unhandledRejection', (error) => {
+  //   if (myServer) {
+  //     myServer.close(() => {
+  //       errorLogger.error('Unhandled Rejection:', error);
+  //       // process.exit(1);
+  //     });
+  //   } else {
+  //     // process.exit(1);
+  //   }
+  // });
 }
 
 main().catch((err) => errorLogger.error('Main function error:', err));
 
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM signal received');
+// process.on('SIGTERM', () => {
+//   logger.info('SIGTERM signal received');
+//   if (myServer) {
+//     myServer.close(() => {
+//       logger.info('Server closed gracefully');
+//     });
+//   }
+// });
+
+process.on('unhandledRejection', () => {
+  console.log('unhandledRejection is detected shutting down the server');
   if (myServer) {
     myServer.close(() => {
-      logger.info('Server closed gracefully');
+      process.exit(1);
     });
   }
+  process.exit(1);
+});
+
+process.on('uncaughtException', () => {
+  console.log('uncaughtException is detected ');
+  process.exit(1);
 });
