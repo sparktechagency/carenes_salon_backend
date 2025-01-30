@@ -7,12 +7,6 @@ import { errorLogger, logger } from './app/shared/logger';
 import config from './app/config';
 import seedSuperAdmin from './app/DB';
 import { initializeSocket } from './app/socket/socketManager';
-// import socket from './app/socket/socket';
-// some changes--------
-process.on('uncaughtException', (error) => {
-  errorLogger.error('Uncaught Exception:', error);
-  // process.exit(1);
-});
 
 let myServer: HTTPServer | undefined;
 

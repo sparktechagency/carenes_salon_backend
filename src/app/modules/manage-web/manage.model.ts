@@ -35,11 +35,11 @@ const termsAndConditionsSchema = new mongoose.Schema(
   {
     descriptionForCustomerApp: {
       type: String,
-      required: true,
+      // required: true,
     },
     descriptionForClientApp: {
       type: String,
-      required: true,
+      // required: true,
     },
   },
   {

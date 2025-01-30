@@ -163,6 +163,15 @@ const addPaypalEmail = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const deleteShop = catchAsync(async (req, res) => {
+  const result = await ClientServices.deleteClient(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Shop deleted successfully',
+    data: result,
+  });
+});
 
 const ClientController = {
   updateClientProfile,
@@ -178,6 +187,7 @@ const ClientController = {
   notifyAllShopsForAdminFee,
   notifySingleShopsForAdminFee,
   addPaypalEmail,
+  deleteShop,
 };
 
 export default ClientController;

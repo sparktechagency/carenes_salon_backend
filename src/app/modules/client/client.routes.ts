@@ -95,4 +95,9 @@ router.post(
   auth(USER_ROLE.client),
   ClientController.addPaypalEmail,
 );
+router.delete(
+  '/delete-shop/:id',
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  ClientController.deleteShop,
+);
 export const clientRoutes = router;
