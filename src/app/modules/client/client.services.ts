@@ -22,6 +22,8 @@ import {
   ENUM_PAYMENT_PURPOSE,
 } from '../../utilities/enum';
 import Stripe from 'stripe';
+import paypal from '@paypal/checkout-server-sdk';
+import paypalClient from '../../utilities/paypalClient';
 import config from '../../config';
 import Notification from '../notification/notification.model';
 import getAdminNotificationCount from '../../helper/getAdminNotification';
@@ -473,7 +475,47 @@ const payAdminFeeWithStripe = async (shopId: string) => {
 };
 
 const payAdminFeeWithPaypal = async (shopId: string) => {
-  console.log(shopId);
+  const shop = await Client.findById(shopId).select(
+    'payOnShopChargeDueAmount _id',
+  );
+  const amount = shop.payOnShopChargeDueAmount;
+  const request = new paypal.orders.OrdersCreateRequest();
+  request.prefer('return=representation');
+
+  const returnUrl = config.paypal.paypal_return_url_for_amdin_fee;
+  const cancelUrl = config.paypal.paypal_cancel_url_for_admin_fee;
+
+  request.requestBody({
+    intent: 'CAPTURE',
+    purchase_units: [
+      {
+        amount: {
+          value: amount.toFixed(2),
+          currency_code: 'EUR',
+        },
+      },
+    ],
+    application_context: {
+      return_url: returnUrl,
+      cancel_url: cancelUrl,
+    },
+  });
+
+  try {
+    const order = await paypalClient.execute(request);
+    // const orderId = order.result.id;
+    const approvalUrl = order.result.links.find(
+      (link: { rel: string; href: string }) => link.rel === 'approve',
+    )?.href;
+
+    if (approvalUrl) {
+      return { url: approvalUrl };
+    } else {
+      throw new Error('Failed to retrieve approval URL');
+    }
+  } catch (error) {
+    throw new Error('Failed to create PayPal payment');
+  }
 };
 
 // notify shops for admin fee

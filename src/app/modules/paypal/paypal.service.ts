@@ -30,7 +30,7 @@ const handlePaypalPayment = async (amount: number) => {
       {
         amount: {
           value: amount.toFixed(2),
-          currency_code: 'USD',
+          currency_code: 'EUR',
         },
       },
     ],

@@ -50,5 +50,9 @@ export default {
     client_secret: process.env.PAYPAL_CLIENT_SECRET,
     paypal_return_url: process.env.PAYPAL_RETURN_URL,
     paypal_cancel_url: process.env.PAYPAL_CANCEL_URL,
+    paypal_return_url_for_amdin_fee:
+      process.env.PAYPAL_RETURN_URL_FOR_ADMIN_FEE,
+    paypal_cancel_url_for_admin_fee:
+      process.env.PAYPAL_CANCEL_URL_FOR_ADMIN_FEE,
   },
 };
