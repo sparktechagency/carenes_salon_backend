@@ -172,6 +172,17 @@ const deleteShop = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const executeAdminFeeWithPaypalPayment = catchAsync(async (req, res) => {
+  const result = await ClientServices.executeAdminFeeWithPaypalPayment(
+    req.body.orderId,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Payment successfull',
+    data: result,
+  });
+});
 
 const ClientController = {
   updateClientProfile,
@@ -188,6 +199,7 @@ const ClientController = {
   notifySingleShopsForAdminFee,
   addPaypalEmail,
   deleteShop,
+  executeAdminFeeWithPaypalPayment,
 };
 
 export default ClientController;

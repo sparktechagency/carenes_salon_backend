@@ -659,6 +659,7 @@ const ClientServices = {
   notifySingleShopsForAdminFee,
   addPaypalEmail,
   deleteClient,
+  executeAdminFeeWithPaypalPayment,
 };
 
 export default ClientServices;

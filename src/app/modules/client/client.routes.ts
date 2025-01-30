@@ -100,4 +100,10 @@ router.delete(
   auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   ClientController.deleteShop,
 );
+
+router.post(
+  '/execute-admin-fee-with-paypal',
+  auth(USER_ROLE.client),
+  ClientController.executeAdminFeeWithPaypalPayment,
+);
 export const clientRoutes = router;
