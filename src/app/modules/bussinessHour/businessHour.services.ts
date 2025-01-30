@@ -7,8 +7,10 @@ import Booking from '../booking/booking.model';
 import Staff from '../staff/staff.model';
 import { IBusinessHour } from './businessHour.interface';
 import BusinessHour from './businessHour.model';
+import mongoose from 'mongoose';
 
 const getAvailableDates = async (staffId: string) => {
+  console.log('staff id ', staffId);
   const today = new Date();
   const nextFiveDays = [];
 
@@ -17,15 +19,23 @@ const getAvailableDates = async (staffId: string) => {
     throw new AppError(httpStatus.NOT_FOUND, 'Staff not found');
   }
 
+  console.log('staff', staff);
   const shopHours = await BusinessHour.find({
     entityId: staff.shop,
     entityType: 'Shop',
   });
+  console.log('shop Hourse', shopHours);
+  if (!shopHours) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Shop hours not found');
+  }
   const staffHours = await BusinessHour.find({
     entityId: staffId,
     entityType: 'Staff',
   });
-
+  console.log('staff Hourse', staffHours);
+  if (!staffHours) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Staff hours not found');
+  }
   for (let i = 0; i < 5; i++) {
     const date = new Date(today);
     date.setDate(today.getDate() + i);

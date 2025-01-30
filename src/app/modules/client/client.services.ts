@@ -114,7 +114,7 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
   //Build the client query with pagination, search, etc.
   const ClientQuery = new QueryBuilder(
     Client.find().select(
-      'shopName shopImages totalRating totalRatingCount phoneNumber email location status city',
+      'shopName shopImages totalRating totalRatingCount phoneNumber email location status city user',
     ),
     query,
   )
@@ -538,6 +538,17 @@ const addPaypalEmail = async (profileId: string, paypalEmail: string) => {
   return result;
 };
 
+const deleteClient = async (id: string) => {
+  const client = await Client.findById(id);
+  if (!client) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+
+  const result = await Client.findByIdAndDelete(id);
+  await User.findByIdAndDelete(client.user);
+  return result;
+};
+
 const ClientServices = {
   updateClientProfile,
   getAllClientFromDB,
@@ -552,6 +563,7 @@ const ClientServices = {
   notifyAllShopsForAdminFee,
   notifySingleShopsForAdminFee,
   addPaypalEmail,
+  deleteClient,
 };
 
 export default ClientServices;

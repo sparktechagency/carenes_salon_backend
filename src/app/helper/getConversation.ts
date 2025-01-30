@@ -16,6 +16,8 @@ export const getConversation = async (crntUserId: string) => {
       })
       .populate('sender')
       .populate('receiver');
+
+    console.log('curretn user conversation', currentUserConversation);
     // console.log('currentUserConversation', currentUserConversation);
     // const conversation = currentUserConversation?.map((conv) => {
     //   const countUnseenMessage = conv.messages?.reduce((prev, curr) => {

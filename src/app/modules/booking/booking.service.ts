@@ -30,6 +30,8 @@ import PaypalService from '../paypal/paypal.service';
 import mongoose from 'mongoose';
 import isAccountReady from '../../helper/isAccountReady';
 import { payonShopChargePerBooking } from '../../constant';
+import { getIO } from '../../socket/socketManager';
+import getUserNotificationCount from '../../helper/getUnseenNotification';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 
 const createPayOnShopBooking = async (customerId: string, payload: any) => {
@@ -462,6 +464,7 @@ const createCancelBookingRequest = async (
   bookingId: string,
 ) => {
   let booking;
+  const io = getIO();
   if (userData.role === USER_ROLE.client) {
     booking = await Booking.findOne({
       _id: bookingId,
@@ -501,7 +504,7 @@ const createCancelBookingRequest = async (
     );
   }
   const shop = await Client.findById(booking.shopId).select(
-    'shopName shopImages',
+    'shopName shopImages user',
   );
   if (!shop) {
     throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
@@ -534,6 +537,10 @@ const createCancelBookingRequest = async (
   };
 
   await Notification.create(notificationData);
+  const updatedNotificationCount = await getUserNotificationCount(
+    requestReceiver.toString(),
+  );
+  io.to(shop?.user.toObject()).emit('notifications', updatedNotificationCount);
 };
 
 const changeCancelBookingRequestStatus = async (

@@ -35,14 +35,19 @@ const initializeSocket = (server: HTTPServer) => {
     io.on('connection', async (socket: Socket) => {
       const userId = socket.handshake.query.id as string;
       console.log('a user connected', userId);
+
       if (!userId) {
         return;
       }
+
       // const currentUser = await getUserDetails(userId);
       const currentUser = await User.findById(userId);
+      console.log('current user', currentUser);
       if (!currentUser) {
+        console.log('current user is null');
         return;
       }
+
       const currentUserId = currentUser?._id.toString();
       // create a room-------------------------
       socket.join(currentUserId as string);
@@ -50,9 +55,9 @@ const initializeSocket = (server: HTTPServer) => {
       onlineUser.add(currentUserId);
       // send to the client
       io.emit('onlineUser', Array.from(onlineUser));
-
       // message page-----------------
       socket.on('message-page', async (userId) => {
+        console.log('nice to meet you in message page', userId);
         const userDetails = await getUserDetails(userId);
         if (userDetails) {
           const payload = {
@@ -61,7 +66,10 @@ const initializeSocket = (server: HTTPServer) => {
               userDetails.shopName ||
               userDetails.firstName + ' ' + userDetails.lastName,
             email: userDetails.email,
-            profile_pic: userDetails.profile_image || userDetails.shopImages[0],
+            profile_pic:
+              userDetails?.profile_image || userDetails?.profile_image == ''
+                ? userDetails?.profile_image
+                : userDetails?.shopImages[0] || '',
             online: onlineUser.has(userId),
           };
           socket.emit('message-user', payload);
@@ -80,11 +88,11 @@ const initializeSocket = (server: HTTPServer) => {
 
         // console.log('previous conversation message', getConversationMessage);
 
-        socket.emit('message', getConversationMessage?.messages || []);
+        socket.emit('messages', getConversationMessage?.messages || []);
       });
 
       // new message -----------------------------------
-      socket.on('new message', async (data) => {
+      socket.on('new-message', async (data) => {
         // const req = { files: data.files } as any; // Simulate an Express request
         // const res = {} as any; // Dummy response object
 
@@ -137,14 +145,16 @@ const initializeSocket = (server: HTTPServer) => {
           .populate('messages')
           .sort({ updatedAt: -1 });
         // send to the frontend ---------------
-        io.to(data?.sender).emit(
-          'message',
-          getConversationMessage?.messages || [],
-        );
-        io.to(data?.receiver).emit(
-          'message',
-          getConversationMessage?.messages || [],
-        );
+        // io.to(data?.sender).emit(
+        //   'message',
+        //   getConversationMessage?.messages || [],
+        // );
+        // io.to(data?.receiver).emit(
+        //   'message',
+        //   getConversationMessage?.messages || [],
+        // );
+        io.to(data?.sender).emit('message', saveMessage);
+        io.to(data?.receiver).emit('message', saveMessage);
 
         //send conversation
         const conversationSender = await getConversation(data?.sender);
@@ -155,7 +165,8 @@ const initializeSocket = (server: HTTPServer) => {
       });
 
       // sidebar
-      socket.on('sidebar', async (crntUserId) => {
+      socket.on('chat-list', async (crntUserId) => {
+        console.log('side bar');
         const conversation = await getConversation(crntUserId);
         socket.emit('conversation', conversation);
       });
