@@ -10,4 +10,5 @@ export interface ITransaction {
   type: 'Booking' | 'Refund' | 'Shop Charge';
   paymentMethod: (typeof ENUM_PAYMENT_METHOD)[keyof typeof ENUM_PAYMENT_METHOD];
   transactionId: string;
+  status: 'pending' | 'success';
 }

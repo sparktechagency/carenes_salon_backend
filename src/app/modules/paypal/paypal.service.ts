@@ -278,6 +278,7 @@ const PaypalService = {
   capturePaymentForAppointment,
   refundPayment,
   transferMoneyToSalonOwner,
+  getOrderDetails,
 };
 
 export default PaypalService;

@@ -19,6 +19,7 @@ import ShopCategory from '../shopCategory/shopCategory.model';
 import Booking from '../booking/booking.model';
 import {
   ENUM_NOTIFICATION_TYPE,
+  ENUM_PAYMENT_METHOD,
   ENUM_PAYMENT_PURPOSE,
 } from '../../utilities/enum';
 import Stripe from 'stripe';
@@ -28,6 +29,8 @@ import config from '../../config';
 import Notification from '../notification/notification.model';
 import getAdminNotificationCount from '../../helper/getAdminNotification';
 import { getIO } from '../../socket/socketManager';
+import PaypalService from '../paypal/paypal.service';
+import Transaction from '../transaction/transaction.model';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 
 const updateClientProfile = async (
@@ -503,7 +506,17 @@ const payAdminFeeWithPaypal = async (shopId: string) => {
 
   try {
     const order = await paypalClient.execute(request);
-    // const orderId = order.result.id;
+    const orderId = order.result.id;
+
+    await Transaction.create({
+      senderEntityId: shopId,
+      senderEntityType: 'Client',
+      amount: amount,
+      type: 'Shop Charge',
+      paymentMethod: ENUM_PAYMENT_METHOD.PAYPAL,
+      transactionId: orderId,
+      status: 'pending',
+    });
     const approvalUrl = order.result.links.find(
       (link: { rel: string; href: string }) => link.rel === 'approve',
     )?.href;
@@ -515,6 +528,46 @@ const payAdminFeeWithPaypal = async (shopId: string) => {
     }
   } catch (error) {
     throw new Error('Failed to create PayPal payment');
+  }
+};
+
+const executeAdminFeeWithPaypalPayment = async (orderId: string) => {
+  const token = orderId;
+
+  try {
+    const orderDetails = await PaypalService.getOrderDetails(token);
+
+    const orderId = orderDetails.id;
+    const captureRequest = new paypal.orders.OrdersCaptureRequest(orderId);
+    captureRequest.requestBody({});
+    const captureResponse = await paypalClient.execute(captureRequest);
+    const captureId = captureResponse?.result?.id;
+    if (
+      !captureResponse.result.purchase_units[0].payments.captures[0].amount
+        .value
+    ) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'Invalid payment data in capture response.',
+      );
+    }
+
+    const bookingInfo = await Booking.findOne({ orderId: orderId });
+    if (!bookingInfo) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Booking not found.');
+    }
+
+    const transaction = await Transaction.findOneAndUpdate(
+      { transactionId: orderId },
+      { status: 'success' },
+      { new: true, runValidators: true },
+    );
+    console.log('updated transaction', transaction);
+    return {
+      captureId: captureResponse.result.id,
+    };
+  } catch (captureError) {
+    throw new Error('Failed to capture payment.');
   }
 };
 
