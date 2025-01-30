@@ -136,7 +136,7 @@ const initializeSocket = (server: HTTPServer) => {
         );
 
         // get the conversation
-        const getConversationMessage = await Conversation.findOne({
+        await Conversation.findOne({
           $or: [
             { sender: data?.sender, receiver: data?.receiver },
             { sender: data?.receiver, receiver: data?.sender },
