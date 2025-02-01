@@ -532,6 +532,7 @@ const payAdminFeeWithPaypal = async (shopId: string) => {
 };
 
 const executeAdminFeeWithPaypalPayment = async (orderId: string) => {
+  console.log('orderid', orderId);
   const token = orderId;
 
   try {
@@ -541,7 +542,8 @@ const executeAdminFeeWithPaypalPayment = async (orderId: string) => {
     const captureRequest = new paypal.orders.OrdersCaptureRequest(orderId);
     captureRequest.requestBody({});
     const captureResponse = await paypalClient.execute(captureRequest);
-    const captureId = captureResponse?.result?.id;
+    console.log('capture response', captureResponse);
+    // const captureId = captureResponse?.result?.id;
     if (
       !captureResponse.result.purchase_units[0].payments.captures[0].amount
         .value
@@ -552,17 +554,25 @@ const executeAdminFeeWithPaypalPayment = async (orderId: string) => {
       );
     }
 
-    const bookingInfo = await Booking.findOne({ orderId: orderId });
-    if (!bookingInfo) {
-      throw new AppError(httpStatus.NOT_FOUND, 'Booking not found.');
-    }
-
-    const transaction = await Transaction.findOneAndUpdate(
+    const updateTransaction = await Transaction.findOneAndUpdate(
       { transactionId: orderId },
       { status: 'success' },
       { new: true, runValidators: true },
     );
-    console.log('updated transaction', transaction);
+    if (!updateTransaction) {
+      throw new AppError(
+        httpStatus.FAILED_DEPENDENCY,
+        'Failed to create transaction',
+      );
+    }
+    await Client.findByIdAndUpdate(
+      updateTransaction?.senderEntityId,
+      {
+        $inc: { payOnShopChargeDueAmount: -updateTransaction?.amount },
+      },
+      { new: true, runValidators: true },
+    );
+
     return {
       captureId: captureResponse.result.id,
     };
