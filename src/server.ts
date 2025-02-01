@@ -39,7 +39,7 @@ process.on('unhandledRejection', (promise, reason) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   if (myServer) {
     myServer.close(() => {
-      process.exit(1);
+      // process.exit(1);
     });
   }
   process.exit(1);
@@ -48,5 +48,5 @@ process.on('unhandledRejection', (promise, reason) => {
 process.on('uncaughtException', (promise, reason) => {
   console.log('uncaughtException is detected ');
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  process.exit(1);
+  // process.exit(1);
 });

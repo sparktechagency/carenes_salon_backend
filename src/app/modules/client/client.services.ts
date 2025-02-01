@@ -536,7 +536,7 @@ const executeAdminFeeWithPaypalPayment = async (orderId: string) => {
 
   try {
     const orderDetails = await PaypalService.getOrderDetails(token);
-
+    console.log('order details', orderDetails);
     const orderId = orderDetails.id;
     const captureRequest = new paypal.orders.OrdersCaptureRequest(orderId);
     captureRequest.requestBody({});

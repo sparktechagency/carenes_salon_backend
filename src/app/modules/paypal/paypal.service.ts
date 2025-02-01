@@ -20,10 +20,8 @@ interface CapturePayload {
 const handlePaypalPayment = async (amount: number) => {
   const request = new paypal.orders.OrdersCreateRequest();
   request.prefer('return=representation');
-
   const returnUrl = config.paypal.paypal_return_url;
   const cancelUrl = config.paypal.paypal_cancel_url;
-
   request.requestBody({
     intent: 'CAPTURE',
     purchase_units: [
@@ -39,16 +37,14 @@ const handlePaypalPayment = async (amount: number) => {
       cancel_url: cancelUrl,
     },
   });
-
   try {
     const order = await paypalClient.execute(request);
-    const orderId = order.result.id;
+    // const orderId = order.result.id;
     const approvalUrl = order.result.links.find(
       (link: { rel: string; href: string }) => link.rel === 'approve',
     )?.href;
-
     if (approvalUrl) {
-      return { approvalUrl, orderId: orderId };
+      return { approvalUrl };
     } else {
       throw new Error('Failed to retrieve approval URL');
     }
@@ -59,10 +55,8 @@ const handlePaypalPayment = async (amount: number) => {
 
 const capturePaymentForAppointment = async (payload: CapturePayload) => {
   const { token } = payload;
-
   try {
     const orderDetails = await getOrderDetails(token);
-
     const orderId = orderDetails.id;
     const captureRequest = new paypal.orders.OrdersCaptureRequest(orderId);
     captureRequest.requestBody({});
@@ -77,7 +71,6 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
         'Invalid payment data in capture response.',
       );
     }
-
     const bookingInfo = await Booking.findOne({ orderId: orderId });
     if (!bookingInfo) {
       throw new AppError(httpStatus.NOT_FOUND, 'Booking not found.');
