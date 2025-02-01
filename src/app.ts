@@ -62,16 +62,6 @@ router.get('/stripe/onboarding/refresh', async (req, res, next) => {
   }
 });
 
-const test = (req: Request, res: Response) => {
-  Promise.reject();
-  // const a = 10;
-  // res.send(a);
-};
-
-app.get('/', test);
-
-//===============================================================================
-
 // global error handler
 app.use(globalErrorHandler);
 // not found
