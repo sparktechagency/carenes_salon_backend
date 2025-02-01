@@ -4,11 +4,13 @@ import sendResponse from '../../utilities/sendResponse';
 import PaypalService from './paypal.service';
 
 const executePaypalPayment = catchAsync(async (req, res) => {
-  const result = await PaypalService.capturePaymentForAppointment(req.body);
+  const result = await PaypalService.capturePaymentForAppointment(
+    req.body.orderId,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Rating added. Thanks for your time',
+    message: 'Payment successfull for booking',
     data: result,
   });
 });

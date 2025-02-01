@@ -20,8 +20,8 @@ interface CapturePayload {
 const handlePaypalPayment = async (amount: number) => {
   const request = new paypal.orders.OrdersCreateRequest();
   request.prefer('return=representation');
-  const returnUrl = config.paypal.paypal_return_url;
-  const cancelUrl = config.paypal.paypal_cancel_url;
+  const returnUrl = config.paypal.paypal_return_url_for_booking;
+  const cancelUrl = config.paypal.paypal_cancel_url_for_booking;
   request.requestBody({
     intent: 'CAPTURE',
     purchase_units: [
@@ -44,7 +44,7 @@ const handlePaypalPayment = async (amount: number) => {
       (link: { rel: string; href: string }) => link.rel === 'approve',
     )?.href;
     if (approvalUrl) {
-      return { approvalUrl };
+      return { approvalUrl, orderId: order.result.id };
     } else {
       throw new Error('Failed to retrieve approval URL');
     }
@@ -53,14 +53,15 @@ const handlePaypalPayment = async (amount: number) => {
   }
 };
 
-const capturePaymentForAppointment = async (payload: CapturePayload) => {
-  const { token } = payload;
+const capturePaymentForAppointment = async (orderId: string) => {
+  const token = orderId;
   try {
     const orderDetails = await getOrderDetails(token);
     const orderId = orderDetails.id;
     const captureRequest = new paypal.orders.OrdersCaptureRequest(orderId);
     captureRequest.requestBody({});
     const captureResponse = await paypalClient.execute(captureRequest);
+    console.log('capture res', captureResponse);
     const captureId = captureResponse?.result?.id;
     if (
       !captureResponse.result.purchase_units[0].payments.captures[0].amount
@@ -89,9 +90,10 @@ const capturePaymentForAppointment = async (payload: CapturePayload) => {
       },
       { new: true, runValidators: true },
     );
-    return {
-      captureId: captureResponse.result.id,
-    };
+    // return {
+    //   // captureId: captureResponse.result.id,
+    // };
+    return null;
   } catch (captureError) {
     throw new Error('Failed to capture payment.');
   }

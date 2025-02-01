@@ -393,8 +393,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
     });
 
     return {
-      approvalLink: result.approvalUrl,
-      orderId: result.orderId,
+      url: result.approvalUrl,
     };
   }
 };
