@@ -372,7 +372,6 @@ const getSingleShop = async (id: string) => {
       const services = await Service.find({ category: category._id })
         .select('serviceName availableFor durationMinutes price')
         .exec();
-
       const servicesWithDiscount = services.map((service) => {
         const isServiceDiscounted =
           isAllServicesDiscounted ||

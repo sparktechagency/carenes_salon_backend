@@ -620,12 +620,16 @@ const acceptCancelBookingRequest = async (
         booking.captureId as string,
         booking.totalPrice,
       );
+      await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
+      await Notification.findByIdAndDelete(notificationId);
       return refund;
+    } else if (booking?.paymentMethod === 'pay-on-shop') {
+      await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
+      await Notification.findByIdAndDelete(notificationId);
     }
   } else if (userData?.role === USER_ROLE.client) {
     const currentTime = notification?.createdAt;
     const startTime = new Date(booking.startTime);
-
     const timeDifferenceInMs = startTime.getTime() - currentTime.getTime();
     const timeDifferenceInHours = timeDifferenceInMs / (1000 * 60 * 60);
     let refundPercentage = 50;
@@ -733,9 +737,14 @@ const acceptCancelBookingRequest = async (
           );
           console.log('tranfer paypal', tranfer);
         }
+        await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
+        await Notification.findByIdAndDelete(notificationId);
       } catch (error) {
         console.log('error in tranfer or refund', error);
       }
+    } else if (booking?.paymentMethod === 'pay-on-shop') {
+      await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
+      await Notification.findByIdAndDelete(notificationId);
     }
   }
 
