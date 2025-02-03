@@ -26,6 +26,23 @@ async function main() {
 
     // Initialize Socket.IO
     initializeSocket(myServer);
+    // Global unhandled rejection handler
+    process.on('unhandledRejection', (error) => {
+      logger.error('Unhandled Rejection:', error);
+      if (myServer) {
+        // myServer.close(() => process.exit(1));
+      } else {
+        // process.exit(1);
+      }
+    });
+
+    // Global termination signal handler
+    process.on('SIGTERM', () => {
+      logger.info('SIGTERM signal received');
+      if (myServer) {
+        myServer.close(() => logger.info('Server closed gracefully'));
+      }
+    });
   } catch (error) {
     errorLogger.error('Error in main function:', error);
     throw error;
@@ -34,19 +51,19 @@ async function main() {
 
 main().catch((err) => errorLogger.error('Main function error:', err));
 
-process.on('unhandledRejection', (promise, reason) => {
-  console.log('unhandledRejection is detected shutting down the server');
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  if (myServer) {
-    myServer.close(() => {
-      // process.exit(1);
-    });
-  }
-  process.exit(1);
-});
+// process.on('unhandledRejection', (promise, reason) => {
+//   console.log('unhandledRejection is detected shutting down the server');
+//   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+//   if (myServer) {
+//     myServer.close(() => {
+//       // process.exit(1);
+//     });
+//   }
+//   process.exit(1);
+// });
 
-process.on('uncaughtException', (promise, reason) => {
-  console.log('uncaughtException is detected ');
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // process.exit(1);
-});
+// process.on('uncaughtException', (promise, reason) => {
+//   console.log('uncaughtException is detected ');
+//   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+//   // process.exit(1);
+// });

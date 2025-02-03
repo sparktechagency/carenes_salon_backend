@@ -114,6 +114,57 @@ import { USER_ROLE } from '../modules/user/user.constant';
 //   }
 // };
 
+// export const getConversation = async (crntUserId: string) => {
+//   if (!crntUserId) return [];
+
+//   const currentUserConversation = await Conversation.find({
+//     $or: [{ sender: crntUserId }, { receiver: crntUserId }],
+//   })
+//     .sort({ updatedAt: -1 })
+//     .populate('messages')
+//     .populate('sender')
+//     .populate('receiver');
+//   const conversationList = await Promise.all(
+//     currentUserConversation?.map(async (conv: any) => {
+//       const countUnseenMessage = conv.messages?.reduce(
+//         (prev: number, curr: any) =>
+//           curr.msgByUserId.toString() !== crntUserId && !curr.seen
+//             ? prev + 1
+//             : prev,
+//         0,
+//       );
+//       // Identify the other user in the conversation
+//       const otherUser =
+//         conv.sender._id.toString() === crntUserId ? conv.receiver : conv.sender;
+//       console.log('other user', otherUser);
+//       // Fetch additional user details if necessary
+//       console.log('other user', otherUser.role);
+//       let userData = null;
+//       if (otherUser?.role === USER_ROLE.customer) {
+//         userData = await Customer.findOne({ user: otherUser._id });
+//       } else if (otherUser?.role === USER_ROLE.client) {
+//         userData = await Client.findOne({ user: otherUser._id });
+//       }
+
+//       return {
+//         _id: conv._id,
+//         userData: {
+//           id: otherUser._id,
+//           user: userData.user,
+//           name: userData ? `${userData.firstName} ${userData.lastName}` : '',
+//           profileImage: userData?.shopImages
+//             ? userData?.shopImages[0]
+//             : userData?.profile_image,
+//         },
+//         unseenMsg: countUnseenMessage,
+//         lastMsg: conv.messages[conv.messages.length - 1],
+//       };
+//     }),
+//   );
+
+//   return conversationList;
+// };
+
 export const getConversation = async (crntUserId: string) => {
   if (!crntUserId) return [];
 
@@ -126,19 +177,21 @@ export const getConversation = async (crntUserId: string) => {
     .populate('receiver');
 
   const conversationList = await Promise.all(
-    currentUserConversation?.map(async (conv: any) => {
-      const countUnseenMessage = conv.messages?.reduce(
-        (prev: number, curr: any) =>
-          curr.msgByUserId.toString() !== crntUserId && !curr.seen
-            ? prev + 1
-            : prev,
-        0,
-      );
+    currentUserConversation.map(async (conv: any) => {
+      if (!conv.sender || !conv.receiver) {
+        console.warn(`Skipping conversation ${conv._id} due to missing user`);
+        return null;
+      }
+
       // Identify the other user in the conversation
       const otherUser =
         conv.sender._id.toString() === crntUserId ? conv.receiver : conv.sender;
 
-      // Fetch additional user details if necessary
+      if (!otherUser) {
+        console.warn(`Skipping conversation ${conv._id} - otherUser is null`);
+        return null;
+      }
+
       let userData = null;
       if (otherUser.role === USER_ROLE.customer) {
         userData = await Customer.findOne({ user: otherUser._id });
@@ -148,19 +201,27 @@ export const getConversation = async (crntUserId: string) => {
 
       return {
         _id: conv._id,
-        userData: {
-          id: otherUser._id,
-          user: userData.user,
-          name: userData ? `${userData.firstName} ${userData.lastName}` : '',
-          profileImage: userData?.shopImages
-            ? userData?.shopImages[0]
-            : userData?.profile_image,
-        },
-        unseenMsg: countUnseenMessage,
-        lastMsg: conv.messages[conv.messages.length - 1],
+        userData: userData
+          ? {
+              id: otherUser._id,
+              user: userData.user,
+              name: `${userData.firstName} ${userData.lastName}`,
+              profileImage: userData.shopImages
+                ? userData.shopImages[0]
+                : userData.profile_image,
+            }
+          : null,
+        unseenMsg: conv.messages?.reduce(
+          (prev: number, curr: any) =>
+            curr.msgByUserId.toString() !== crntUserId && !curr.seen
+              ? prev + 1
+              : prev,
+          0,
+        ),
+        lastMsg: conv.messages?.[conv.messages.length - 1] || null,
       };
     }),
   );
 
-  return conversationList;
+  return conversationList.filter((conv) => conv !== null);
 };

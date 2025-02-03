@@ -7,6 +7,7 @@ import Conversation from '../modules/conversation/conversation.model';
 import { getConversation } from '../helper/getConversation';
 import Message from '../modules/message/message.model';
 import { User } from '../modules/user/user.model';
+import { getSingleConversation } from '../helper/getSingleConversation';
 // import { uploadFile } from '../helper/fileUploader';
 // import util from 'util';
 // import path from 'path';
@@ -135,40 +136,30 @@ const initializeSocket = (server: HTTPServer) => {
           },
         );
 
-        // get the conversation
-        await Conversation.findOne({
-          $or: [
-            { sender: data?.sender, receiver: data?.receiver },
-            { sender: data?.receiver, receiver: data?.sender },
-          ],
-        })
-          .populate('messages')
-          .sort({ updatedAt: -1 });
         // send to the frontend ---------------
-        // io.to(data?.sender).emit(
-        //   'message',
-        //   getConversationMessage?.messages || [],
-        // );
-        // io.to(data?.receiver).emit(
-        //   'message',
-        //   getConversationMessage?.messages || [],
-        // );
         io.to(data?.sender).emit('message', saveMessage);
         io.to(data?.receiver).emit('message', saveMessage);
 
         //send conversation
-        const conversationSender = await getConversation(data?.sender);
-        const conversationReceiver = await getConversation(data?.receiver);
-
-        io.to(data?.sender).emit('conversation', conversationSender);
-        io.to(data?.receiver).emit('conversation', conversationReceiver);
+        const conversationSender = await getSingleConversation(
+          data?.sender,
+          data?.receiver,
+        );
+        const conversationReceiver = await getSingleConversation(
+          data?.receiver,
+          data?.sender,
+        );
+        io.to(data?.sender.toString()).emit('conversation', conversationSender);
+        io.to(data?.receiver.toString()).emit(
+          'conversation',
+          conversationReceiver,
+        );
       });
 
       // sidebar
       socket.on('chat-list', async (crntUserId) => {
-        console.log('side bar');
         const conversation = await getConversation(crntUserId);
-        socket.emit('conversation', conversation);
+        socket.emit('chat-list', conversation);
       });
 
       // send
@@ -187,11 +178,15 @@ const initializeSocket = (server: HTTPServer) => {
           { $set: { seen: true } },
         );
 
-        //send conversation
-        const conversationSender = await getConversation(
-          currentUserId as string,
+        // //send conversation
+        const conversationSender = await getSingleConversation(
+          currentUserId,
+          msgByUserId,
         );
-        const conversationReceiver = await getConversation(msgByUserId);
+        const conversationReceiver = await getSingleConversation(
+          msgByUserId,
+          currentUserId,
+        );
 
         io.to(currentUserId as string).emit('conversation', conversationSender);
         io.to(msgByUserId).emit('conversation', conversationReceiver);

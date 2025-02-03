@@ -1068,6 +1068,7 @@ const getSalesAndServiceData = async (
 };
 
 const markNoShow = async (shopId: string, id: string) => {
+  let result;
   const currentTime = new Date();
   const booking = await Booking.findOne({
     _id: id,
@@ -1077,13 +1078,26 @@ const markNoShow = async (shopId: string, id: string) => {
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
+  // const result = await Booking.findByIdAndUpdate(
+  //   id,
+  //   { status: 'completed' },
+  //   { new: true, runValidators: true },
+  // );
 
-  const result = await Booking.findByIdAndUpdate(
-    id,
-    { status: 'completed' },
-    { new: true, runValidators: true },
-  );
-
+  // return result;
+  if (
+    booking.bookingPaymentType === 'online' &&
+    booking.paymentMethod === ENUM_PAYMENT_METHOD.STRIPE
+  ) {
+    result = await completeStripeBooking(id);
+  } else if (
+    booking.bookingPaymentType === 'online' &&
+    booking.paymentMethod === ENUM_PAYMENT_METHOD.PAYPAL
+  ) {
+    result = await completePaypalBooking(id);
+  } else if (booking.bookingPaymentType === 'pay-on-shop') {
+    result = await completePayOnShopBooking(id);
+  }
   return result;
 };
 
@@ -1172,6 +1186,13 @@ const completeStripeBooking = async (bookingId: string) => {
   const bookingAmount = booking.totalPrice;
   const adminFee = bookingAmount * 0.05;
   const amountInCent = (bookingAmount - adminFee) * 100;
+  const ready = await isAccountReady(shop.stripAccountId);
+  if (!ready) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Payment information is not completed',
+    );
+  }
   try {
     // Transfer funds
     const transfer: any = await stripe.transfers.create({
