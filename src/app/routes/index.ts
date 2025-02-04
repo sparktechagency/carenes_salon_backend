@@ -27,6 +27,7 @@ import { paypalRoutes } from '../modules/paypal/paypal.routes';
 import { transactionRoutes } from '../modules/transaction/transaction.routes';
 import { superAdminRoutes } from '../modules/superAdmin/superAdmin.routes';
 import { notificationRoutes } from '../modules/notification/notification.routes';
+import { uploadRoutes } from '../modules/file-upload/fileUpload.routes';
 
 const router = Router();
 
@@ -142,6 +143,10 @@ const moduleRoutes = [
   {
     path: '/notification',
     router: notificationRoutes,
+  },
+  {
+    path: '/file-upload',
+    router: uploadRoutes,
   },
 ];
 

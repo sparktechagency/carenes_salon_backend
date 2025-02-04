@@ -28,8 +28,8 @@ export const uploadFile = () => {
         uploadPath = 'uploads/images/licence';
       } else if (file.fieldname === 'store_image') {
         uploadPath = 'uploads/images/store';
-      } else if (file.fieldname === 'chat_image') {
-        uploadPath = 'uploads/images/chat-image'; // For chat images
+      } else if (file.fieldname === 'chat_images') {
+        uploadPath = 'uploads/images/chat-images'; // For chat images
       } else if (file.fieldname === 'chat_video') {
         uploadPath = 'uploads/video/chat-video'; // For chat videos
       } else {
@@ -61,7 +61,7 @@ export const uploadFile = () => {
 
   const fileFilter = (req: Request, file: any, cb: any) => {
     const allowedFieldnames = [
-      'chat_image',
+      'chat_images',
       'profile_image',
       'shop_image',
       'product_image',
@@ -71,7 +71,7 @@ export const uploadFile = () => {
       'app_banner',
       'licence_image',
       'store_image',
-      'chat_video',
+      'chat_videos',
       'shop_category_image',
     ];
 
@@ -99,7 +99,7 @@ export const uploadFile = () => {
     storage: storage,
     fileFilter: fileFilter,
   }).fields([
-    { name: 'chat_image', maxCount: 1 },
+    { name: 'chat_images', maxCount: 5 },
     { name: 'profile_image', maxCount: 1 },
     { name: 'category_image', maxCount: 1 },
     { name: 'product_image', maxCount: 1 },
@@ -109,7 +109,7 @@ export const uploadFile = () => {
     { name: 'app_banner', maxCount: 1 },
     { name: 'licence_image', maxCount: 1 },
     { name: 'store_image', maxCount: 1 },
-    { name: 'chat_video', maxCount: 1 },
+    { name: 'chat_videos', maxCount: 3 },
     { name: 'shop_category_image', maxCount: 1 },
   ]);
 

@@ -46,6 +46,9 @@ const initializeSocket = (server: HTTPServer) => {
       console.log('current user', currentUser);
       if (!currentUser) {
         console.log('current user is null');
+        socket.emit('socket-error', {
+          errorMessage: 'Current user is not exits',
+        });
         return;
       }
 
@@ -58,11 +61,11 @@ const initializeSocket = (server: HTTPServer) => {
       io.emit('onlineUser', Array.from(onlineUser));
       // message page-----------------
       socket.on('message-page', async (userId) => {
-        console.log('nice to meet you in message page', userId);
         const userDetails = await getUserDetails(userId);
         if (userDetails) {
           const payload = {
             _id: userDetails._id,
+            user: userDetails.user,
             name:
               userDetails.shopName ||
               userDetails.firstName + ' ' + userDetails.lastName,
@@ -76,6 +79,9 @@ const initializeSocket = (server: HTTPServer) => {
           socket.emit('message-user', payload);
         } else {
           console.log('User not found');
+          socket.emit('socket-error', {
+            errorMessage: 'Current user is not exits',
+          });
         }
         //get previous message
         const getConversationMessage = await Conversation.findOne({

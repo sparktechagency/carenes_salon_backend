@@ -8,8 +8,8 @@ const messageSchema = new Schema<IMessage>(
       default: '',
     },
     imageUrl: {
-      type: String,
-      default: '',
+      type: [String],
+      default: [],
     },
     videoUrl: {
       type: String,

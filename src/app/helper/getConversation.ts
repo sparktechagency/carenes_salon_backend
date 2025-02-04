@@ -198,14 +198,15 @@ export const getConversation = async (crntUserId: string) => {
       } else if (otherUser.role === USER_ROLE.client) {
         userData = await Client.findOne({ user: otherUser._id });
       }
-
       return {
         _id: conv._id,
         userData: userData
           ? {
               id: otherUser._id,
               user: userData.user,
-              name: `${userData.firstName} ${userData.lastName}`,
+              name: userData?.shopName
+                ? userData?.shopName
+                : `${userData.firstName} ${userData.lastName}`,
               profileImage: userData.shopImages
                 ? userData.shopImages[0]
                 : userData.profile_image,

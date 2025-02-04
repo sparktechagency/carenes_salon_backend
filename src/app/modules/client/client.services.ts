@@ -31,6 +31,7 @@ import getAdminNotificationCount from '../../helper/getAdminNotification';
 import { getIO } from '../../socket/socketManager';
 import PaypalService from '../paypal/paypal.service';
 import Transaction from '../transaction/transaction.model';
+import getUserNotificationCount from '../../helper/getUnseenNotification';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 
 const updateClientProfile = async (
@@ -152,6 +153,7 @@ const getAllClientFromDB = async (query: Record<string, any>) => {
 };
 
 const updateClientStatus = async (id: string, status: string) => {
+  const io = getIO();
   const client = await Client.findById(id);
   if (!client) {
     throw new AppError(httpStatus.NOT_FOUND, 'Client not found');
@@ -172,21 +174,27 @@ const updateClientStatus = async (id: string, status: string) => {
 
     const isActive = status === 'active';
 
-    await User.findOneAndUpdate(
+    const updateUser = await User.findOneAndUpdate(
       { _id: result.user },
       { isActive: isActive },
       { runValidators: true, new: true, session: session },
     );
-    //! TODO: need to send notification after saving in database
     const notificationData = {
       title: isActive ? 'Activate shop' : 'Deactivate shop',
+      type: ENUM_NOTIFICATION_TYPE.GENERAL,
       message: isActive
         ? 'Congratulations admin approved your shop.Please connect your bank information for receive payments'
         : 'An Admin deactivate your shop , please contact with support',
       receiver: result._id,
     };
+    console.log('notification data', notificationData);
+    if (!updateUser) {
+      throw new AppError(httpStatus.FAILED_DEPENDENCY, 'User not updated');
+    }
     await Notification.create(notificationData);
-
+    //! TODO: need to send notification after saving in database
+    const unseenNotifications = await getUserNotificationCount(result._id);
+    io.to(updateUser?._id.toString()).emit('notification', unseenNotifications);
     await session.commitTransaction();
     session.endSession();
     return result;
@@ -346,7 +354,7 @@ const getSingleShop = async (id: string) => {
   const shop = await Client.findById(id)
     .populate('shopCategoryId')
     .select(
-      'shopImages shopName location totalRating totalRatingCount _id shopGenderCategory',
+      'shopImages shopName location totalRating totalRatingCount _id shopGenderCategory user',
     );
 
   // Check if the shop was found

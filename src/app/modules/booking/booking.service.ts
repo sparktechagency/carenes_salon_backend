@@ -418,7 +418,10 @@ const getCustomerBookings = async (
     Booking.find({
       customerId: customerId,
       status: { $ne: 'canceled' },
-    }).populate({ path: 'shopId', select: 'shopName shopImages location' }),
+    }).populate({
+      path: 'shopId',
+      select: 'shopName shopImages location address',
+    }),
     query,
   )
     .search(['customerId'])
