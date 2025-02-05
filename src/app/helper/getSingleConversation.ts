@@ -31,20 +31,19 @@ export const getSingleConversation = async (
     0,
   );
 
-  // Identify the other user in the conversation
+  // Identify the other user in the conversation----------
   const otherUser =
     conversation.sender._id.toString() === currentUserId
       ? conversation.receiver
       : conversation.sender;
 
-  // Fetch additional user details if necessary
+  // Fetch additional user details if necessary---------------
   let userData = null;
   if (otherUser?.role === USER_ROLE.customer) {
     userData = await Customer.findOne({ user: otherUser._id });
   } else if (otherUser?.role === USER_ROLE.client) {
     userData = await Client.findOne({ user: otherUser._id });
   }
-
   return {
     _id: conversation._id,
     userData: {

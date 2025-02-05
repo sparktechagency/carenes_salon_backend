@@ -539,10 +539,14 @@ const createCancelBookingRequest = async (
   };
 
   await Notification.create(notificationData);
-  const updatedNotificationCount = await getUserNotificationCount(
+  const notificationReceiver =
+    userData.role === USER_ROLE.client
+      ? customer?._id.toString()
+      : shop._id.toString();
+  const unseenCount = await getUserNotificationCount(
     requestReceiver.toString(),
   );
-  io.to(shop?.user.toObject()).emit('notifications', updatedNotificationCount);
+  io.to(notificationReceiver).emit('notifications', unseenCount);
 };
 
 const changeCancelBookingRequestStatus = async (
@@ -564,6 +568,7 @@ const acceptCancelBookingRequest = async (
   userData: JwtPayload,
   notificationId: string,
 ) => {
+  const io = getIO();
   const notification = await Notification.findById(notificationId);
   if (!notification) {
     throw new AppError(httpStatus.NOT_FOUND, 'Notification not found');
@@ -573,11 +578,11 @@ const acceptCancelBookingRequest = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
   const shop = await Client.findById(booking.shopId).select(
-    'shopName shopImages stripAccountId',
+    'shopName shopImages stripAccountId _id',
   );
 
   const customer = await Customer.findById(booking.customerId).select(
-    'firstName lastName profile_image',
+    'firstName lastName profile_image _id',
   );
 
   // await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
@@ -768,14 +773,22 @@ const acceptCancelBookingRequest = async (
     bookingId: booking._id,
     type: ENUM_NOTIFICATION_TYPE.REJECT_REQUEST,
   };
-
   await Notification.create(notificationData);
+  const notificationReceiver =
+    userData.role === USER_ROLE.client
+      ? customer?.user.toString()
+      : shop.user.toString();
+  const unseenCount = await getUserNotificationCount(
+    requestReceiver.toString(),
+  );
+  io.to(notificationReceiver).emit('notifications', unseenCount);
 };
 
 const rejectCancelBookingRequest = async (
   userData: JwtPayload,
   notificationId: string,
 ) => {
+  const io = getIO();
   const notification = await Notification.findById(notificationId);
   if (!notification) {
     throw new AppError(httpStatus.NOT_FOUND, 'Notification not found');
@@ -794,7 +807,6 @@ const rejectCancelBookingRequest = async (
   );
 
   await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
-
   await Notification.findByIdAndDelete(notificationId);
   const requestReceiver =
     userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
@@ -817,6 +829,14 @@ const rejectCancelBookingRequest = async (
   };
 
   await Notification.create(notificationData);
+  const notificationReceiver =
+    userData.role === USER_ROLE.client
+      ? customer?.user.toString()
+      : shop.user.toString();
+  const unseenCount = await getUserNotificationCount(
+    requestReceiver.toString(),
+  );
+  io.to(notificationReceiver).emit('notifications', unseenCount);
 };
 
 const getShopBookings = async (

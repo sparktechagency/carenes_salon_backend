@@ -33,7 +33,6 @@ import PaypalService from '../paypal/paypal.service';
 import Transaction from '../transaction/transaction.model';
 import getUserNotificationCount from '../../helper/getUnseenNotification';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
-
 const updateClientProfile = async (
   userId: string,
   payload: Partial<IClient>,
@@ -78,13 +77,11 @@ const addBankDetails = async (id: string, payload: Partial<IClient>) => {
   if (!shop) {
     throw new AppError(httpStatus.NOT_FOUND, 'Shop not found');
   }
-
   const result = await Client.findByIdAndUpdate(
     id,
     { ...payload, isProfileCompleted: true },
     { new: true, runValidators: true },
   );
-
   const notificationData = {
     title: 'New Shop Register!',
     message: `A new shop is registered named ${shop.shopName}`,

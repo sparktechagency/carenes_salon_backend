@@ -12702,3 +12702,71 @@ Tue Feb 04 2025 12:17 45 [Food Delivery] info: DB Connected Successfully
 Tue Feb 04 2025 12:17 45 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
 Tue Feb 04 2025 12:34 59 [Food Delivery] info: DB Connected Successfully
 Tue Feb 04 2025 12:34 59 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Tue Feb 04 2025 12:36 51 [Food Delivery] info: DB Connected Successfully
+Tue Feb 04 2025 12:36 51 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Tue Feb 04 2025 12:41 10 [Food Delivery] info: DB Connected Successfully
+Tue Feb 04 2025 12:41 10 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Tue Feb 04 2025 18:53 3 [Food Delivery] error: Unhandled Rejection: Conversation validation failed: receiver: Path `receiver` is required.
+Wed Feb 05 2025 10:25 11 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:25 11 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:25 16 [Food Delivery] error: Unhandled Rejection: Caused by :: Unable to write to collection 'salonDB.superadmins' due to catalog changes; please retry the operation :: Please retry your operation or multi-document transaction.
+Wed Feb 05 2025 10:25 25 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:25 25 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:25 34 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:25 34 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:25 42 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:25 42 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:25 51 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:25 51 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:26 12 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:26 12 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:28 43 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:28 43 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:28 53 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:28 53 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:30 13 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:30 13 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:30 21 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:30 21 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:32 12 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:32 12 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:35 12 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:35 12 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:36 4 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:36 4 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:36 20 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:36 20 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:37 44 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:37 44 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:39 29 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:39 29 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:39 54 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:39 54 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:40 10 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:40 10 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:40 40 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:40 40 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:40 57 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:40 57 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:41 19 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:41 19 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:41 44 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:41 44 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:41 53 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:41 53 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:41 57 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:41 57 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:42 3 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:42 3 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:42 7 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:42 7 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:43 10 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:43 10 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:43 16 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:43 16 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:43 29 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:43 29 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:43 36 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:43 36 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
+Wed Feb 05 2025 10:43 42 [Food Delivery] info: DB Connected Successfully
+Wed Feb 05 2025 10:43 42 [Food Delivery] info: Example app listening on port http://192.168.10.153:5000
