@@ -578,11 +578,11 @@ const acceptCancelBookingRequest = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
   const shop = await Client.findById(booking.shopId).select(
-    'shopName shopImages stripAccountId _id',
+    'shopName shopImages stripAccountId _id user',
   );
 
   const customer = await Customer.findById(booking.customerId).select(
-    'firstName lastName profile_image _id',
+    'firstName lastName profile_image _id user',
   );
 
   // await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
@@ -766,13 +766,14 @@ const acceptCancelBookingRequest = async (
     ? `${shop?.shopImages[0]}`
     : `${customer?.profile_image}`;
   const notificationData = {
-    title: 'Accept Cancel Request',
+    title: 'Cancel Request Accepted',
     message: notificationMessage,
     image: notificationImage,
     receiver: requestReceiver,
     bookingId: booking._id,
-    type: ENUM_NOTIFICATION_TYPE.REJECT_REQUEST,
+    type: ENUM_NOTIFICATION_TYPE.GENERAL,
   };
+  console.log('notification data', notificationData);
   await Notification.create(notificationData);
   const notificationReceiver =
     userData.role === USER_ROLE.client
@@ -799,11 +800,11 @@ const rejectCancelBookingRequest = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
   const shop = await Client.findById(booking.shopId).select(
-    'shopName shopImages',
+    'shopName shopImages user',
   );
 
   const customer = await Customer.findById(booking.customerId).select(
-    'firstName lastName profile_image',
+    'firstName lastName profile_image user',
   );
 
   await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
@@ -820,7 +821,7 @@ const rejectCancelBookingRequest = async (
     ? `${shop?.shopImages[0]}`
     : `${customer?.profile_image}`;
   const notificationData = {
-    title: 'Reject Cancel Request',
+    title: 'Cancel Request Rejected',
     message: notificationMessage,
     image: notificationImage,
     receiver: requestReceiver,

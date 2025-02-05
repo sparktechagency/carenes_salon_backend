@@ -28,6 +28,12 @@ const loginUserIntoDB = async (payload: TLoginUser) => {
   if (user.status === 'blocked') {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked');
   }
+  if (!user.isActive && user.role === USER_ROLE.admin) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Super admin blocked your access',
+    );
+  }
   if (!user.isVerified) {
     throw new AppError(
       httpStatus.FORBIDDEN,

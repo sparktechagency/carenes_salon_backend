@@ -14,7 +14,7 @@ router.post(
 router.post('/add-faq', auth(USER_ROLE.superAdmin), ManageController.addFAQ);
 router.post(
   '/add-terms-conditions',
-  auth(USER_ROLE.superAdmin),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   ManageController.addTermsConditions,
 );
 router.post(
@@ -24,7 +24,7 @@ router.post(
 );
 router.post(
   '/add-privacy-policy',
-  auth(USER_ROLE.superAdmin),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   ManageController.addPrivacyPolicy,
 );
 router.post(

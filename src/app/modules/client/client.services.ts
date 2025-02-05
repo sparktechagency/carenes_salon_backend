@@ -557,7 +557,6 @@ const executeAdminFeeWithPaypalPayment = async (orderId: string) => {
         'Invalid payment data in capture response.',
       );
     }
-
     const updateTransaction = await Transaction.findOneAndUpdate(
       { transactionId: orderId },
       { status: 'success' },
@@ -605,7 +604,7 @@ const notifyAllShopsForAdminFee = async () => {
     message: `Dear ${shop.shopName}, your current due charge is ${shop.payOnShopChargeDueAmount}. Please clear it to avoid penalties.`,
     seen: false,
     receiver: shop.user.toString(),
-    type: ENUM_NOTIFICATION_TYPE.NOTIFY_ADMIN_FEE,
+    type: ENUM_NOTIFICATION_TYPE.GENERAL,
   }));
 
   await Notification.insertMany(notifications);
@@ -626,7 +625,7 @@ const notifySingleShopsForAdminFee = async (shopId: string) => {
     message: `Dear ${shop.shopName}, your current due charge is ${shop.payOnShopChargeDueAmount}. Please clear it to avoid penalties.`,
     seen: false,
     receiver: shop.user.toString(),
-    type: ENUM_NOTIFICATION_TYPE.NOTIFY_ADMIN_FEE,
+    type: ENUM_NOTIFICATION_TYPE.GENERAL,
   };
 
   await Notification.create(notificationData);
