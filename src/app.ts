@@ -38,7 +38,6 @@ app.use(
 app.use('/uploads', express.static('uploads'));
 // application routers ----------------
 app.use('/', router);
-
 // onboarding refresh url
 router.get('/stripe/onboarding/refresh', async (req, res, next) => {
   try {

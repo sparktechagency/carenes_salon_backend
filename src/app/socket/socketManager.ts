@@ -8,12 +8,6 @@ import { getConversation } from '../helper/getConversation';
 import Message from '../modules/message/message.model';
 import { User } from '../modules/user/user.model';
 import { getSingleConversation } from '../helper/getSingleConversation';
-// import { uploadFile } from '../helper/fileUploader';
-// import util from 'util';
-// import path from 'path';
-// Promisify the upload middleware for use with Socket.IO
-// const uploadMiddleware = util.promisify(uploadFile());
-// let io: IOServer | null = null;
 let io: IOServer;
 
 const initializeSocket = (server: HTTPServer) => {
@@ -100,20 +94,6 @@ const initializeSocket = (server: HTTPServer) => {
 
       // new message -----------------------------------
       socket.on('new-message', async (data) => {
-        // const req = { files: data.files } as any; // Simulate an Express request
-        // const res = {} as any; // Dummy response object
-
-        // // Use the upload middleware to handle files
-        // await uploadMiddleware(req, res);
-
-        // const imageUrl = req.files?.chat_image
-        //   ? path.join('uploads/images/chat-image', req.files.chat_image[0].filename)
-        //   : null;
-
-        // const videoUrl = req.files?.chat_video
-        //   ? path.join('uploads/video/chat-video', req.files.chat_video[0].filename)
-        //   : null;
-
         let conversation = await Conversation.findOne({
           $or: [
             { sender: data?.sender, receiver: data?.receiver },
