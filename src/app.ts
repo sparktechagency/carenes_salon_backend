@@ -17,7 +17,11 @@ import handleWebhook from './app/handleWebhook/webhook';
 import handleConnectedAccountWebhook from './app/handleWebhook/connectedAccountWebhook';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 // parser---------------------
-app.post('/webhook', express.raw({ type: 'application/json' }), handleWebhook);
+app.post(
+  '/careness-webhook',
+  express.raw({ type: 'application/json' }),
+  handleWebhook,
+);
 app.post(
   '/careness-connected-account/webhook',
   express.raw({ type: 'application/json' }),
@@ -37,6 +41,7 @@ app.use(
       'http://10.0.60.38:7585',
       'http://10.0.60.187:5175',
       'http://10.0.60.187:7585',
+      'http://69.62.117.207:4173',
     ],
     credentials: true,
   }),
