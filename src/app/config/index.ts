@@ -22,6 +22,8 @@ export default {
   stripe: {
     stripe_secret_key: process.env.STRIPE_SECRET_KEY,
     webhook_endpoint_secret: process.env.WEBHOOK_ENDPOINT_SECRET,
+    connected_account_webhook_secret:
+      process.env.CONNECTED_ACCOUNT_WEBHOOK_SECRET,
     onboarding_return_url: process.env.ONBOARDING_RETURN_URL,
     onboarding_refresh_url: process.env.ONBOARDING_REFRESH_URL,
     admin_fee_payment_success_url: process.env.ADMIN_FEE_PAYMENT_SUCCESS_URL,

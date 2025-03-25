@@ -14,9 +14,15 @@ const app: Application = express();
 import Stripe from 'stripe'; // Import Stripe using ES module syntax
 import config from './app/config';
 import handleWebhook from './app/handleWebhook/webhook';
+import handleConnectedAccountWebhook from './app/handleWebhook/connectedAccountWebhook';
 const stripe = new Stripe(config.stripe.stripe_secret_key as string);
 // parser---------------------
 app.post('/webhook', express.raw({ type: 'application/json' }), handleWebhook);
+app.post(
+  '/careness-connected-account/webhook',
+  express.raw({ type: 'application/json' }),
+  handleConnectedAccountWebhook,
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(
