@@ -574,6 +574,7 @@ const acceptCancelBookingRequest = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Notification not found');
   }
   const booking = await Booking.findById(notification.bookingId);
+  console.log('booking', booking);
   if (!booking) {
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
@@ -630,8 +631,9 @@ const acceptCancelBookingRequest = async (
       );
       await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
       await Notification.findByIdAndDelete(notificationId);
-      return refund;
+      // return refund;
     } else if (booking?.paymentMethod === 'pay-on-shop') {
+      console.log('customer pay on shop');
       await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
       await Notification.findByIdAndDelete(notificationId);
     }
@@ -711,7 +713,7 @@ const acceptCancelBookingRequest = async (
         //     amount: Math.min(refundAmountInCents, charge.amount),
         //   });
         // }
-        return refund;
+        // return refund;
       } catch (error: unknown) {
         if (error instanceof Error) {
           console.error('Refund failed:', error.message);
@@ -751,6 +753,7 @@ const acceptCancelBookingRequest = async (
         console.log('error in tranfer or refund', error);
       }
     } else if (booking?.paymentMethod === 'pay-on-shop') {
+      console.log('booking pay on shop');
       await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
       await Notification.findByIdAndDelete(notificationId);
     }
@@ -773,7 +776,6 @@ const acceptCancelBookingRequest = async (
     bookingId: booking._id,
     type: ENUM_NOTIFICATION_TYPE.GENERAL,
   };
-  console.log('notification data', notificationData);
   await Notification.create(notificationData);
   const notificationReceiver =
     userData.role === USER_ROLE.client
@@ -782,7 +784,9 @@ const acceptCancelBookingRequest = async (
   const unseenCount = await getUserNotificationCount(
     requestReceiver.toString(),
   );
+
   io.to(notificationReceiver).emit('notifications', unseenCount);
+  await Notification.findByIdAndDelete(notificationId);
 };
 
 const rejectCancelBookingRequest = async (
@@ -807,7 +811,6 @@ const rejectCancelBookingRequest = async (
     'firstName lastName profile_image user',
   );
 
-  await Booking.findByIdAndUpdate(booking._id, { status: 'canceled' });
   await Notification.findByIdAndDelete(notificationId);
   const requestReceiver =
     userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
@@ -826,7 +829,7 @@ const rejectCancelBookingRequest = async (
     image: notificationImage,
     receiver: requestReceiver,
     bookingId: booking._id,
-    type: ENUM_NOTIFICATION_TYPE.REJECT_REQUEST,
+    type: ENUM_NOTIFICATION_TYPE.GENERAL,
   };
 
   await Notification.create(notificationData);

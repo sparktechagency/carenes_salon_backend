@@ -22,12 +22,14 @@ const initializeSocket = (server: HTTPServer) => {
           'http://192.168.10.25:7585',
           'http://192.168.10.25:7586',
           'http://10.0.60.38:7585',
+          'http://10.0.60.187:7585',
         ],
       },
     });
     // online user
     const onlineUser = new Set();
     io.on('connection', async (socket: Socket) => {
+      console.log('user connected');
       const userId = socket.handshake.query.id as string;
       console.log('a user connected', userId);
 

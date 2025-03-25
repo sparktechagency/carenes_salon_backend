@@ -184,7 +184,6 @@ const updateClientStatus = async (id: string, status: string) => {
         : 'An Admin deactivate your shop , please contact with support',
       receiver: result._id,
     };
-    console.log('notification data', notificationData);
     if (!updateUser) {
       throw new AppError(httpStatus.FAILED_DEPENDENCY, 'User not updated');
     }
@@ -235,20 +234,6 @@ const getNearbyShopWithTime = async (
   // Base aggregation pipeline
   const pipeline: any[] = [];
 
-  // Conditionally add $geoNear if nearby is true
-  // if (query.latitude && query.longitude) {
-  //   pipeline.push({
-  //     $geoNear: {
-  //       near: {
-  //         type: 'Point',
-  //         coordinates: [query.longitude, query.latitude],
-  //       },
-  //       distanceField: 'distance',
-  //       maxDistance: maxDistanceForShop,
-  //       spherical: true,
-  //     },
-  //   });
-  // }
   if (query.latitude && query.longitude) {
     pipeline.push({
       $geoNear: {
@@ -268,7 +253,6 @@ const getNearbyShopWithTime = async (
 
   pipeline.push(...matchStage);
 
-  // Add filter for shopCategoryId if provided
   if (query.shopCategoryId) {
     pipeline.push({
       $match: {
@@ -277,23 +261,21 @@ const getNearbyShopWithTime = async (
     });
   }
 
-  // Add estimated time calculation
   pipeline.push({
     $addFields: {
       estimatedTime: {
-        $divide: ['$distance', customerSpeed], // distance / speed
+        $divide: ['$distance', customerSpeed],
       },
     },
   });
-  // Conditionally add ratingRatio calculation and sorting if 'topRated' is in query
   if (query.topRated) {
     pipeline.push({
       $addFields: {
         ratingRatio: {
           $cond: {
-            if: { $eq: [{ $ifNull: ['$totalRatingCount', 0] }, 0] }, // Prevent division by zero
+            if: { $eq: [{ $ifNull: ['$totalRatingCount', 0] }, 0] },
             then: 0,
-            else: { $divide: ['$totalRating', '$totalRatingCount'] }, // totalRating / totalRatingCount
+            else: { $divide: ['$totalRating', '$totalRatingCount'] },
           },
         },
       },
@@ -333,7 +315,6 @@ const getNearbyShopWithTime = async (
     ...shop,
     isBookmark: bookmarkedShopIds.has(shop._id.toString()),
   }));
-
   return enrichedResult;
 };
 
@@ -453,6 +434,12 @@ const payAdminFeeWithStripe = async (shopId: string) => {
   const shop = await Client.findById(shopId).select(
     'payOnShopChargeDueAmount _id',
   );
+  if (shop.payOnShopChargeDueAmount < 10) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You can't payment for less then 10",
+    );
+  }
   const amountInCents = Math.round(shop.payOnShopChargeDueAmount * 100);
   console.log('shop id', shop._id);
   const session = await stripe.checkout.sessions.create({
@@ -485,6 +472,12 @@ const payAdminFeeWithPaypal = async (shopId: string) => {
   const shop = await Client.findById(shopId).select(
     'payOnShopChargeDueAmount _id',
   );
+  if (shop.payOnShopChargeDueAmount < 10) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You can't payment for less then 10",
+    );
+  }
   const amount = shop.payOnShopChargeDueAmount;
   const request = new paypal.orders.OrdersCreateRequest();
   request.prefer('return=representation');

@@ -12,17 +12,20 @@ import Client from '../client/client.model';
 import Customer from '../customer/customer.model';
 import { USER_ROLE } from '../user/user.constant';
 import Notification from '../notification/notification.model';
+import { getIO } from '../../socket/socketManager';
+import getUserNotificationCount from '../../helper/getUnseenNotification';
 
 const createRescheduleRequest = async (
   userData: JwtPayload,
   payload: IBookingReschedule,
 ) => {
+  const io = getIO();
   const booking = await Booking.findById(payload.bookingId);
   if (!booking) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Booking not found');
   }
   const shop = await Client.findById(booking.shopId).select(
-    'shopName shopImages',
+    'shopName shopImages user',
   );
   const customer = await Customer.findById(booking.customerId);
   if (!booking) {
@@ -98,6 +101,15 @@ const createRescheduleRequest = async (
 
   // Create notification for the receiver
   await Notification.create(notificationData);
+
+  const notificationReceiver =
+    userData.role === USER_ROLE.client
+      ? customer?._id.toString()
+      : shop._id.toString();
+  const unseenCount = await getUserNotificationCount(
+    requestReceiver.toString(),
+  );
+  io.to(notificationReceiver).emit('notifications', unseenCount);
 };
 
 const changeRescheduleRequestStatus = async (
@@ -119,6 +131,7 @@ const acceptRescheduleRequest = async (
   userData: JwtPayload,
   notificationId: string,
 ) => {
+  const io = getIO();
   const notification = await Notification.findById(notificationId);
   if (!notification) {
     throw new AppError(httpStatus.NOT_FOUND, 'Notification not found');
@@ -129,11 +142,10 @@ const acceptRescheduleRequest = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
   }
   const shop = await Client.findById(booking.shopId).select(
-    'shopName shopImages',
+    'shopName shopImages user',
   );
-
   const customer = await Customer.findById(booking.customerId).select(
-    'firstName lastName profile_image',
+    'firstName lastName profile_image user',
   );
 
   const endDate = new Date(notification.rescheduleDateTime);
@@ -145,7 +157,6 @@ const acceptRescheduleRequest = async (
     startTime: notification.rescheduleDateTime,
     endTime: endDate,
   });
-
   await Notification.findByIdAndDelete(notificationId);
   const requestReceiver =
     userData.role === USER_ROLE.client ? booking.customerId : booking.shopId;
@@ -164,10 +175,18 @@ const acceptRescheduleRequest = async (
     image: notificationImage,
     receiver: requestReceiver,
     bookingId: booking._id,
-    type: ENUM_NOTIFICATION_TYPE.ACCEPT_REQUEST,
+    type: ENUM_NOTIFICATION_TYPE.GENERAL,
   };
 
   await Notification.create(notificationData);
+  const notificationReceiver =
+    userData.role === USER_ROLE.client
+      ? customer?._id.toString()
+      : shop._id.toString();
+  const unseenCount = await getUserNotificationCount(
+    requestReceiver.toString(),
+  );
+  io.to(notificationReceiver).emit('notifications', unseenCount);
 };
 
 const rejectRescheduleRequest = async (

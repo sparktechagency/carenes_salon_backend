@@ -24,7 +24,6 @@ const getAvailableDates = async (staffId: string) => {
     entityId: staff.shop,
     entityType: 'Shop',
   });
-  console.log('shop Hourse', shopHours);
   if (!shopHours) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Shop hours not found');
   }
@@ -32,7 +31,6 @@ const getAvailableDates = async (staffId: string) => {
     entityId: staffId,
     entityType: 'Staff',
   });
-  console.log('staff Hourse', staffHours);
   if (!staffHours) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Staff hours not found');
   }
@@ -115,6 +113,7 @@ const getAvailableTimeSlots = async (staffId: string, date: string) => {
   const existingBookings = await Booking.find({
     staffId,
     startTime: { $gte: openTime, $lt: closeTime },
+    status: 'booked',
   });
   const availableSlots = [];
   let slotStart = new Date(openTime);

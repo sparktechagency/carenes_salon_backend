@@ -82,6 +82,7 @@ const createPayOnShopBooking = async (customerId: string, payload: any) => {
   const existingBookings = await Booking.find({
     staffId: payload.staffId,
     $and: [{ startTime: { $lt: endDate }, endTime: { $gt: startDate } }],
+    status: 'booked',
   });
 
   if (existingBookings.length > 0) {
@@ -230,6 +231,7 @@ const createOnlineBooking = async (customerId: string, payload: any) => {
   const existingBookings = await Booking.find({
     staffId: payload.staffId,
     $and: [{ startTime: { $lt: endDate }, endTime: { $gt: startDate } }],
+    status: 'booked',
   });
   //check operation-------------
   if (existingBookings.length > 0) {

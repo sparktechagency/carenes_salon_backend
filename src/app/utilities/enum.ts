@@ -69,6 +69,7 @@ export const ENUM_PAYMENT_PURPOSE = {
 export const ENUM_PAYMENT_METHOD = {
   STRIPE: 'stripe',
   PAYPAL: 'paypal',
+  PAY_ON_SHOP: 'pay-on-shop',
 };
 
 export const ENUM_NOTIFICATION_RECEIVER = {
