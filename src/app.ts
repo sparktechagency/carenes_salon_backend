@@ -44,6 +44,11 @@ app.use(
 app.use('/uploads', express.static('uploads'));
 // application routers ----------------
 app.use('/', router);
+
+app.get('/', async (req, res) => {
+  res.status(200).send({ message: 'Wellcome to careness salon service' });
+});
+
 // onboarding refresh url
 router.get('/stripe/onboarding/refresh', async (req, res, next) => {
   try {
