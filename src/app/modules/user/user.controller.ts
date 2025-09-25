@@ -96,6 +96,15 @@ const blockUnblockUser = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const deleteAccount = catchAsync(async (req, res) => {
+  const result = await userServices.deleteAccount(req.user, req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User account deleted successfully',
+    data: result,
+  });
+});
 
 const userController = {
   registerCustomer,
@@ -105,5 +114,6 @@ const userController = {
   verifyCode,
   resendVerifyCode,
   blockUnblockUser,
+  deleteAccount,
 };
 export default userController;

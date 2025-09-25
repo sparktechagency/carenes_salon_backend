@@ -1,24 +1,25 @@
 /* eslint-disable no-unused-vars */
-import mongoose from 'mongoose';
-import { ICustomer } from '../customer/customer.interface';
-import Customer from '../customer/customer.model';
-import { USER_ROLE } from './user.constant';
-import { TUser, TUserRole } from './user.interface';
-import { User } from './user.model';
-import AppError from '../../error/appError';
 import httpStatus from 'http-status';
-import { IClient } from '../client/client.interface';
-import Client from '../client/client.model';
+import { JwtPayload } from 'jsonwebtoken';
+import mongoose from 'mongoose';
+import cron from 'node-cron';
+import config from '../../config';
+import AppError from '../../error/appError';
+import isAccountReady from '../../helper/isAccountReady';
+import registrationSuccessEmailBody from '../../mailTemplete/registerSuccessEmail';
+import sendEmail from '../../utilities/sendEmail';
 import { IAdmin } from '../admin/admin.interface';
 import Admin from '../admin/admin.model';
 import BusinessHour from '../bussinessHour/businessHour.model';
-import sendEmail from '../../utilities/sendEmail';
-import registrationSuccessEmailBody from '../../mailTemplete/registerSuccessEmail';
-import cron from 'node-cron';
+import { IClient } from '../client/client.interface';
+import Client from '../client/client.model';
+import { ICustomer } from '../customer/customer.interface';
+import Customer from '../customer/customer.model';
 import SuperAdmin from '../superAdmin/superAdmin.model';
+import { USER_ROLE } from './user.constant';
+import { TUser, TUserRole } from './user.interface';
+import { User } from './user.model';
 import { createToken } from './user.utils';
-import config from '../../config';
-import isAccountReady from '../../helper/isAccountReady';
 
 const generateVerifyCode = (): number => {
   return Math.floor(1000 + Math.random() * 9000);
@@ -317,6 +318,48 @@ const blockUnblockUser = async (id: string, status: string) => {
   return result;
 };
 
+const deleteAccount = async (
+  userData: JwtPayload,
+  payload: { password: string },
+) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const user = await User.findById(userData.id).session(session);
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    }
+
+    const isMatch = await User.isPasswordMatched(
+      payload?.password,
+      user?.password,
+    );
+    if (!isMatch) {
+      throw new AppError(httpStatus.FORBIDDEN, 'Password does not match');
+    }
+
+    if (userData.role === USER_ROLE.client) {
+      await Client.findOneAndDelete({ user: userData.id }).session(session);
+    }
+
+    if (userData.role === USER_ROLE.customer) {
+      await Customer.findOneAndDelete({ user: userData.id }).session(session);
+    }
+
+    await User.findByIdAndDelete(userData.id).session(session);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return { success: true, message: 'Account deleted successfully' };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 // crone jobs -------------
 cron.schedule('*/2 * * * *', async () => {
   try {
@@ -366,6 +409,7 @@ const userServices = {
   verifyCode,
   resendVerifyCode,
   blockUnblockUser,
+  deleteAccount,
 };
 
 export default userServices;

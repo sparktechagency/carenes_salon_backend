@@ -1,16 +1,16 @@
 // import { NextFunction, Request, Response, Router } from 'express';
 import validateRequest from '../../middlewares/validateRequest';
-import userControllers from './user.controller';
 import customerValidations from '../customer/customer.validation';
+import userControllers from './user.controller';
 // import { uploadFile } from '../../helper/fileUploader';
 
-import auth from '../../middlewares/auth';
-import { USER_ROLE } from './user.constant';
 import { Router } from 'express';
-import userValidations from './user.validation';
-import ClientValidations from '../client/client.validation';
-import AdminValidations from '../admin/admin.validation';
+import auth from '../../middlewares/auth';
 import authWithoutActive from '../../middlewares/authWithoutActive';
+import AdminValidations from '../admin/admin.validation';
+import ClientValidations from '../client/client.validation';
+import { USER_ROLE } from './user.constant';
+import userValidations from './user.validation';
 
 const router = Router();
 
@@ -60,6 +60,12 @@ router.patch(
   auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   validateRequest(userValidations.blockUnblockUserValidationSchema),
   userControllers.blockUnblockUser,
+);
+router.patch(
+  '/delete-account',
+  auth(USER_ROLE.customer, USER_ROLE.client),
+  validateRequest(userValidations.deleteAccountValidationSchema),
+  userControllers.deleteAccount,
 );
 
 export const userRoutes = router;

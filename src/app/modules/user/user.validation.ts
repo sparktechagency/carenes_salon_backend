@@ -71,10 +71,15 @@ const resendVerifyCodeSchema = z.object({
 });
 
 const blockUnblockUserValidationSchema = z.object({
-  body:z.object({
-    status:z.enum(["blocked","in-progress"])
-  })
-})
+  body: z.object({
+    status: z.enum(['blocked', 'in-progress']),
+  }),
+});
+const deleteAccountValidationSchema = z.object({
+  body: z.object({
+    password: z.string({ required_error: 'Password is required' }),
+  }),
+});
 
 const userValidations = {
   registerUserValidationSchema,
@@ -85,7 +90,8 @@ const userValidations = {
   resetPasswordValidationSchema,
   verifyCodeValidationSchema,
   resendVerifyCodeSchema,
-  blockUnblockUserValidationSchema
+  blockUnblockUserValidationSchema,
+  deleteAccountValidationSchema,
 };
 
 export default userValidations;
